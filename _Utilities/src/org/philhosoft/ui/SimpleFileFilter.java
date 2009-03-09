@@ -1,10 +1,16 @@
-/** @file
- * Simple file filter to use with JFileChooser.
- * Based on Sun's demo ExampleFileFilter.
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
  *
- * @author Philippe Lhoste
+ * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+ *
+ * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
+ * This file is distributed under the zlib/libpng license.
+ * Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
  */
-package org.philhosoft;
+/* File history:
+ *  1.00.000 -- 2005/12/11 (PL) -- Creation
+ */
+package org.philhosoft.ui;
 
 import javax.swing.filechooser.*;
 
@@ -12,12 +18,16 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.HashMap;
 
+import org.philhosoft.io.*;
+
 /**
- * A convenience implementation of FileFilter that filters out
+ * Simple file filter to use with JFileChooser.
+ *
+ * Based on Sun's demo ExampleFileFilter (j2sdk1.4.2_10\demo\jfc\FileChooserDemo),
+ * using HashMap instead of Hashtable and Iterator instead of Enumeration.
+ *
+ * This is a convenience implementation of FileFilter that filters out
  * all files except for those type extensions that it knows about.
- * If no extension is provided, accept all files
- * (by default, ignore dot files like .htaccess or .profile,
- * which is the classical way, in Unix, to hide files).
  *
  * Extensions are of the type ".foo", which is typically found on
  * Windows and Unix boxes, but rarely on Macinthosh. Case is ignored.
@@ -31,8 +41,9 @@ import java.util.HashMap;
  *	 chooser.addChoosableFileFilter(filter);
  *	 chooser.showOpenDialog(this);
  *
- * @version 1.0 - 2005/12/11 (based on ExampleFileFilter 1.14 01/23/03)
  * @author Jeff Dinkins (core) & Philippe Lhoste (added bugs...)
+ * @version 1.00.000 (based on ExampleFileFilter 1.14 01/23/03)
+ * @date 2005/12/11
  */
 public class SimpleFileFilter extends FileFilter
 {
@@ -43,9 +54,7 @@ public class SimpleFileFilter extends FileFilter
 	/// Full description (may include the list of accepted extensions)
 	private String m_fullDescription = null;
 	/// Indicates whether the extensions must be in the full description
-	private boolean b_showExtensionsInDescription = true;
-   /// If true, if accept all files, hide files whose name starts with a dot.
-	private boolean b_hideDotFiles = true;
+	private boolean m_bShowExtensionsInDescription = true;
 
 
 	/*===== Constructors: choice for flexibility... =====*/
@@ -141,22 +150,13 @@ public class SimpleFileFilter extends FileFilter
 	{
 		if (f != null)
 		{
-         if (b_hideDotFiles && f.getName().startsWith("."))
-         {
-            return false;
-         }
-			if (m_filters.size() == 0)
-			{
-				// All valid files are OK
-				return true;
-			}
 			if (f.isDirectory())
 			{
 				// OK to display, ignore extensions on directory names...
 				return true;
 			}
-			String extension = getFileExtension(f);
-			if (extension != null && m_filters.containsKey(extension))
+			String extension = FileX.getFileExtension(f);
+			if (extension != null && m_filters.containsKey(extension.toLowerCase()))
 			{
 				// Extension found in the pool
 				return true;
@@ -172,31 +172,31 @@ public class SimpleFileFilter extends FileFilter
 	 * or: "*.jpg, *.gif" (no description provided)
 	 *
 	 * @see setDescription
-	 * @see setExtensionListInDescription
-	 * @see isExtensionListInDescription
+	 * @see showExtensionsInDescription
+	 * @see areExtensionsInDescription
 	 * @see FileFilter#getDescription
 	 */
 	public String getDescription()
 	{
 		if (m_fullDescription == null)
 		{
-			if (m_description == null || b_showExtensionsInDescription)
+			if (m_description == null || m_bShowExtensionsInDescription)
 			{
 				// Build the description from the extension list
-            if (m_filters.size() > 0)
-            {
-               m_fullDescription = m_description == null ? "" : m_description + " (";
-               Iterator it = m_filters.keySet().iterator();
-               m_fullDescription += "*." + (String)it.next();
-               while (it.hasNext())
-               {
-                  m_fullDescription += ", *." + (String)it.next();
-               }
-               if (m_description != null)
-               {
-                  m_fullDescription += ")";
-               }
-            }
+				if (m_filters.size() > 0)
+				{
+					m_fullDescription = m_description == null ? "" : m_description + " (";
+					Iterator it = m_filters.keySet().iterator();
+					m_fullDescription += "*." + (String)it.next();
+					while (it.hasNext())
+					{
+						m_fullDescription += ", *." + (String)it.next();
+					}
+					if (m_description != null)
+					{
+						m_fullDescription += ")";
+					}
+				}
 			}
 			else
 			{
@@ -223,17 +223,18 @@ public class SimpleFileFilter extends FileFilter
 	 */
 	public void addExtension(String extension)
 	{
-      int dotPos = extension.indexOf('.');
-      if (dotPos == 0)
-      {
-         extension = extension.substring(1);
-         dotPos = extension.indexOf('.');
-      }
-      if (dotPos > -1)
-      {
-         // Ignore invalid extension with dot inside
-         return;
-      }
+		int dotPos = extension.indexOf('.');
+		if (dotPos == 0)
+		{
+			// Skip initial dot
+			extension = extension.substring(1);
+			dotPos = extension.indexOf('.');
+		}
+		if (dotPos > -1)
+		{
+			// Ignore invalid extension with dot inside
+			return;
+		}
 		m_filters.put(extension.toLowerCase(), extension);
 		// Reset full description as it may change
 		m_fullDescription = null;
@@ -241,10 +242,10 @@ public class SimpleFileFilter extends FileFilter
 
 	/**
 	 * Set the human readable description of this filter.
-    * For example: filter.setDescription("Gif and JPeg Images");
+	 * For example: filter.setDescription("Gif and JPeg Images");
 	 *
-	 * @see setExtensionListInDescription
-	 * @see isExtensionListInDescription
+	 * @see showExtensionsInDescription
+	 * @see areExtensionsInDescription
 	 */
 	public void setDescription(String description)
    {
@@ -264,8 +265,9 @@ public class SimpleFileFilter extends FileFilter
 	 * @see setDescription
 	 * @see areExtensionsInDescription
 	 */
-	public void showExtensionsInDescription(boolean b) {
-		b_showExtensionsInDescription = b;
+	public void showExtensionsInDescription(boolean b)
+	{
+		m_bShowExtensionsInDescription = b;
 		m_fullDescription = null;
 	}
 
@@ -280,50 +282,13 @@ public class SimpleFileFilter extends FileFilter
 	 * @see setDescription
 	 * @see showExtensionsInDescription
 	 */
-	public boolean areExtensionsInDescription() {
-		return b_showExtensionsInDescription;
-	}
-
-	/**
-	 * Set if dot files (like .htaccess or .profile) must be hidden.
-	 *
-	 * @see FileFilter#accept
-	 */
-   public void hideDotFiles(boolean bHide)
+	public boolean areExtensionsInDescription()
 	{
-      b_hideDotFiles = bHide;
-	}
-
-	/**
-	 * Indicate if dot files (like .htaccess or .profile) must be hidden.
-	 */
-   public boolean areDotFilesHidden()
-	{
-      return b_hideDotFiles;
+		return m_bShowExtensionsInDescription;
 	}
 
 
 	/*===== Private methods =====*/
 
-	/**
-	 * Return the extension portion of the file's name in lower case.
-	 *
-	 * @see FileFilter#accept
-	 */
-	private String getFileExtension(File f)
-	{
-		if (f != null)
-		{
-			String filename = f.getName();
-			int pos = filename.lastIndexOf('.');
-         if (pos > 0 && pos < filename.length() - 1)
-			{
-				return filename.substring(pos + 1).toLowerCase();
-			}
-         // Starts or ends with dot: no extension
-		}
-      // No dot
-		return null;
-	}
 
 }
