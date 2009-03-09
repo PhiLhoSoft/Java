@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Created-By: PhiLhoSoft
+Main-Class: org.philhosoft.tests.AppletAndJS

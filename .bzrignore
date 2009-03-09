@@ -1,0 +1,15 @@
+*.gif
+*.png
+*.bmp
+*.ico
+*.avi
+
+*.lnk
+
+*.java-
+
+bin/
+
+.metadata/
+ProfileProject/
+traer.physics/
