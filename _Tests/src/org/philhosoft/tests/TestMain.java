@@ -15,6 +15,11 @@ package org.philhosoft.tests;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+import java.util.UUID;
+
 import javax.swing.*;
 
 
@@ -26,34 +31,16 @@ import javax.swing.*;
  * @date 2008/10/31
  */
 @SuppressWarnings("serial")
-public class TestMain extends JFrame
+public class TestMain
 {
 	private TestMain()
 	{
-        JLabel label = new JLabel("Move mouse here for hand cursor");
-        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        JOptionPane pane = new JOptionPane(label);
-        pane.setOptions(new Object[] { "OK" } );
-
-        JDialog dialog = pane.createDialog(this, "Test Dialog");
-        dialog.setVisible(true);
 	}
 
-	private DoStuff()
+	static String GetRandomString(int length)
 	{
-		Container cont = getContentPane();
-		cont.setLayout(new FlowLayout());
-		String text = "Test text.";
-		JPanel panel = new JPanel();
-		cont.add(panel);
-		JLabel label1 = new JLabel(text);
-		JLabel label2 = new JLabel(text);
-		label1.setForeground(Color.BLUE);
-		label2.setBackground(Color.GREEN);
-		label2.setOpaque(true);
-		cont.add(label1);
-		panel.add(label2);
-		panel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		UUID uuid = UUID.randomUUID();
+		return uuid.toString().substring(0, length);	
 	}
 
 	/**
@@ -61,21 +48,20 @@ public class TestMain extends JFrame
 	 */
 	public static void main(String[] args)
 	{
-		// turn bold fonts off in metal
-		UIManager.put("swing.boldMetal", Boolean.FALSE);
-
-		// Schedule a job for the event-dispatching thread:
-		// creating and showing this application's GUI.
-		SwingUtilities.invokeLater(new Runnable()
+		ArrayList<String> al = new ArrayList<String>(20);
+		for (int i = 0; i < 10; i++)
 		{
-			public void run()
-			{
-				JFrame testFrame = new TestMain();
-				testFrame.setTitle("Test GUI");
-				testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				testFrame.setSize(500, 300);
-				testFrame.setVisible(true);
-			}
-		});
+			al.add(GetRandomString(7));
+		}
+		ArrayList<String> cloneArray = new ArrayList<String>(al);
+		Collections.copy(cloneArray, al);
+		System.out.println(al);
+		System.out.println(cloneArray);
+		for (int i = 9; i >= 0; i -= 2)
+		{
+			al.remove(i);
+		}
+		System.out.println(al);
+		System.out.println(cloneArray);
 	}
 }
