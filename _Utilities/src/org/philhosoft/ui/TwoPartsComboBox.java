@@ -43,7 +43,7 @@ public class TwoPartsComboBox extends JComboBox
 		public JLRenderer()
 		{
 			m_lastRecent = new JLabel();
-			m_lastRecent.setBorder(new BottomLineBorder(Color.BLACK));
+			m_lastRecent.setBorder(new BottomLineBorder());
 //			m_lastRecent.setBorder(new BottomThickLineBorder(10, Color.BLUE));
 		}
 

@@ -8,6 +8,7 @@
  * Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
+ *  1.01.000 -- 2009/03/13 (PL) -- Better handling of insets, JavaDoc.
  *  1.00.000 -- 2008/09/20 (PL) -- Creation
  */
 package org.philhosoft.ui;
@@ -19,18 +20,29 @@ import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 
-// TODO: Implement this as subclass of BottomThickLineBorder
-class BottomLineBorder implements Border
+/**
+ * Draws a line at the bottom only.
+ * Useful for making a separator in combo box, for example.
+ */
+@SuppressWarnings("serial")
+class BottomLineBorder extends AbstractBorder
 {
+	private int m_thickness;
 	private Color m_color;
 
 	BottomLineBorder()
 	{
-		this(Color.BLACK);
+		this(1, Color.BLACK);
 	}
 
 	BottomLineBorder(Color color)
 	{
+		this(1, color);
+	}
+
+	BottomLineBorder(int thickness, Color color)
+	{
+		m_thickness = thickness;
 		m_color = color;
 	}
 
@@ -44,7 +56,7 @@ class BottomLineBorder implements Border
 			{
 				copy.translate(x, y);
 				copy.setColor(m_color);
-				copy.drawLine(0, height - 1, width - 1, height - 1);
+				copy.fillRect(0, height - m_thickness, width - 1, height - 1);
 			}
 			finally
 			{
@@ -59,12 +71,12 @@ class BottomLineBorder implements Border
 	}
 	public Insets getBorderInsets(Component c)
 	{
-		return new Insets(0, 0, 1, 0);
+		return new Insets(0, 0, m_thickness, 0);
 	}
 	public Insets getBorderInsets(Component c, Insets i)
 	{
 		i.left = i.top = i.right = 0;
-		i.bottom = 1;
+		i.bottom = m_thickness;
 		return i;
 	}
 }

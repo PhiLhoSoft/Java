@@ -72,35 +72,22 @@ public class TableTester extends JPanel {
 
 class SpecialTable extends JTable
 {
-    boolean bIsControlDown;
-    int clickedRow;
-    
     SpecialTable(Object[][] data, String[] columnNames)
     {
         super(data, columnNames);
+// That's already the default        
 //        setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        getSelectionModel().addListSelectionListener(this);
-        addMouseListener(new MouseInputAdapter()
-        {
-            public void mousePressed(MouseEvent me)
-            {
-                bIsControlDown = me.isControlDown();
-                clickedRow = rowAtPoint(me.getPoint());
-            }
-        });
     }
     
-    public void valueChanged(ListSelectionEvent evt)  
+    /**
+     * Called by javax.swing.plaf.basic.BasicTableUI.Handler.adjustSelection(MouseEvent)
+     * like: table.changeSelection(pressedRow, pressedCol, e.isControlDown(), e.isShiftDown());
+     */
+    @Override
+    public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend)
     {
-        super.valueChanged(evt);
-        if (bIsControlDown)
-        {
-            if (!evt.getValueIsAdjusting())
-            {
-//                System.out.println(evt);
-//                System.out.println("=> " + clickedRow);
-                getSelectionModel().removeSelectionInterval(clickedRow, clickedRow);
-            }
-        }
+        if (toggle && !isRowSelected(rowIndex))
+            return; // Don't do the selection
+        super.changeSelection(rowIndex, columnIndex, toggle, extend);
     }
 }

@@ -1,16 +1,27 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ *
+ * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+ *
+ * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
+ * This file is distributed under the zlib/libpng license.
+ * Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
+ */
+/* File history:
+ *  1.00.000 -- 2009/03/10 (PL) -- Creation
+ */
 package org.philhosoft.util;
 
 import java.awt.Color;
 
 /**
- *
- * @author PhiLho
+ * Static functions for color operations.
  */
 public class ColorUtil
 {
+	protected static float MIN_BRIGHT_DIFF = 125.0F;
 	protected static int MIN_COLOR_DIFF = 400;
 	protected static int MIN_COLOR_DIFF_STRICT = 500;
-	protected static float MIN_BRIGHT_DIFF = 125.0F;
 
 	protected static float MIN_LUM_RATIO_LARGE_AA = 3.0F;
 	protected static float MIN_LUM_RATIO_NORMAL_AA = 4.5F;
@@ -18,16 +29,22 @@ public class ColorUtil
 	protected static float MIN_LUM_RATIO_NORMAL_AAA = 7.0F;
 
 	/**
-	 * Check if two given colors have enough contrast in a slightly lenient way.
+	 * Checks if two given colors have enough contrast in a slightly lenient way.
 	 */
 	public static boolean IsColorConstrastOK(Color c1, Color c2, boolean bWithLargeFont)
 	{
 		return IsColorConstrastOKByLuminance(c1, c2, bWithLargeFont, false);
 	}
+
 	/**
-	 * Check if two given colors have enough luminance contrast.
+	 * Checks if two given colors have enough luminance contrast.
 	 * See {@link http://www.paciellogroup.com/resources/contrast-analyser.html for details on algorithm}.
 	 * See also {@link http://www.wat-c.org/tools/CCA/1.1/}
+	 *
+	 * @param c1        first color to compare
+	 * @param c1        second color to compare
+	 * @param bWithLargeFont   if true, it is more tolerant because big fonts have better contrast
+	 * @param bStrict   applies stricter rules (AAA instead of AA)
 	 */
 	public static boolean IsColorConstrastOKByLuminance(Color c1, Color c2, boolean bWithLargeFont, boolean bStrict)
 	{
@@ -52,9 +69,13 @@ public class ColorUtil
 	}
 
 	/**
-	 * Check if two given colors have enough color contrast (brightness and difference).
+	 * Checks if two given colors have enough color contrast (brightness and difference).
 	 * See {@link http://www.paciellogroup.com/resources/contrast-analyser.html for details on algorithm}.
 	 * See also {@link http://www.wat-c.org/tools/CCA/1.1/}
+	 *
+	 * @param c1        first color to compare
+	 * @param c1        second color to compare
+	 * @param bStrict   applies stricter rules (W3C instead of HP)
 	 */
 	public static boolean IsColorConstrastOKByColor(Color c1, Color c2, boolean bStrict)
 	{
@@ -97,7 +118,7 @@ public class ColorUtil
 	}
 
 	/**
-	 * Compute brightness of a color using RGB to YIQ conversion.
+	 * Computes brightness of a color using RGB to YIQ conversion.
 	 * YIQ: Y=Luminance. I=Red-Y, Q=Blue-Y
 	 */
 	public static float GetColorBrightness(Color c)
