@@ -31,16 +31,29 @@ public class AddTransparency
 		BufferedImage image = ImageIO.read(inFile);
 
 		Image transpImg1 = TransformGrayToTransparency(image);
-		BufferedImage resultImage1 = ImageToBufferedImage(transpImg1, image.getWidth(), image.getHeight());
+		BufferedImage resultImage1 = org.philhosoft.util.ImageUtil.ImageToBufferedImage(
+				transpImg1, image.getWidth(), image.getHeight());
 
 		File outFile1 = new File(imagePath, "map_with_transparency1.png");
 		ImageIO.write(resultImage1, "PNG", outFile1);
 
 		Image transpImg2 = TransformColorToTransparency(image, new Color(0, 50, 77), new Color(200, 200, 255));
-		BufferedImage resultImage2 = ImageToBufferedImage(transpImg2, image.getWidth(), image.getHeight());
+		BufferedImage resultImage2 = org.philhosoft.util.ImageUtil.ImageToBufferedImage(
+				transpImg2, image.getWidth(), image.getHeight());
 
 		File outFile2 = new File(imagePath, "map_with_transparency2.png");
 		ImageIO.write(resultImage2, "PNG", outFile2);
+		
+		// Save to Gif format
+		BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.ConvertRGBAToIndexed(resultImage2);
+
+		File outFile3 = new File(imagePath, "map_with_transparency2.gif");
+		ImageIO.write(resultImage3, "GIF", outFile3);
+		
+		File globeFile = new File("E:/Documents/Images/TransparentPNG/globe-scene-fish-bowl-pngcrush.png");
+		BufferedImage globe = ImageIO.read(globeFile);
+		BufferedImage resultImage4 = org.philhosoft.util.ImageUtil.ConvertRGBAToIndexed(globe);
+		ImageIO.write(resultImage4, "GIF", new File(imagePath, "globe.gif"));
 	}
 
 	private Image TransformGrayToTransparency(BufferedImage image)
@@ -86,16 +99,6 @@ public class AddTransparency
 
 		ImageProducer ip = new FilteredImageSource(image.getSource(), filter);
 	    return Toolkit.getDefaultToolkit().createImage(ip);
-	}
-
-	private BufferedImage ImageToBufferedImage(Image image, int width, int height)
-	{
-		BufferedImage dest = new BufferedImage(
-				width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = dest.createGraphics();
-		g2.drawImage(image, 0, 0, null);
-		g2.dispose();
-		return dest;
 	}
 
 	public static void main(String[] args) throws IOException
