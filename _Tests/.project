@@ -3,7 +3,7 @@
 	<name>Tests</name>
 	<comment></comment>
 	<projects>
-		<project>Utilities</project>
+		<project>_Utilities</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

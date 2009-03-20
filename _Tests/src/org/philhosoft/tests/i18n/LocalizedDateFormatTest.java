@@ -1,3 +1,5 @@
+package org.philhosoft.tests.i18n;
+
 import javax.swing.*;
 import java.util.Date;
 import java.awt.GridLayout;
@@ -8,7 +10,7 @@ import java.util.Locale;
 /**
  * The class.
  */
-public class Dialog
+public class LocalizedDateFormatTest
 {
 	/* The entry point */
 	public static void main(String[] args)
@@ -29,15 +31,15 @@ public class Dialog
 		DateFormat df_s_es_ES = DateFormat.getDateInstance(DateFormat.SHORT, lc_es_ES);
 		DateFormat df_l_es_ES = DateFormat.getDateInstance(DateFormat.LONG, lc_es_ES);
 		DateFormat df_f_es_ES = DateFormat.getDateInstance(DateFormat.FULL, lc_es_ES);
-/* Foo */
+/* US */
 		DateFormat df_s_en_US = DateFormat.getDateInstance(DateFormat.SHORT, lc_en_US);
 		DateFormat df_l_en_US = DateFormat.getDateInstance(DateFormat.LONG, lc_en_US);
 		DateFormat df_f_en_US = DateFormat.getDateInstance(DateFormat.FULL, lc_en_US);
-/*
+/* TW */
 		DateFormat df_s_zh_TW = DateFormat.getDateInstance(DateFormat.SHORT, lc_zh_TW);
 		DateFormat df_l_zh_TW = DateFormat.getDateInstance(DateFormat.LONG, lc_zh_TW);
 		DateFormat df_f_zh_TW = DateFormat.getDateInstance(DateFormat.FULL, lc_zh_TW);
-*/
+
 
 		String dfp_s = GetDateFormatPattern(df_s);
 		String dfp_l = GetDateFormatPattern(df_l);

@@ -12,12 +12,7 @@
  */
 package org.philhosoft.tests.image;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.awt.image.RGBImageFilter;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.*;
@@ -31,7 +26,6 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.Histogram;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
-import javax.swing.*;
 
 import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriter;
@@ -53,7 +47,8 @@ public class PNGtoTIFF2
 		double[] threshold = histogram.getPTileThreshold(0.5);
 
 		// if background and foreground could not be separated
-		if (threshold[0] == 0.0 || threshold[0] == 1.0) {
+		if (threshold[0] == 0.0 || threshold[0] == 1.0) 
+		{
 			threshold[0] = 127.5;
 		}
 
@@ -87,7 +82,8 @@ public class PNGtoTIFF2
 
         int[] xi = bi.getSampleModel().getSampleSize();
 
-        for (int i : xi) {
+        for (int i : xi) 
+        {
             System.out.println("bitsize " + i);
         }
 
@@ -98,7 +94,8 @@ public class PNGtoTIFF2
         // TIFFImageWriteParam param = (TIFFImageWriteParam) writer.getDefaultWriteParam();
         TIFFImageWriteParam param = new TIFFImageWriteParam(Locale.US);
         String[] strings = param.getCompressionTypes();
-        for (String string : strings) {
+        for (String string : strings) 
+        {
             System.out.println(string);
         }
 

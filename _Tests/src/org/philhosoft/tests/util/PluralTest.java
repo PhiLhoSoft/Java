@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.philhosoft.util;
+package org.philhosoft.tests.util;
 
 /**
  *

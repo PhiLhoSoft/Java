@@ -15,10 +15,7 @@ package org.philhosoft.ui;
 
 
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
 
 /**
  * Draws a line at the bottom only.

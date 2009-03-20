@@ -21,14 +21,14 @@ import java.io.*;
  * @version 1.00.000
  * @date 2008/11/28
  */
-public class FileReader
+public class WholeFileReader
 {
 	private static final int BUFFER_SIZE = 8192;
 
 	public static StringBuilder ReadFile(String fileName)
 			throws IOException
 	{
-		return readFile(fileName, null);
+		return ReadFile(fileName, null);
 	}
 
 	public static StringBuilder ReadFile(String fileName, String charsetName)

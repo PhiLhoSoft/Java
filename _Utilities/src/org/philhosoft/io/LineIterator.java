@@ -18,7 +18,7 @@ import java.io.*;
  * Read a file and allow to access it line by line.
  *
  * Currently, this is more a template than a generic class,
- * since the line process code is hardcoded.
+ * since the line process code is hard-coded.
  *
  * @author Philippe Lhoste
  * @version 1.00.000
