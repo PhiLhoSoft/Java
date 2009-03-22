@@ -32,9 +32,9 @@ public class ImageUtil
 {
 	/**
 	 * ImageIO.write needs a RenderedImage while some functions (like Toolkit.createImage)
-	 * produces a more generic Image. 
+	 * produces a more generic Image.
 	 * Use this to get a BufferedImage with RGB+alpha out of the image.
-	 *  
+	 *
 	 * @param image    the image to convert
 	 * @param width    width of the image
 	 * @param height   height of the image
@@ -44,12 +44,12 @@ public class ImageUtil
 	{
 		return ImageToBufferedImage(image, width, height, BufferedImage.TYPE_INT_ARGB);
 	}
-	
+
 	/**
 	 * ImageIO.write needs a RenderedImage while some functions (like Toolkit.createImage)
-	 * produces a more generic Image. 
+	 * produces a more generic Image.
 	 * Use this to get a BufferedImage with given type out of the image.
-	 *  
+	 *
 	 * @param image    the image to convert
 	 * @param width    width of the image
 	 * @param height   height of the image
@@ -66,21 +66,21 @@ public class ImageUtil
 
 	/**
 	 * Converts a full color will alpha image to byte-indexed with one transparent color image.
-	 * 
+	 *
 	 * @param srcImage   the image to convert
 	 * @return a BufferedImage of TYPE_BYTE_INDEXED type
 	 */
 	public static BufferedImage ConvertRGBAToIndexed(BufferedImage srcImage)
 	{
 		// Create a non-transparent palletized image
-		Image flattenedImage = TransformTransparencyToMagenta(srcImage); 
-		BufferedImage flatImage = ImageToBufferedImage(flattenedImage, 
-				srcImage.getWidth(), srcImage.getHeight(), BufferedImage.TYPE_BYTE_INDEXED); 
+		Image flattenedImage = TransformTransparencyToMagenta(srcImage);
+		BufferedImage flatImage = ImageToBufferedImage(flattenedImage,
+				srcImage.getWidth(), srcImage.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
 		BufferedImage destImage = MakeColorTransparent(flatImage, 0, 0);
 		return destImage;
 	}
 
-	private static Image TransformTransparencyToMagenta(BufferedImage image)
+	private static Image ConvertTranslucencyToTransparency(BufferedImage image)
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
@@ -91,9 +91,9 @@ public class ImageUtil
 				int opacity = (rgb & 0xFF000000) >>> 24;
 				if (opacity < 128)
 				{
-					// Quite transparent: replace color with magenta
+					// Quite transparent: replace color with transparent magenta
 					// (traditional color for binary transparency)
-					pixelValue = 0xFFFF00FF;
+					pixelValue = 0x00FF00FF;
 				}
 				else
 				{
@@ -110,7 +110,7 @@ public class ImageUtil
 
 	/**
 	 * Makes the given indexed image to have a color transparent by choosing a pixel.
-	 * 
+	 *
 	 * @param image   image to convert
 	 * @param x       the horizontal coordinate of the pixel whose color must be transparent
 	 * @param y       the vertical coordinate of the pixel whose color must be transparent

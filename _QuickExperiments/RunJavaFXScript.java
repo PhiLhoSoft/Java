@@ -6,20 +6,22 @@ import javax.script.ScriptEngineManager;
 
 class RunJavaFXScript
 {
-  static String PATH = "E:/Dev/PhiLhoSoft/Java/_QuickExperiments/Test.fx";
+  static String SCRIPT_NAME = "Test.fx";
 
   public static void main(String[] args)
   {
+    // Get the current directory
+    File curDir = new File(".");
     // Get the script's file content
     BufferedReader reader = null;
-    File f = new File(PATH);
+    File f = new File(curDir.getAbsolutePath(), SCRIPT_NAME);
     try
     {
       reader = new BufferedReader(new FileReader(f));
     }
     catch (FileNotFoundException e)
     {
-      System.err.println("File not found: " + PATH);
+      System.err.println("File not found: " + f.getAbsolutePath());
       return;
     }
 
