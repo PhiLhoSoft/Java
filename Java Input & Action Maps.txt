@@ -1,0 +1,96 @@
+Swing uses, for all its JComponents, action maps and input maps to map behaviors to keystrokes in a very flexible way, allowing reusability.
+
+http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/InputMap.html
+InputMap is a map between keystrokes and action names/ID (actually, Objects).
+
+http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/ActionMap.html
+ActionMap is a map between action names/ID and actions.
+
+http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Action.html
+Actions are wrappers.
+
+Note that these maps are hierarchical, ie. they can have parents where to search if item is not found in the map.
+ActionMap and InputMap of a component are actually created by its look and feel.
+They tell, for example, than in a text input component, Left key move caret one char to the left, while Ctrl+Left move it one word.
+
+
+Example of use (in a base, abstract Dialog class, derivated from JDialog):
+
+// Register Escape and Cancel key, mapping them to a given method.
+
+	// Enable (register) Escape Key
+	 Action action = new AbstractAction("Escape")
+	 {
+		public void actionPerformed(ActionEvent e) { cancelDialog(e); }
+	 };
+	 KeyStroke ksEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+	 getRootPane().getInputMap(
+			JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+					ksEscape, action.getValue(Action.NAME));
+	 getRootPane().getActionMap().put(action.getValue(Action.NAME), action);
+
+	// Enable (register) Enter Key
+	 Action action = new AbstractAction("Enter")
+	 {
+		public void actionPerformed(ActionEvent e) { validateDialog(e); }
+	 };
+	 KeyStroke ksEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+	 getRootPane().getInputMap(
+			JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+					ksEnter, action.getValue(Action.NAME));
+	 getRootPane().getActionMap().put(action.getValue(Action.NAME), action);
+
+	// Enable Cancel On Close Window
+	 addWindowListener(new WindowAdapter()
+	 {
+		public void windowClosing(WindowEvent e)
+		{
+			onCancel(e);
+			closeDialog();
+		}
+	 });
+
+
+On a derived, concrete class, I had to remap Enter to deactivate validation of dialog.
+
+// Remap Enter to Cancel action, eg. for a dialog box in read-only mode.
+
+	// To remap Enter key to Cancel action and back
+	private Action m_enterAction;
+
+	// In view/display mode, disable OK button and Enter key
+	// to avoid validating the dialog.
+	private void SetOKActive(boolean bActive)
+	{
+		JButton btnOK = super.getOKButton();
+		btnOK.setEnabled(bActive);
+		btnOK.setVisible(bActive);
+
+		// The keyboard keys
+		KeyStroke ksEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		KeyStroke ksEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		// Get the keys of corresponding actions in action map
+		Object escapeActionID = getRootPane().getInputMap(
+				JComponent.WHEN_IN_FOCUSED_WINDOW).get(ksEscape);
+		Object enterActionID = getRootPane().getInputMap(
+				JComponent.WHEN_IN_FOCUSED_WINDOW).get(ksEnter);
+		// Get the actions in the action map (originally Cancel() and Validate())
+		Action escapeAction = getRootPane().getActionMap().get(escapeActionID);
+		// We must do this only once, to keep original action, to restore it back
+		if (m_enterAction == null)
+		{
+			m_enterAction = getRootPane().getActionMap().get(enterActionID);
+		}
+		if (bActive)
+		{
+			// Remap Validate behavior to Enter key
+			getRootPane().getActionMap().put(enterActionID, m_enterAction);
+			super.SetAbortButtonText("Cancel");
+		}
+		else
+		{
+			// Redirect Enter key to Cancel behavior
+			getRootPane().getActionMap().put(enterActionID, escapeAction);
+			super.SetAbortButtonText("Close");
+		}
+	}

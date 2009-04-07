@@ -1,0 +1,438 @@
+### Create a dynamic array
+
+	ArrayList al = new ArrayList(optionalInitialSize);
+	for ()
+	{
+		al.add(str) ;
+	}
+	String[] stra = new String[al.size()];
+	al.toArray(stra);
+	return stra;	// Array of strings
+
+### Static init of array, map, etc.
+
+static HashMap crusties = new HashMap();
+static {
+	crusties.put("BFont", new Object());
+	crusties.put("BGraphics", new Object());
+	crusties.put("BImage", new Object());
+	crusties.put("framerate", new Object());
+	crusties.put("push", new Object());
+	crusties.put("LINE_LOOP", new Object());
+	crusties.put("LINE_STRIP", new Object());
+}
+
+[...]
+
+if (crusties.get(item) != null) ...;
+
+### Dynamic init of array, map, etc.
+
+HashMap<String, String> crusties = new HashMap<String, String>()
+{{
+	this.put("BFont", "");
+	this.put("BGraphics", "");
+	this.put("BImage", "");
+	this.put("framerate", "");
+	this.put("push", "");
+	this.put("LINE_LOOP", "");
+	this.put("LINE_STRIP", "");
+}};
+
+[...]
+
+if (crusties.get(item) == "") ...;
+
+### Using REs
+
+import java.util.regex.*;
+
+      Pattern p = Pattern.compile("^\\s*\\d+\\D+(\\d+)");
+
+      Matcher m = p.matcher(strPrevLine);
+      if (m.find()) // or m.matches() for matching the whole expression
+      {
+         bytes = Long.parseLong(m.group(1));
+      }
+
+### Cursor
+
+       Cursor cOldCursor = getCursor();
+       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+      // Do stuff...
+
+       setCursor(Cursor.getDefaultCursor());
+	   // or
+       setCursor(cOldCursor());
+
+### Swing methods
+
+paint is a container method which receives a graphics context and is used to render a container and all of its children
+repaint is what we use in event code to ask a component to re-render itself
+update: used in AWT drawing to avoid flicker; its use in Swing is not recommended/needed.
+validate - container AWT method which we call when any changes have been made that might affect the layout of a container; asks the container to do a new layout of its children
+revalidate - (a great) JComponent method with similiar affect to validate
+invalidate - used to mark a component that needs to have its layout redone; occasionally used in AWT
+doLayout - rarely used unless you are doing some lower-level layout research/work
+pack is a top-level container method that will get everything layed out in the minimum space required and ready for display.
+updateUI is used only when you need to change/update the look and feel
+
+### Get a system color
+
+Color bgColor = UIManager.getColor("Panel.background");
+
+### Resources to free
+http://docs.google.com/Doc?id=ddv8ts74_0vnstdfdh
+
+A resource is as an object that must be closed manually,
+such as a java.io.InputStream, OutputStream, Reader, Writer, Formatter;
+java.nio.Channel; java.net.socket; java.sql.Connection, Statement, ResultSet,
+or java.awt.Graphics.
+
+Minimal (nearly) correct code to release a single resource today.
+
+    static String readFirstLineFromFile(String path) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        try {
+            return br.readLine();
+        } finally {
+            br.close(); // If exception is thrown, will hide the readLine one if any!
+        }
+    }
+
+Static method to make a copy of a file, demonstrating the minimal correct code to release two resources today:
+
+    static void copy(String src, String dest) throws IOException {
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dest);
+            try {
+                byte[] buf = new byte[8 * 1024];
+                int n;
+                while ((n = in.read(buf)) >= 0)
+                    out.write(buf, 0, n);
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+### If you want to make the file chooser read-only
+
+// Do this before you create your file chooser -- this will affect all file choosers you create:
+UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+
+### Maximize the main window
+
+import javax.swing.JFrame;
+import java.awt.Toolkit;
+
+public class MaximizeTest() extends JFrame
+{
+     public static main(String args)
+     {
+         Toolkit toolkit = Toolkit.getDefaultToolkit();
+         System.out.print(
+               "Supports maximize:\n"
+             + "  Horixontal " + toolkit.isFrameStateSupported(MAXIMIZED_HORIZ) + "\n"
+             + "  Vertical   " + toolkit.isFrameStateSupported(MAXIMIZED_VERT ) + "\n"
+             + "  Both       " + toolkit.isFrameStateSupported(MAXIMIZED_BOTH ) + "\n"
+         );
+
+         JFrame frame = new MaximizeTest("Maximize Test");
+         frame.setSize(400, 300);
+         // or:
+         //  Set the normalized size
+         //setBounds (100, 100, 600, 600);
+         frame.setExtendedState(MAXIMIZED_BOTH);
+         frame.show();
+     }
+
+     public MaximizeTest(String title)
+     {
+         super(title);
+         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+         //  Realize the window components
+         pack();
+     }
+}
+
+### Set a number of threads based on the number of CPUs
+
+// Set the number of threads based on the number of CPUs with at least 2 threads
+int nCPU = Runtime.getRuntime().availableProcessors();
+int nMaxThread = Math.min(ThreadPool.MAX_THREADS, nCPU + 1);
+aThreadPool = StartThreadPool(nMaxThread, nMaxThread);
+
+### Disable some buttons in JFileChooser
+
+// http://forum.java.sun.com/thread.jspa?forumID=57&messageID=1941148&threadID=432596
+
+JFileChooser chooser = new JFileChooser();
+disableSomeButtons( chooser );
+
+...
+
+    public void disableSomeButtons( Container c )
+    {
+        Component[] comps = c.getComponents(  );
+
+        for( int i = 0; i < comps.length; i++ )
+        {
+            if( comps[ i ] instanceof JButton )
+            {
+                JButton b = (JButton) comps[ i ];
+
+                String ttText = b.getToolTipText(  );
+                String buttonText = b.getText(  );
+
+                if( ( ttText != null ) && ttText.equals( "Create New Folder" ) )
+                {
+                    b.setEnabled( false );
+                }
+            }
+
+            if( comps[ i ] instanceof Container )
+            {
+                localizeButtons( (Container) comps[ i ] );
+            }
+        }
+    }
+
+or:
+
+private void removeButtons(Container c)
+{
+   int len = c.getComponentCount();
+   for (int i = 0; i < len; i++)
+   {
+      Component comp = c.getComponent(i);
+      if (comp instanceof JButton)
+      {
+         JButton b = (JButton)comp;
+         Icon icon = b.getIcon();
+         if (icon != null && icon == UIManager.getIcon("FileChooser.newFolderIcon"))
+            b.setEnabled(false);
+      }
+      else if(comp instanceof JList)
+      {
+         m_oFileList = (JList)comp;
+         //Here is what I thot of implementing some functionality to inhibit the user to rename....but waiting.
+      }
+      else if (comp instanceof Container)
+         removeButtons(Container)comp);
+   }
+}
+
+### Printing
+http://java.sun.com/docs/books/tutorial/2d/printing/index.html
+
+http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Printing_questions
+
+Q:What are the differences between the various printing APIs I see in the JDK?
+A. These are the printing APIs in the JDK:
+
+1.1 (aka AWT) printing - java.awt.PrintJob
+    * A UI component-oriented printing API
+    * Can print only the 1.1 "Graphics" API, not "Graphics2D" extensions
+
+2D printing - java.awt.print.PrinterJob
+    * A more flexible API for printing documents
+    * Can print all of Java 2D.
+    * Callback printing model
+    * Integrates with javax.print
+
+Java Printing Service - javax.print packages
+    * Adds discovery of printers and capabilities
+    * Adds ability to specify job behaviour through attributes
+    * Adds ability to install custom print services
+
+In summary 1.1/AWT printing can be used for many basic cases but has largely been superseded by 2D printing (as of J2SE 1.2), and when the javax.print package was added in J2SE 1.4 it was made largely complementary to 2D printing and integrated with it for ease of us. So most applications which are focused on rendering to a printer will find it more natural to centre around PrinterJob.
+
+So the presently recommended way to print for most applications is to use java.awt.print.PrinterJob which has methods which leverage javax.print to enumerate printers, and can accept printing attributes from javax.print which define job printing behaviour such as duplex printing.
+
+Q: When printing using java.awt.PrinterJob, why does it print each page at least twice (and sometimes much more than that)?
+A: The root of this is that Java 2D printing needs to be able to print everything that Java 2D can render to the screen, and that includes translucent colours, images etc which cannot always be printed directly in Postscript or GDI except when printing everything as one big image, so the implementation tries to avoid this by calling first to discover the rendering that needs to be done for the page. If its simple opaque rendering then only one more call is needed to render the page. If there are translucent colours then multiple calls are done for "bands" down the page to limit the size of the image being generated and hence constrain peak memory usage.
+
+Q How do I keep the information from getting cut off from the top and left sides of the page when I print using the Java 2D printing API?
+A: Because many printers cannot print on the entire paper surface, the PageFormat specifies the imageable area of the page: this is the portion of the page in which it's safe to render. The specification of the imageable area does not alter the coordinate system; it is provided so that the contents of the page can be rendered so that they don't extend into the area where the printer can't print. If you find that information is clipped from your page, you might need to translate the information to the imageable area of the page, as shown in this sample:
+
+    public int print(Graphics g, PageFormat pf, int pageIndex)
+        throws PrinterException
+    {
+        Graphics2D g2 = (Graphics2D)g;
+        g2.translate(pf.getImageableX(),
+        pf.getImageableY() + 72);
+        ...
+    }
+
+Q: Why are my 1-pixel wide lines repositioned when I print them? How do I correct this?
+A: For horizontal or vertical 1-pixel wide line fills, it is generally better to use fillRect rather than drawLine. The rounding of the drawLine method moves lines by half a device pixel, which make the lines appear more consistent whether or not antialiasing is applied. Therefore, if you have a 1-pixel wide line, the line is moved by half of its width. Because this adjustment occurs at the device-space level, your lines can move by half of a line width on printouts from high-resolution printers.
+
+Q: How do I scale an image to fit a page?
+A: Here is a sample code that uses the page's imageable width and height to scale an image.
+
+public int print(Graphics graphics, PageFormat pageFormat, int
+ pageIndex) throws PrinterException
+ {
+ if(pageIndex > 0)
+    return Printable.NO_SUCH_PAGE;
+ Graphics2D g2d = (Graphics2D) graphics;
+
+ //Set us to the upper left corner
+ g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+ AffineTransform at = new AffineTransform();
+ at.translate(0,0);
+
+ //We need to scale the image properly so that it fits on one page.
+ double xScale = pageFormat.getImageableWidth() / m_image.getWidth();
+ double yScale = pageFormat.getImageableHeight() / m_image.getHeight();
+ // Maintain the aspect ratio by taking the min of those 2 factors and
+ using it to scale both dimensions.
+ double aspectScale = Math.min(xScale, yScale);
+
+ g2d.drawRenderedImage(m_image, at);
+ return Printable.PAGE_EXISTS;
+ }
+
+
+http://java.sun.com/products/jfc/tsc/articles/javaOne2001/595/index.html
+
+The Java Print Service API: Package Structure
+
+    * javax.print: Core package
+    * javax.print.attribute: Classes to describe and contain printer attributes
+    * javax.print.attribute.standard: The common printer attributes
+    * javax.print.event: For notification of job and printer events
+
+The Java Print Service API: Features
+
+    * Printer discovery: PrintServiceLookup class <http://java.sun.com/javase/6/docs/api/javax/print/PrintServiceLookup.html>
+    * Printer objects: PrintService interface <http://java.sun.com/javase/6/docs/api/javax/print/PrintService.html>
+    * Printer description: Attribute interface <http://java.sun.com/javase/6/docs/api/javax/print/attribute/Attribute.html>
+    * Print request specification: Attribute interface
+    * Print data description: DocFlavor class <http://java.sun.com/javase/6/docs/api/javax/print/DocFlavor.html>
+    * Print job submission: DocPrintJob interface <http://java.sun.com/javase/6/docs/api/javax/print/DocPrintJob.html>
+    * Print Job monitoring: PrintJobEvent class <http://java.sun.com/javase/6/docs/api/javax/print/event/PrintJobEvent.html>
+// PrintRequestAttribute <http://java.sun.com/javase/6/docs/api/javax/print/attribute/PrintRequestAttribute.html> I
+http://java.sun.com/javase/6/docs/api/java/awt/PrintJob.html
+
+Describing the Print Data (Document Flavors)
+
+    * DocFlavor class
+          o Made up of two string elements
+          o First describes the type of print data
+                + E.g., jpeg image, plain text
+                + Uses mime type, e.g., “image/jpeg”
+          o Second describes the Java technology representation of the data
+                + E.g., input stream, byte array
+                + Uses name of Java class, e.g.,“java.io.InputStream”
+    * API has pre-defined DocFlavor instances
+          o These are for convenience
+    * Examples:
+          o DocFlavor.BYTE_ARRAY.POSTSCRIPT
+          o DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF8
+          o DocFlavor.INPUT_STREAM.TEXT_HTML_US_ASCII
+          o DocFlavor.SERVICE_FORMATTED.PRINTABLE
+
+# Describe the print data using a DocFlavor
+Application is obtaining the HTML content from a URL. Data is ASCII-encoded
+    DocFlavor htmlFlavor = DocFlavor.URL.TEXT_HTML_US_ASCII;
+Or alternatively:
+    DocFlavor htmlFlavor = new DocFlavor("text/plain;charset=ascii", "java.net.URL");
+
+# Specify How to Print the Data: Printer Attributes
+Printers have capabilities such as:
+          o Paper sizes supported
+          o Multiple media trays
+          o Duplex (2-sided) printing
+                + These are request attributes in the JPS API
+                + They may be used in a print request to specify how the job is to be printed
+Printer attributes such as name, location are service attributes
+Attribute interface
+          o Combines role of printer attribute category and attribute value
+          o IPP attribute categories
+          o First implementing class defines IPP category
+                + All subclasses are the same category
+          o Instances define particular values
+Different attribute roles (service, request, job, etc).
+JPS API represents these using subclasses of the Attribute interface, e.g., PrintRequestAttribute, PrintServiceAttribute
+Applications may use both these attribute types (request and service) to select a suitable printer for a jobn, e.g., find a colour printer on the 3rd floor that can do large format duplex printing.
+ PrintRequestAttribute examples
+    * MediaSizeName class
+          o Named paper sizes, e.g., ISO_A4, NA_LETTER, JIS_B5
+    * Copies class
+          o Number of document copies to print.
+          o Client creates instance to hold integer
+          o new Copies(99)
+    * Sides class
+          o Single or two sided printing.
+          o Closed enumeration
+          o ONE_SIDED
+          o TWO_SIDED_LONG_EDGE
+                + Same as DUPLEX
+          o TWO_SIDED_SHORT_EDGE
+                + Same as TUMBLE
+
+
+//# Specifying How to Print the Data
+
+import javax.print.attribute.*;
+import javax.print.attribute.standard.*;
+
+PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+aset.add(MediaSizeName.ISO_A4);
+aset.add(Sides.TWO_SIDED_LONG_EDGE);
+aset.add(new Copies(2));
+
+//# Locating a Printer
+
+// use attribute set and doc flavor created earlier.
+PrintService []matchingServices = PrintServiceLookup.lookupPrintServices(aset, htmlFlavor);
+if (matchingServices.length == 0) return;
+// pick one of the services.
+PrintService service = matchingServices[0];
+
+//# Create Print Job and Specify Data
+import java.net.*;
+import javax.print.*;
+
+URL url = < ... the print data source ..>;
+
+DocPrintJob pjob = service.createPrintJob();
+SimpleDoc doc = new SimpleDoc(url, htmlFlavor, null);
+
+//# Submit the Print Job
+try
+{
+   pjob.print(doc, aset);
+}
+catch (PrintException e) { }
+
+// 2D PrinterJob
+PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+DocFlavor pFlavor = DocFlavor.SERVICE_FORMATTED_PRINTABLE;
+PrintService[] services = PrintServiceLookup(pFlavor, aset);
+if (services.length == 0) return;
+
+PrinterJob job = PrinterJob.getPrinterJob();
+job.setPrintable(this); // Printable object
+
+job.setPrintService(services[0]);
+
+if (job.printDialog(aset))
+{
+   try
+   {
+      job.print(aset);
+   }
+   catch (PrinterException e)
+   {
+   }
+}
+
+###
