@@ -1,0 +1,8 @@
+Scripting > Luaj: you write Juaj in the description.
+Various > Processing: listed twice
+
+Missing:
+Kahlua <http://code.google.com/p/kahlua/> (Lua interpreter)
+Stuff from http://java-source.net/open-source/scripting-languages like Pnuts <https://pnuts.dev.java.net/> or Seppia <http://www.seppia.org/>
+
+

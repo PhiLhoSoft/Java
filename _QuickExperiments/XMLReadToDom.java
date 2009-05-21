@@ -33,7 +33,7 @@ public class XMLReadToDom
 			// Set an error listener
 			builder.setErrorHandler(new XMLErrorHandler());
 
-			// Create the builder and parse the file
+			// Parse the file
 			Document doc = builder.parse(new File(fileName));
 			return doc;
 		}

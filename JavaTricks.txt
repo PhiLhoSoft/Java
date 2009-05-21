@@ -66,7 +66,97 @@ import java.util.regex.*;
 	   // or
        setCursor(cOldCursor());
 
-### Swing methods
+### Swing methods to re-paint and re-layout
+
+- AWT: java.awt.Component
+invalidate(): Invalidates the container. The container and all parents above it are marked as needing to be laid out (cached layout and size are dropped).
+paint(): Paints this component.
+print(): Prints this component.
+repaint(): Repaints this component. [For application-triggered painting, eg. after changing state of component.]
+
+- AWT: java.awt.Container extends java.awt.Component
+doLayout(): Causes this container to lay out its components. Do not call, use validate() instead.
+invalidate(): Invalidates the container. The container and all parents above it are marked as needing to be laid out. This method can be called often, so it needs to execute quickly.
+paint():  Paints the container.
+paintComponents():  Paints each of the components in this container.
+print(): Prints the container.
+printComponents(): Prints each of the components in this container.
+update(): Updates the container. [Called by repaint(). Multiple calls to repaint() are collapsed into one update() call. Default update() clears the background and calls paint(). Can be used for incremental painting.]
+validate(): Validates this container and all of its subcomponents. Cause a container to lay out its subcomponents again.
+
+- AWT: java.awt.Window extends java.awt.Container
+pack(): Causes this Window to be sized to fit the preferred size and layouts of its subcomponents. If the window and/or its owner are not yet displayable, both are made displayable before calculating the preferred size. The Window will be validated [call to validate()] after the preferredSize is calculated.
+
+- AWT: java.awt.Frame extends java.awt.Window
+pack()
+
+- Swing: javax.swing.JComponent extends java.awt.Container
+paint():  Invoked by Swing to draw components. [paint() invokes paintComponent(), paintBorder() and paintChildren().]
+paintBorder():  Paints the component's border. [No need to override.]
+paintComponent():  Calls the UI delegate's paint method, if the UI delegate is non-null. [Should be overridden instead of paint(). Calls ui.update() (look-and-feel) which calls ui.paint(). Unlike AWT's one, default ui.update() doesn't clear background if component isn't opaque.]
+paintChildren():  Paints this component's children. [No need to override.]
+paintImmediately(): Paints the specified region now. [Synchronous painting, for real-time painting (eg. scroll pane). No need to override.]
+print(): Invoke this method to print the component to the specified Graphics.
+printAll(): Invoke this method to print the component.
+printBorder():  Prints the component's border.
+printComponent():  Calls the UI delegate's print method, if the UI delegate is non-null.
+printChildren():  Prints this component's children.
+repaint(): Adds the specified region to the dirty region list if the component is showing. [For app-triggered painting.]
+revalidate(): Supports deferred automatic layout. [To call after adding/removing components.]
+update(): Calls paint. [Actually never invoked.]
+updateUI(): Resets the UI property to a value from the current look and feel. [Not to use in general.]
+
+- Swing: javax.swing.JWindow extends java.awt.Window
+pack()
+repaint(): Repaints the specified rectangle of this component within time milliseconds.
+update(): Calls paint(g).
+
+- Swing: javax.swing.JFrame extends java.awt.Frame
+pack()
+repaint(): Repaints the specified rectangle of this component within time milliseconds.
+update(): Just calls paint(g).
+
+Swing's paint() uses double buffering. print() does not.
+
+# http://forums.java.net/jive/message.jspa?messageID=243001
+
+Use revalidate() to cause a validation of components to happen on the EDT. This internally calls invalidate() to invalidate that container and sub-containers and then queues an operation to re-layout that container and all subcontainers. You don't need to call invalidate()/validate() separately in Swing.
+This differs from AWT where upon adding/removing/changing a component size, you need call invalidate()/validate() upon the container things have been added to.
+
+# http://java.sun.com/products/jfc/tsc/articles/painting/index.html
+
+AWT Painting Guidelines
+The AWT provides a simple callback API for painting components. When you use it, the following guidelines apply:
+
+   1. For most programs, all client paint code should be placed within the scope of the component's paint() method.
+   2. Programs may trigger a future call to paint() by invoking repaint(), but shouldn't call paint() directly.
+   3. On components with complex output, repaint() should be invoked with arguments which define only the rectangle that needs updating, rather than the no-arg version, which causes the entire component to be repainted.
+   4. Since a call to repaint() results first in a call to update(), which is forwarded to paint() by default, heavyweight components may override update() to do incremental drawing if desired (lightweights do not support incremental drawing)
+   5. Extensions of java.awt.Container which override paint() should always invoke super.paint() to ensure children are painted.
+   6. Components which render complex output should make smart use of the clip rectangle to narrow the drawing operations to those which intersects with the clip area.
+
+Swing Painting Guidelines
+Swing programs should understand these guidelines when writing paint code:
+
+   1. For Swing components, paint() is always invoked as a result of both system-triggered and app-triggered paint requests;update() is never invoked on Swing components.
+   2. Programs may trigger a future call to paint() by invoking repaint(), but shouldn't call paint() directly.
+   3. On components with complex output, repaint() should be invoked with arguments which define only the rectangle that needs updating, rather than the no-arg version, which causes the entire component to be repainted.
+   4. Swing's implementation of paint() factors the call into 3 separate callbacks:
+         1. paintComponent()
+         2. paintBorder()
+         3. paintChildren()
+      Extensions of Swing components which wish to implement their own paint code should place this code within the scope of the paintComponent() method (not within paint()).
+   5. Swing introduces two properties to maximize painting efficiency:
+          * opaque: will the component paint all its bits or not?
+          * optimizedDrawingEnabled: may any of this component's children overlap?
+   6. If a Swing component's opaque property is set to true, then it is agreeing to paint all of the bits contained within its bounds (this includes clearing it's own background within paintComponent()), otherwise screen garbage may result.
+   7. Setting either the opaque or optimizedDrawingEnabled properties to false on a component will cause more processing on each paint operation, therefore we recommend judicious use of both transparency and overlapping components.
+   8. Extensions of Swing components which have UI delegates (including JPanel), should typically invoke super.paintComponent() within their own paintComponent() implementation. Since the UI delegate will take responsibility for clearing the background on opaque components, this will take care of #5.
+   9. Swing supports built-in double-buffering via the JComponent doubleBuffered property, and it defaults to true for all Swing components, however setting it to true on a Swing container has the general effect of turning it on for all lightweight descendents of that container, regardless of their individual property settings.
+  10. It is strongly recommended that double-buffering be enabled for all Swing components.
+  11. Components which render complex output should make smart use of the clip rectangle to narrow the drawing operations to those which intersect with the clip area.
+
+# http://www.java-forums.org/awt-swing/3397-repaint-validate-dolayout.html
 
 paint is a container method which receives a graphics context and is used to render a container and all of its children
 repaint is what we use in event code to ask a component to re-render itself
@@ -77,6 +167,24 @@ invalidate - used to mark a component that needs to have its layout redone; occa
 doLayout - rarely used unless you are doing some lower-level layout research/work
 pack is a top-level container method that will get everything layed out in the minimum space required and ready for display.
 updateUI is used only when you need to change/update the look and feel
+
+# http://www.jguru.com/faq/view.jsp?EID=88716
+
+The following might help -
+
+http://java.sun.com/j2se/1.3/docs/api/javax/swing/JComponent.html
+
+My understanding or invalidate(), validate(), revalidate(), repaint() is as follows -
+
+   1. invalidate()/validate()/revalidate() only affects the layout. It results in a repaint if the layout actually changes.
+   2. invalidate()/validate() is the mechanism for batching changes (like beginPaint, paint, paint, paint, endPaint of windowing SDKs). You mark, using invalidate(), all the components that might affect the layout as invalid. Then call the parent container's validate() method. In the validate() method the parent checks if at least one of its immediate children is invalid. If it finds a child marked invalid, it calls layoutComponents() on its layout manager.
+
+      If the layoutmanager actually re-lays out the children, then, as a side effect, repaint() will get called.
+
+      The thing to note here is that the Container only looks for invalid immediate children.
+
+      For precisely this reason sometimes the resulting layout is not what you expected as the parent's parent and children's chidren may not get re-layed out. To work around this issue Swing added the revalidate() method.
+   3. What revalidate() does is basically marks all the container upto the top level (window and its subclasses or applet) as invalid. Then it calls validate() on the top level.
 
 ### Get a system color
 
@@ -167,6 +275,18 @@ public class MaximizeTest() extends JFrame
 int nCPU = Runtime.getRuntime().availableProcessors();
 int nMaxThread = Math.min(ThreadPool.MAX_THREADS, nCPU + 1);
 aThreadPool = StartThreadPool(nMaxThread, nMaxThread);
+
+### Full rendering quality
+
+   private void SetRenderingOptions(Graphics2D g2)
+   {
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+      g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+   }
 
 ### Disable some buttons in JFileChooser
 
