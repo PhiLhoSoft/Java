@@ -30,19 +30,7 @@ public class GetLocaleInfo extends Applet
   public void start() // Applet should start
   {
     // Following output goes to Java console
-    System.out.println(String.format("Locale for %s: country=%s (%s / %s), lang=%s (%s / %s), variant=%s (%s)",
-        loc.getDisplayName(),
-        loc.getDisplayCountry(),
-        loc.getCountry(),
-        loc.getISO3Country(),
-
-        loc.getDisplayLanguage(),
-        loc.getLanguage(),
-        loc.getISO3Language(),
-
-        loc.getDisplayVariant(),
-        loc.getVariant()
-    ));
+    System.out.println(GetLocaleInformation());
     System.out.println(nf.format(0.1));
     System.out.println(cnf.format(1.0));
     System.out.println(pnf.format(0.01));
@@ -54,6 +42,23 @@ public class GetLocaleInfo extends Applet
 
   public void destroy() // Applet should destroy any resources that it has allocated
   {
+  }
+
+  public String GetLocaleInformation()
+  {
+    return String.format("Locale for %s: country=%s (%s / %s), lang=%s (%s / %s), variant=%s (%s)",
+        loc.getDisplayName(),
+        loc.getDisplayCountry(),
+        loc.getCountry(),
+        loc.getISO3Country(),
+
+        loc.getDisplayLanguage(),
+        loc.getLanguage(),
+        loc.getISO3Language(),
+
+        loc.getDisplayVariant(),
+        loc.getVariant()
+    );
   }
 
   /*
