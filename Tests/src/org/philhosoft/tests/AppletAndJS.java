@@ -43,7 +43,9 @@ public class AppletAndJS extends Applet implements ActionListener
 	public void init()
 	{
 		command = new TextField(20);
+		add(new Label("Command:"));
 		add(command);
+		add(new Label("Param:"));
 		param = new TextField(50);
 		add(param);
 		exec = new Button("Execute JavaScript");
@@ -52,7 +54,7 @@ public class AppletAndJS extends Applet implements ActionListener
 		cb = new Button("Execute Callback");
 		add(cb);
 		cb.addActionListener(this);
-		status = new JLabel("/");
+		status = new JLabel(" ");
 		add(status);
 	}
 
@@ -96,14 +98,14 @@ public class AppletAndJS extends Applet implements ActionListener
 	public void Call(String message)
 	{
 		JSObject win = (JSObject) JSObject.getWindow(this);
-		String[] arguments = { "Call with String", message };
+		String[] arguments = { "Call JS function DumbTest with String", message };
 		win.call("DumbTest", arguments);
 	}
 
 	public void Call(JSObject jso)
 	{
 		JSObject win = (JSObject) JSObject.getWindow(this);
-		String[] arguments = { "Call with JSObject", jso.toString() };
+		String[] arguments = { "Call JS function DumbTest with JSObject", jso.toString() };
 		win.call("DumbTest", arguments);
 	}
 }

@@ -61,20 +61,45 @@ public class GetLocaleInfo extends Applet
     );
   }
 
-  /*
-  private void ToJavaScript()
+  public String FormatNumber(String number)
   {
-    // Unrelated demo code
-    JSObject window = JSObject.getWindow(this);
-    JSObject document = (JSObject) win.getMember("document");
-
-    window = JSObject.getWindow(this);
-    document = (JSObject) window.getMember("document");
-
-    JSObject loc = (JSObject) document.getMember("location");
-
-    String s = (String) loc.getMember("href");  // document.location.href
-    win.call("f", null);		  	     // Call f() in HTML page
+    double value = 0;
+    try
+    {
+      value = Double.parseDouble(number);
+    }
+    catch (NumberFormatException nfe)
+    {
+      return "!";
+    }
+    return nf.format(value);
   }
-*/
+
+  public String FormatCurrency(String number)
+  {
+    double value = 0;
+    try
+    {
+      value = Double.parseDouble(number);
+    }
+    catch (NumberFormatException nfe)
+    {
+      return "!";
+    }
+    return cnf.format(value);
+  }
+
+  public String FormatPercent(String number)
+  {
+    double value = 0;
+    try
+    {
+      value = Double.parseDouble(number);
+    }
+    catch (NumberFormatException nfe)
+    {
+      return "!";
+    }
+    return pnf.format(value);
+  }
 }
