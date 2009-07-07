@@ -1,15 +1,16 @@
 /*
  * org.philhosoft.*: A collection of utility classes for Java.
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.00.000 -- 2005/12/13 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.ui;
 
 //import java.io.File;
@@ -32,7 +33,7 @@ public class ImagePreview
 		implements PropertyChangeListener
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final int PREFERRED_WIDTH = 125;
 	private static final int PREFERRED_HEIGHT = 100;
 

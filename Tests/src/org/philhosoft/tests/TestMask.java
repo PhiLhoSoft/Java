@@ -1,15 +1,16 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.00.000 -- 2008/09/20 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.tests;
 
 import java.awt.*;
@@ -42,16 +43,16 @@ public class TestMask
 		// Color image with transparency around
 		m_images[i++] = ImageIO.read(new File(imagePath + "people.png"));
 
-		m_images[i++] = GetComposite(m_images[0], m_images[1], 
+		m_images[i++] = GetComposite(m_images[0], m_images[1],
 				AlphaComposite.DST_IN, 1.0F);
- 		m_images[i++] = GetComposite(m_images[0], m_images[1], 
+ 		m_images[i++] = GetComposite(m_images[0], m_images[1],
  				AlphaComposite.SRC_OVER, 0.5F);
- 		
- 		m_images[i++] = GetComposite(m_images[0], m_images[3], 
+
+ 		m_images[i++] = GetComposite(m_images[0], m_images[3],
  				AlphaComposite.SRC_OVER, 1.0F);
-		m_images[i++] = GetComposite(m_images[3], m_images[0], 
+		m_images[i++] = GetComposite(m_images[3], m_images[0],
 				AlphaComposite.SRC_IN, 1.0F);
-		
+
 		Image transpImg = TransformGrayToTransparency(m_images[2]);
 		m_images[i++] = ApplyTransparency(m_images[0], transpImg);
 	}
@@ -101,7 +102,7 @@ public class TestMask
 		ImageProducer ip = new FilteredImageSource(image.getSource(), filter);
 	    return Toolkit.getDefaultToolkit().createImage(ip);
 	}
-	
+
 	private BufferedImage ApplyTransparency(BufferedImage image, Image mask)
 	{
 		BufferedImage dest = new BufferedImage(

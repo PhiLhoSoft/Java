@@ -2,17 +2,18 @@
  * Tests: A collection of little test programs to explore Java language.
  * Testing communication between Java and JavaScript.
  * Compile with: javac -cp C:\Java\jdk1.6.0_13\jre\lib\plugin.jar AppletAndJS.java
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.01.000 -- 2009/07/06 (PL) -- Some more tests.
  *  1.00.000 -- 2008/11/17 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2008-2009 Philippe Lhoste / PhiLhoSoft
+*/
 //~ package org.philhosoft.tests;
 
 
@@ -26,11 +27,11 @@ import netscape.javascript.*;
 
 
 /**
- * Template class for test applications.
+ * Testing communication between Java and JavaScript.
  *
  * @author Philippe Lhoste
- * @version 1.00.000
- * @date 2008/11/17
+ * @version 1.01.000
+ * @date 2009/07/06
  */
 @SuppressWarnings("serial")
 public class AppletAndJS extends Applet implements ActionListener

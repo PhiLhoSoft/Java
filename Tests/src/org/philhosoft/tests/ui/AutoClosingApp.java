@@ -1,15 +1,16 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.00.000 -- 2008/11/03 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.tests.ui;
 
 import java.awt.*;
@@ -28,7 +29,7 @@ import javax.swing.*;
 public class AutoClosingApp extends JFrame implements WindowListener
 {
 	Timer m_clock;
-	
+
 	public AutoClosingApp()
 	{
 		super("Some Frame");
@@ -92,7 +93,7 @@ public class AutoClosingApp extends JFrame implements WindowListener
 		public WindowCloser()
 		{
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent ae)
 		{

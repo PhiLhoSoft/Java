@@ -1,15 +1,16 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.00.000 -- 2008/09/20 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.tests.image;
 
 import java.awt.image.BufferedImage;
@@ -37,7 +38,7 @@ public class PNGtoTIFF2
 	 * Converts grayscale image to bilevel image.
 	 */
 	public static synchronized RenderedOp
-			convertGrayscaleToBlackWhiteImage(RenderedImage ri) 
+			convertGrayscaleToBlackWhiteImage(RenderedImage ri)
 	{
 		// Generate a histogram.
 		Histogram histogram = (Histogram)JAI.create("histogram",
@@ -47,7 +48,7 @@ public class PNGtoTIFF2
 		double[] threshold = histogram.getPTileThreshold(0.5);
 
 		// if background and foreground could not be separated
-		if (threshold[0] == 0.0 || threshold[0] == 1.0) 
+		if (threshold[0] == 0.0 || threshold[0] == 1.0)
 		{
 			threshold[0] = 127.5;
 		}
@@ -61,7 +62,7 @@ public class PNGtoTIFF2
 	 * gray = 0.3*red + 0.59*green + 0.11*blue
 	 */
 	public static synchronized RenderedOp
-			convertRGBToGrayscaleImage(RenderedImage ri) 
+			convertRGBToGrayscaleImage(RenderedImage ri)
 	{
 		double[][] matrix = { { 0.3D, 0.59D, 0.11D, 0D } };
 		ParameterBlock pb = new ParameterBlock();
@@ -69,7 +70,7 @@ public class PNGtoTIFF2
 		pb.add(matrix);
 		return JAI.create("BandCombine", pb, null);
 	}
-	
+
 	public static void test() throws IOException
 	{
         String fileName = "4848970_1";
@@ -82,7 +83,7 @@ public class PNGtoTIFF2
 
         int[] xi = bi.getSampleModel().getSampleSize();
 
-        for (int i : xi) 
+        for (int i : xi)
         {
             System.out.println("bitsize " + i);
         }
@@ -94,7 +95,7 @@ public class PNGtoTIFF2
         // TIFFImageWriteParam param = (TIFFImageWriteParam) writer.getDefaultWriteParam();
         TIFFImageWriteParam param = new TIFFImageWriteParam(Locale.US);
         String[] strings = param.getCompressionTypes();
-        for (String string : strings) 
+        for (String string : strings)
         {
             System.out.println(string);
         }

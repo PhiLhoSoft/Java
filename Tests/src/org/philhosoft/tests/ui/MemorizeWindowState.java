@@ -1,15 +1,16 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
- *
- * Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
- *
- * Copyright notice: See the PhiLhoSoftLicence.txt file for details.
- * This file is distributed under the zlib/libpng license.
- * Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
  */
 /* File history:
  *  1.00.000 -- 2005/12/29 (PL) -- Creation
  */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.tests.ui;
 
 import java.awt.*;
@@ -177,7 +178,7 @@ class MainFrame extends JFrame implements ComponentListener
 class GUI extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	// Access to data
 //~ 	private DataAccess m_da;
 	// Access to parent frame
