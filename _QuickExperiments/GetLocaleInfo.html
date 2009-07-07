@@ -1,2 +1,58 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html lang="en"><head>  <title>Get Locale Info</title>  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">  <meta http-equiv="Content-Language" content="en-US">
-  <meta name="Author" content="Philippe Lhoste">  <meta name="Copyright" content="(c) 2009 Philippe Lhoste">  <meta name="Generator" content="SciTE">  <meta name="Description" content="Page to demonstrate how JavaScript can get locale information from Java">  <meta name="MSSmartTagsPreventParsing" content="TRUE"><script language="JavaScript" type="text/javascript">function ChangeLink(evt){}</script></head><body>	<div id="Container">		<p>Page to demonstrate how JavaScript can get locale information from Java</p>		<div id="AppletContainer">			<!-- Give redundant information, trying to please most browsers... -->			<object classid="java:GetLocaleInfo.class" codetype="application/java"					data="java:GetLocaleInfo.class" type="application/x-java-applet"					archive="GetLocaleInfo.jar"					name="AppletId" width="0" height="0">				<param name="code" value="GetLocaleInfo"/>				<param name="archive" value="GetLocaleInfo.jar"/>				<param name="mayscript" value="true"/>				<param name="scriptable" value="true"/>				<p><!-- Displayed if object isn't supported -->					<strong>This browser does not have Java enabled.</strong>					<br>					<a href="http://java.sun.com/products/plugin/downloads/index.html" title="Download Java plug-in">					Get the latest Java plug-in here					</a> (or enable Java support).				</p>			</object>		</div><!-- AppletContainer -->		<p>		Applet and JavaScript test code.		</p>		<input type="button" name="JSAction" id="JSAction" value="Run applet function" onclick="javascript:DoSomething()"/>		<input type="button" name="JavaAction" id="JavaAction" value="Run Java function" onclick="javascript:CallJava()"/>		<div id="Results">		</div><!-- Results -->	</div><!-- Container --></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <title>Get Locale Info</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="en-US">
+  <meta name="Author" content="Philippe Lhoste">
+  <meta name="Copyright" content="(c) 2009 Philippe Lhoste">
+  <meta name="Generator" content="SciTE">
+  <meta name="Description" content="Page to demonstrate how JavaScript can get locale information from Java">
+  <meta name="MSSmartTagsPreventParsing" content="TRUE">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+});
+</script>
+<script type="text/javascript">
+function DoFormatting()
+{
+  $('table.toFormat').each(function()  {
+    var table = $(this);
+    $('td', table).each(function(cellId)    {//~       console.log(cell);      var val = $(this);
+      if (val.is('.number'))      {        val.append('N');      }      else if (val.is('.currency'))      {        val.text('C');      }      else if (val.is('.percent'))      {        val.text('P' + val.text());      }      else      {        console.log(val);
+      }    });
+  });}/*
+          var rows = $table.find('tbody > tr').get();          rows.sort();          $.each(rows, function(index, row) {            $table.children('tbody').append(row);          });        });*/</script>
+</head>
+<body>
+  <div id="Container">
+    <p>Page to demonstrate how JavaScript can get locale information from Java</p>
+    <div id="AppletContainer">
+      <!-- Give redundant information, trying to please most browsers... -->
+      <object classid="java:GetLocaleInfo.class" codetype="application/java"
+          data="java:GetLocaleInfo.class" type="application/x-java-applet"
+          archive="GetLocaleInfo.jar"
+          name="AppletId" width="0" height="0">
+        <param name="code" value="GetLocaleInfo"/>
+        <param name="archive" value="GetLocaleInfo.jar"/>
+        <param name="mayscript" value="true"/>
+        <param name="scriptable" value="true"/>
+        <p><!-- Displayed if object isn't supported -->
+          <strong>This browser does not have Java enabled.</strong>
+          <br>
+          <a href="http://java.sun.com/products/plugin/downloads/index.html" title="Download Java plug-in">
+          Get the latest Java plug-in here
+          </a> (or enable Java support).
+        </p>
+      </object>
+    </div><!-- AppletContainer -->
+    <p>
+    Click on the button to format the table content to the locale rules of the user.
+    </p>
+    <input type="button" name="DoFormatting" id="DoFormatting" value="Format the table" onclick="javascript:DoFormatting()"/>
+    <div id="Results">
+    </div><!-- Results --><table class="toFormat"><caption>Synthetic View</caption><thead><tr><th>Name</th><th>Value</th><th>Cost</th><th>Discount</th></tr></thead><tbody><tr><td>Foo</td><td class="number">3.1415926</td><td class="currency">21.36</td><td class="percent">0.12</td></tr><tr><td>Bar</td><td class="number">159263.14</td><td class="currency">33</td><td class="percent">0.33</td></tr><tr><td>Baz</td><td class="number">15926</td><td class="currency">12.99</td><td class="percent">0.05</td></tr><tr><td>Doh</td><td class="number">0.01415926</td><td class="currency">5.1</td><td class="percent">0.1</td></tr></tbody></table>
+  </div><!-- Container -->
+</body>
+</html>
