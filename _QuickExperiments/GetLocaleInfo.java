@@ -1,4 +1,4 @@
-//~ import netscape.javascript.*;
+import netscape.javascript.*;
 import java.applet.*;
 import java.util.Locale;
 import java.text.*;
@@ -46,6 +46,7 @@ public class GetLocaleInfo extends Applet
 
   public String GetLocaleInformation()
   {
+//~     System.out.println("GetLocaleInformation");
     return String.format("Locale for %s: country=%s (%s / %s), lang=%s (%s / %s), variant=%s (%s)",
         loc.getDisplayName(),
         loc.getDisplayCountry(),
@@ -61,8 +62,14 @@ public class GetLocaleInfo extends Applet
     );
   }
 
+  public void Testing(JSObject number)
+  {
+    System.out.println("Testing: " + number);
+  }
+
   public String FormatNumber(String number)
   {
+//~     System.out.println("FormatNumber: " + number);
     double value = 0;
     try
     {
@@ -77,6 +84,7 @@ public class GetLocaleInfo extends Applet
 
   public String FormatCurrency(String number)
   {
+//~     System.out.println("FormatCurrency: " + number);
     double value = 0;
     try
     {
@@ -91,6 +99,7 @@ public class GetLocaleInfo extends Applet
 
   public String FormatPercent(String number)
   {
+//~     System.out.println("FormatPercent: " + number);
     double value = 0;
     try
     {

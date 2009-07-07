@@ -9,33 +9,53 @@
   <meta name="Generator" content="SciTE">
   <meta name="Description" content="Page to demonstrate how JavaScript can get locale information from Java">
   <meta name="MSSmartTagsPreventParsing" content="TRUE">
+
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
+var applet;
+$(document).ready(function()
+{
+  applet = document.getElementById('LocaleInfo');
+//~   alert(applet.GetLocaleInformation());
+//~   applet.Testing(document);
+  $('#Results').text(applet.GetLocaleInformation());
 });
 </script>
 <script type="text/javascript">
 function DoFormatting()
 {
-  $('table.toFormat').each(function()  {
+  $('table.toFormat').each(function()
+  {
     var table = $(this);
-    $('td', table).each(function(cellId)    {//~       console.log(cell);      var val = $(this);
-      if (val.is('.number'))      {        val.append('N');      }      else if (val.is('.currency'))      {        val.text('C');      }      else if (val.is('.percent'))      {        val.text('P' + val.text());      }      else      {        console.log(val);
-      }    });
-  });}/*
-          var rows = $table.find('tbody > tr').get();          rows.sort();          $.each(rows, function(index, row) {            $table.children('tbody').append(row);          });        });*/</script>
+    $('td', table).each(function(cellId)
+    {
+      var val = $(this);
+      if (val.is('.number'))
+      {
+        val.text(applet.FormatNumber(val.text()));
+      }
+      else if (val.is('.currency'))
+      {
+        val.text(applet.FormatCurrency(val.text()));
+      }
+      else if (val.is('.percent'))
+      {
+        val.text(applet.FormatPercent(val.text()));
+      }
+    });
+  });
+}
+</script>
+
 </head>
 <body>
   <div id="Container">
     <p>Page to demonstrate how JavaScript can get locale information from Java</p>
     <div id="AppletContainer">
-      <!-- Give redundant information, trying to please most browsers... -->
-      <object classid="java:GetLocaleInfo.class" codetype="application/java"
-          data="java:GetLocaleInfo.class" type="application/x-java-applet"
-          archive="GetLocaleInfo.jar"
-          name="AppletId" width="0" height="0">
+      <object classid="java:GetLocaleInfo.class"
+          type="application/x-java-applet" codetype="application/java"
+          name="LocaleInfo" id="LocaleInfo" width="0" height="0">
         <param name="code" value="GetLocaleInfo"/>
-        <param name="archive" value="GetLocaleInfo.jar"/>
         <param name="mayscript" value="true"/>
         <param name="scriptable" value="true"/>
         <p><!-- Displayed if object isn't supported -->
@@ -52,7 +72,7 @@ function DoFormatting()
     </p>
     <input type="button" name="DoFormatting" id="DoFormatting" value="Format the table" onclick="javascript:DoFormatting()"/>
     <div id="Results">
-    </div><!-- Results --><table class="toFormat"><caption>Synthetic View</caption><thead><tr><th>Name</th><th>Value</th><th>Cost</th><th>Discount</th></tr></thead><tbody><tr><td>Foo</td><td class="number">3.1415926</td><td class="currency">21.36</td><td class="percent">0.12</td></tr><tr><td>Bar</td><td class="number">159263.14</td><td class="currency">33</td><td class="percent">0.33</td></tr><tr><td>Baz</td><td class="number">15926</td><td class="currency">12.99</td><td class="percent">0.05</td></tr><tr><td>Doh</td><td class="number">0.01415926</td><td class="currency">5.1</td><td class="percent">0.1</td></tr></tbody></table>
+    </div><!-- Results --><table class="toFormat"><caption>Synthetic View</caption><thead><tr><th>Name</th><th>Value</th><th>Cost</th><th>Discount</th></tr></thead><tbody><tr><td>Foo</td><td class="number">3.1415926</td><td class="currency">21.36</td><td class="percent">0.196</td></tr><tr><td>Bar</td><td class="number">159263.14</td><td class="currency">33</td><td class="percent">0.33</td></tr><tr><td>Baz</td><td class="number">15926</td><td class="currency">12.99</td><td class="percent">0.05</td></tr><tr><td>Doh</td><td class="number">0.01415926</td><td class="currency">5.1</td><td class="percent">0.1</td></tr></tbody></table>
   </div><!-- Container -->
 </body>
 </html>
