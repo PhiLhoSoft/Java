@@ -233,6 +233,13 @@ Static method to make a copy of a file, demonstrating the minimal correct code t
 // Do this before you create your file chooser -- this will affect all file choosers you create:
 UIManager.put("FileChooser.readOnly", Boolean.TRUE);
 
+### Make a Cancel button (dismiss dialog on Escape)
+
+t.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+   .put(KeyStroke.getKeyStroke("ESCAPE"), btnCancel.getAction());
+
+where t is any component(except JButton) like JTextField in the dialog.
+
 ### Maximize the main window
 
 import javax.swing.JFrame;
@@ -349,6 +356,7 @@ private void removeButtons(Container c)
 }
 
 ### Printing
+
 http://java.sun.com/docs/books/tutorial/2d/printing/index.html
 
 http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Printing_questions

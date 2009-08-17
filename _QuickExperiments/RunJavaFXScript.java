@@ -1,3 +1,4 @@
+// javac -cp %JAVAFX_HOME%/lib/shared/javafxc.jar RunJavaFXScript.java
 import java.io.*;
 
 import com.sun.javafx.api.JavaFXScriptEngine;

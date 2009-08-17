@@ -1,2 +1,3 @@
 REM javac -cp %JAVAFX_HOME%/lib/shared/javafxc.jar RunJavaFXScript.java
-java -cp . -Djava.ext.dirs=%JAVAFX_HOME%/lib/shared;%JAVAFX_HOME%/lib/desktop RunJavaFXScript
+REM ~ java -cp . -Xbootclasspath/p:%JAVAFX_HOME%/lib/shared/javafxc.jar;%JAVAFX_HOME%/lib/shared/javafxrt.jar;%JAVAFX_HOME%/lib/desktop/javafxrt-main.jar;%JAVAFX_HOME%/lib/desktop/javafx-common.jar -Djava.ext.dirs=%JAVAFX_HOME%/lib/shared;%JAVAFX_HOME%/lib/desktop RunJavaFXScript
+java -cp . -Xbootclasspath/p:%JAVAFX_HOME%/lib/shared/javafxc.jar;%JAVAFX_HOME%/lib/shared/javafxrt.jar;%JAVAFX_HOME%/lib/shared/asm-all-3.1.jar -Djava.ext.dirs=%JAVAFX_HOME%/lib/shared;%JAVAFX_HOME%/lib/desktop RunJavaFXScript
