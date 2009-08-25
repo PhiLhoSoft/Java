@@ -563,4 +563,72 @@ if (job.printDialog(aset))
    }
 }
 
-###
+### How To Generate JAD from JAR file
+http://www.bitsforfree.eu/tips_and_tricks_jad.html
+
+Some phones won't be able to download jar files above some size from the internet unless a JAD file is used to get information about the jar file first.
+
+To create a jad file from jar file:
+
+   1. Extract the jar file.
+      If you don't know about a program to extract it, you can always rename it to zip and then extract it.
+   2. Locate the META-INF/MANIFEST.MF file and copy it to where the jar file is located.
+   3. Rename the copied MANIFEST.MF to the same name as the jar file but with .jad extension.
+   4. Open the copied file in text editor and edit the file as follows:
+         1. Delete the lines, if they exist, that begin with:
+               1. MIDlet-Jar-URL:
+               2. MIDlet-Jar-Size:
+         2. Add the following lines:
+               1. MIDlet-Jar-URL: followed by a space character and the full jar filename.
+               2. MIDlet-Jar-Size: followed by a space character and size (in bytes) of the jar file.
+         3. Make sure the following lines exist, if they're not add each of them followed by space and its corresponding value:
+               1. MIDlet-Name:
+               2. MIDlet-Version:
+               3. MIDlet-Vendor:
+         4. Fix the following lines:
+               1. It can cause problems if you have a non numeric text in the MIDlet-Version: line (. (dot) is permitted), if it's so you can just remove the non-numeric characters from the version value.
+               2. Sometimes line's value will wrap to the next line. You should fix this, so that the whole value of that line will be on the same line. Happens a lot on MIDlet-1: (or 2,3.. instead of 1) lines.
+               3. To place the Java application into the Games folder by default you can add or edit if it exists the following line:
+                  Nokia-MIDlet-Category: Game
+         5. It is safe to delete all lines that DO NOT begin with the following:
+               1. MIDlet-
+               2. MicroEdition-
+               3. Nokia-MIDlet-Category
+         6. If the application's certificate is causing problems on installation, the lines that begin with the following can be removed:
+               1. MIDlet-Certificate-
+               2. MIDlet-Jar-RSA-
+
+java.net: J2ME Tutorial, Part 1: Creating MIDlets <http://today.java.net/pub/a/today/2005/02/09/j2me1.html?page=2>
+
+Packaging your MIDlet so that it ready for testing and deployment is a fairly involved process, with several steps. Although each step is straightforward, they must be followed in proper sequence.
+
+The first step is to create a Manifest file. This Manifest file describes the contents of the Java Archive (JAR) file that we will be creating in the next step. There are several attributes that can go in this file, but for your Date-Time MIDlet, stick to only the ones that are required. This file's contents are shown here:
+
+MIDlet-Name: DateTimeApp
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Vikram Goyal
+
+Save this file as Manifest.mf in the C:\WTK22\article\output folder. (Note the newline after the last attribute, MIDlet-Vendor. It must be present, otherwise this attribute will not be recognized.)
+
+Next, create the JAR file that packages up the preverified DateTimeApp.class file and the Manifest file. To create this JAR file, navigate to the C:\WTK22\article\output directory and issue the following command:
+
+C:\WTK22\article\output>jar cvfm DateTimeApp.jar Manifest.mf .\com
+
+This will create the DateTimeApp.jar file in the current (C:\WTK22\article\output) folder.
+
+The second-to-last step is to create a file that has an extension of .jad. A Java Application Descriptor (JAD) file points to the location of the MIDlet it describes so that a J2ME device can install it. Again, this file can contain several attributes for a single MIDlet (or for several MIDlets), but for your Date-Time MIDlet, you will stick with the ones that are required.
+
+MIDlet-1: DateTimeApp, , com.j2me.part1.DateTimeApp
+MIDlet-Name: DateTimeApp
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Vikram Goyal
+MIDlet-Jar-URL: DateTimeApp.jar
+MIDlet-Jar-Size:
+MicroEdition-Profile: MIDP-2.0
+MicroEdition-Configuration: CLDC-1.1
+
+Save this file as DateTimeApp.jad in the same folder as the JAR file (C:\WTK22\article\output). I will explain the attributes in this file later, but for now, note that the value of the MIDlet-Jar-Size attribute is missing. This missing value brings you to the last step of the packaging step, where you determine the size of the DateTimeApp.jar file, and put that value in this JAD file, in actual bytes. It is very important to get this exactly right, as the installation of this MIDlet will fail if this value is different from the actual size. On my machine, this value is 1469 bytes, and therefore, this is what this attribute looks like on my machine:
+
+MIDlet-Jar-Size: 1469
+
+This completes the packaging part.
