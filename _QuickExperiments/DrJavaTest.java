@@ -1,4 +1,4 @@
-import java.util.Locale;
+import java.util.Vector;
 
 public class DrJavaTest
 {
@@ -7,18 +7,13 @@ public class DrJavaTest
 
     public static void main(String args[])
     {
-      System.out.println(Locale.getDefault().getCountry());
-      Foo foo = new Foo()
-      {
-        int af(int y) { return x * y; }
-      };
+  Vector<Integer> numbers = new Vector();
+  numbers.add(1);
+  numbers.add(2);
+  numbers.add(3);
+  for (int i=0;i<numbers.size();i++) {
+     Integer num = numbers.elementAt(i);
+     System.out.println(num);
+  }
     }
-}
-
-abstract class Foo
-{
-  protected int x;
-
-  abstract int af(int y);
-  int cf(int y) { return x + y; }
 }

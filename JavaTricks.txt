@@ -295,6 +295,13 @@ aThreadPool = StartThreadPool(nMaxThread, nMaxThread);
       g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
    }
 
+### Acessing Web site from a computer behind a proxy
+
+Properties systemSettings = System.getProperties();
+systemSettings.put("http.proxyHost", "myProxyServer.com");
+systemSettings.put("http.proxyPort", "80");
+System.setProperties(systemSettings);
+
 ### Disable some buttons in JFileChooser
 
 // http://forum.java.sun.com/thread.jspa?forumID=57&messageID=1941148&threadID=432596
