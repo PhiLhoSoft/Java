@@ -43,6 +43,19 @@ HashMap<String, String> crusties = new HashMap<String, String>()
 
 if (crusties.get(item) == "") ...;
 
+### int array to byte array
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
+int[] data = { 4001, 8003, 16005, 32007 };
+
+ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
+IntBuffer intBuffer = byteBuffer.asIntBuffer();
+intBuffer.put(data);
+
+byte[] array = byteBuffer.array();
+
 ### Using REs
 
 import java.util.regex.*;
