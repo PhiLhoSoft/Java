@@ -3,10 +3,11 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
+import java.net.*;
 
 public class TypicalApplet extends Applet
 {
-	private boolean m_bIsStandalone;
+	private boolean m_bIsOnLine;
 	private Graphics m_graphics;
 	private Rectangle m_bounds;
 
@@ -24,7 +25,6 @@ public class TypicalApplet extends Applet
 	public static void main(String args[])
 	{
 		final TypicalApplet applet = new TypicalApplet();
-		applet.SetStandalone(true);
 
 		Frame frame = new Frame();
 		frame.setTitle("Typical Applet");
@@ -81,6 +81,8 @@ public class TypicalApplet extends Applet
 
 		m_message = new Label("                                    ");
 		add(m_message);
+
+    CheckIsOnLine();
 	}
 
 	// Applet should start
@@ -137,17 +139,33 @@ public class TypicalApplet extends Applet
 		paint(g);
 	}
 
-	// Returns the value of the named parameter in the HTML tag
+	/** Returns the value of the named parameter in the HTML tag,
+   * of the system property if not in a browser.
+   */
 	public String GetParameter(String key, String def)
 	{
-		return m_bIsStandalone ?
-				System.getProperty(key, def) :
-				(getParameter(key) != null ? getParameter(key) : def);
+		return m_bIsOnLine ?
+				(getParameter(key) != null ? getParameter(key) : def) :
+				System.getProperty(key, def);
 	}
 
-	private void SetStandalone(boolean b)
+
+	private void CheckIsOnLine()
 	{
-		m_bIsStandalone = b;
+		try
+    {
+      URL db = getDocumentBase();
+      System.out.println("Document base: " + db);
+      URL cb = getCodeBase();
+      System.out.println("Code base: " + cb);
+      AppletContext ac = getAppletContext();
+      System.out.println("AppletContext: " + ac);
+      m_bIsOnLine = true;
+    }
+    catch (NullPointerException ex)
+    {
+      System.out.println("Not in a browser!");
+    }
 	}
 
 	private void ShowStuff()

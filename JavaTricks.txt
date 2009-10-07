@@ -308,12 +308,23 @@ aThreadPool = StartThreadPool(nMaxThread, nMaxThread);
       g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
    }
 
-### Acessing Web site from a computer behind a proxy
+### Accessing Web site from a computer behind a proxy
 
 Properties systemSettings = System.getProperties();
 systemSettings.put("http.proxyHost", "myProxyServer.com");
 systemSettings.put("http.proxyPort", "80");
 System.setProperties(systemSettings);
+
+### Required Permissions for the Java 2 Platform
+
+To run an application on a Java 2 Platform with the standard Security Manager, use the -Djava.security.manager option to the java command.
+Web browser applets running in the Java 2 plug-in are always running in a JVM with the standard Java Security Manager enabled.
+See jre/lib/security/java.policy
+A specific security policy file can be specified with -Djava.security.policy=policyfile option (augment default policies) or -Djava.security.policy==policyfile option (double =) to replace them.
+
+http://docstore.mik.ua/orelly/java-ent/jnut/ch05_01.htm
+http://docstore.mik.ua/orelly/java-ent/jnut/ch05_06.htm
+http://download.oracle.com/docs/cd/E13222_01/wls/docs100/jdbc_drivers/usedriver.html
 
 ### Disable some buttons in JFileChooser
 
