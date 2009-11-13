@@ -31,6 +31,8 @@ import java.awt.image.WritableRaster;
  */
 public class ImageUtil
 {
+	public static int ALPHA_BIT_MASK = 0xFF000000;
+
 	/**
 	 * ImageIO.write needs a RenderedImage while some functions (like Toolkit.createImage)
 	 * produces a more generic Image.
@@ -81,7 +83,7 @@ public class ImageUtil
 		return destImage;
 	}
 
-	private static Image ConvertTranslucencyToTransparency(BufferedImage image)
+	private static Image TransformTransparencyToMagenta(BufferedImage image)
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
@@ -89,7 +91,7 @@ public class ImageUtil
 			public final int filterRGB(int x, int y, int rgb)
 			{
 				int pixelValue = 0;
-				int opacity = (rgb & 0xFF000000) >>> 24;
+				int opacity = (rgb & ALPHA_BIT_MASK) >>> 24;
 				if (opacity < 128)
 				{
 					// Quite transparent: replace color with transparent magenta
@@ -99,7 +101,7 @@ public class ImageUtil
 				else
 				{
 					// Quite opaque: get pure color
-					pixelValue = (rgb & 0xFFFFFF) | 0xFF000000;
+					pixelValue = (rgb & 0xFFFFFF) | ALPHA_BIT_MASK;
 				}
 				return pixelValue;
 			}

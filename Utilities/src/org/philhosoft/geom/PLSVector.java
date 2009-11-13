@@ -90,7 +90,7 @@ public class PLSVector
 	/** Checks if this vector is a null vector. */
 	public final boolean isNull()
 	{
-		return x == 0 && y == 0 && z = 0;
+		return x == 0 && y == 0 && z == 0;
 	}
 
 	/** Magnitude of the vector (same as {@link #length()}). */
@@ -98,12 +98,12 @@ public class PLSVector
 	/** Length of the vector. */
 	public final float length()
 	{
-		return Math.sqrt(x * x + y * y + z * z);
+		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 	/** Squared length of the vector. Can be used to compare vectors as it is faster than {@link #length()}. */
 	public final float sqLength()
 	{
-		return Math.sqrt(x * x + y * y + z * z);
+		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
 	public final PLSVector add(float scalar)
@@ -190,7 +190,7 @@ public class PLSVector
 		return new PLSVector(
 				y * v.z - z * v.y,
 				z * v.x - x * v.z,
-				x * v.y - y * v.x,
+				x * v.y - y * v.x
 		);
 	}
 

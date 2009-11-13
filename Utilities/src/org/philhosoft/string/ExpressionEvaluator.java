@@ -1,12 +1,13 @@
-package prg.philhosoft.string;
+package org.philhosoft.string;
 
 import java.util.HashMap;
 import java.lang.Double;
 
 /************************************************************************
- * <i>Mathematic m_expression evaluator.</i> Supports the following functions:
+ * <i>Mathematical expression evaluator.</i>
+ *  Supports the following functions:
  * +, -, *, /, ^, %, cos, sin, tan, acos, asin, atan, sqrt, sqr, log, min, max, ceil, floor, abs, neg, rndr.<br>
- * When the Eval() is called, a Double object is returned. If it returns null, an error occured.<p>
+ * When the Eval() is called, a Double object is returned. If it returns null, an error occurred.<p>
  * <pre>
  * Sample:
  * ExpressionEvaluator m = new ExpressionEvaluator("-5-6/(-2) + sqr(15+x)");
@@ -17,24 +18,85 @@ import java.lang.Double;
  * @author 	The-Son LAI, <a href="mailto:Lts@writeme.com">Lts@writeme.com</a>
  * @date	 April 2001
  ************************************************************************/
-// Yes, yet another m_expression evaluator. Mostly for Java 1.5, as with Java 1.6 we can use ScriptEngine...
+// Yes, yet another expression evaluator. Mostly for Java 1.5, as with Java 1.6 we can use ScriptEngine...
 public class ExpressionEvaluator
 {
-   	protected static Operator[] s_operators;
-	private Node m_node;
+   	protected static Operator[] s_operators =
+	{
+		// Base on http://www.uni-bonn.de/~manfear/javaoperators.php
+		// Operator symbol, type (unary/binary) and priority
+		new Operator("+", OperatorType.UNARY, 2), // unary plus
+		new Operator("-", OperatorType.UNARY, 2), // OperatorType.UNAry minus
+		new Operator("~", OperatorType.UNARY, 2), // bitwise NOT
+//~ 			new Operator("!", OperatorType.UNARY, 2), // boolean (logical) NOT
+		new Operator("*", OperatorType.BINARY, 3), // multiplication
+		new Operator("/", OperatorType.BINARY, 3), // division
+		new Operator("%", OperatorType.BINARY, 3), // remainder
+		new Operator("+", OperatorType.BINARY, 4), // addition
+		new Operator("-", OperatorType.BINARY, 4), // subtraction
+		new Operator("<<", OperatorType.BINARY, 5), // signed bit shift left
+		new Operator(">>", OperatorType.BINARY, 5), // signed bit shift right
+		new Operator(">>>", OperatorType.BINARY, 5), // unsigned bit shift right
+//~ 			new Operator("<", OperatorType.BINARY, 6), // less than
+//~ 			new Operator("<=", OperatorType.BINARY, 6), // less than or equal to
+//~ 			new Operator(">", OperatorType.BINARY, 6), // greater than
+//~ 			new Operator(">=", OperatorType.BINARY, 6), // greater than or equal to
+//~ 			new Operator("==", OperatorType.BINARY, 7), // equal to
+//~ 			new Operator("!=", OperatorType.BINARY, 7), // not equal to
+		new Operator("&", OperatorType.BINARY, 8), // bitwise AND
+//~ 			new Operator("&", OperatorType.BINARY, 8), // boolean (logical) XOR
+		new Operator("^", OperatorType.BINARY, 9), // bitwise AND
+//~ 			new Operator("^", OperatorType.BINARY, 9), // boolean (logical) XOR
+		new Operator("|", OperatorType.BINARY, 10), // bitwise OR
+//~ 			new Operator("|", OperatorType.BINARY, 10), // boolean (logical) OR
+//~ 			new Operator("&&", OperatorType.BINARY, 11), // boolean (logical) AND with shortcut
+//~ 			new Operator("||", OperatorType.BINARY, 12), // boolean (logical) OR with shortcut
+//~ 			new Operator("?", OperatorType.BINARY, 13), // conditional part 1
+//~ 			new Operator(":", OperatorType.BINARY, 13), // conditional part 2
+//~ 			new Operator("=", OperatorType.BINARY, 14), // assignment (and comOperatorType.BINed assignments)
+		new Operator("abs", OperatorType.FUNCTION_1, 20),
+		new Operator("signum", OperatorType.FUNCTION_1, 20),
+		new Operator("floor", OperatorType.FUNCTION_1, 20),
+		new Operator("ceil", OperatorType.FUNCTION_1, 20),
+		new Operator("round", OperatorType.FUNCTION_1, 20),
+		new Operator("sin", OperatorType.FUNCTION_1, 20),
+		new Operator("cos", OperatorType.FUNCTION_1, 20),
+		new Operator("tan", OperatorType.FUNCTION_1, 20),
+		new Operator("asin", OperatorType.FUNCTION_1, 20),
+		new Operator("acos", OperatorType.FUNCTION_1, 20),
+		new Operator("atan", OperatorType.FUNCTION_1, 20),
+		new Operator("atan2", OperatorType.FUNCTION_2, 20),
+		new Operator("sinh", OperatorType.FUNCTION_1, 20),
+		new Operator("cosh", OperatorType.FUNCTION_1, 20),
+		new Operator("tanh", OperatorType.FUNCTION_1, 20),
+		new Operator("sqr", OperatorType.FUNCTION_1, 20), // square
+		new Operator("sqrt", OperatorType.FUNCTION_1, 20), // square root
+		new Operator("cbrt", OperatorType.FUNCTION_1, 20), // cube root
+		new Operator("log10", OperatorType.FUNCTION_1, 20),
+		new Operator("log", OperatorType.FUNCTION_1, 20),
+		new Operator("exp", OperatorType.FUNCTION_1, 20),
+		new Operator("pow", OperatorType.FUNCTION_2, 20),
+		new Operator("max", OperatorType.FUNCTION_2, 20),
+		new Operator("min", OperatorType.FUNCTION_2, 20),
+		new Operator("random", OperatorType.FUNCTION_0, 20),
+		new Operator("toDegrees", OperatorType.FUNCTION_1, 20),
+		new Operator("toRadians", OperatorType.FUNCTION_1, 20),
+	};
+
+   	private Node m_node;
 	private String m_expression;
-	private HashMap<String, double> m_variables = new HashMap<String, double>();
+	private HashMap<String, Double> m_variables = new HashMap<String, Double>();
 
 	/**
 	 * To run the program in command line.
-	 * Usage: java ExpressionEvaluator.main "math m_expression"
+	 * Usage: java ExpressionEvaluator.main "math expression"
 	 */
 	public static void main(String[] args)
 	{
 		if ( args == null || args.length != 1)
 		{
 			System.err.println("Mathematical Expression Evaluator");
-			System.err.println("Usage: java ExpressionEvaluator.main \"math m_expression\"");
+			System.err.println("Usage: java ExpressionEvaluator.main \"math expression\"");
 			System.exit(0);
 		}
 
@@ -69,10 +131,6 @@ public class ExpressionEvaluator
 
 	private void Init()
 	{
-	   	if (s_operators == null)
-		{
-			InitializeOperators();
-		}
 		m_variables.put("E", Math.E);
 		m_variables.put("PI", Math.PI);
 	}
@@ -100,6 +158,7 @@ public class ExpressionEvaluator
 	{
 		m_node = null;
 		m_expression = null;
+	}
 
 	/**
 	 * Resets the evaluator.
@@ -151,14 +210,14 @@ public class ExpressionEvaluator
 	{
 		if (node.HasOperator() && node.HasChild() )
 		{
-			if (node.GetOperator().GetType() == 1) // Unary
+			if (node.GetOperator().GetType() == OperatorType.UNARY) // Unary
 			{
-				npde.SetValue(EvaluateExpression(
+				node.SetValue(EvaluateExpression(
 						node.GetOperator(),
 						Evaluate(node.GetLeft()),
-						null));
+						0));
 			}
-			else if (node.GetOperator().GetType() == 2)
+			else if (node.GetOperator().GetType() == OperatorType.BINARY)
 			{
 				node.SetValue(EvaluateExpression(
 						node.GetOperator(),
@@ -169,103 +228,38 @@ public class ExpressionEvaluator
 		return node.Eval();
 	}
 
-	private static double EvaluateExpression(Operator operator, double f1, double f2)
+	private static double EvaluateExpression(Operator operator, double d1, double d2)
 	{
-		String op 	= o.getOperator();
-		Double res 	= null;
+		String op = operator.GetOperator();
+		double res = 0;
 
-		if  	 ( "+".equals(op) ) 	res = new Double( f1.doubleValue() + f2.doubleValue() );
-		else if  ( "-".equals(op) ) 	res = new Double( f1.doubleValue() - f2.doubleValue() );
-		else if  ( "*".equals(op) ) 	res = new Double( f1.doubleValue() * f2.doubleValue() );
-		else if  ( "/".equals(op) )  	res = new Double( f1.doubleValue() / f2.doubleValue() );
-		else if  ( "^".equals(op) )  	res = new Double( Math.pow(f1.doubleValue(), f2.doubleValue()) );
-		else if  ( "%".equals(op) )  	res = new Double( f1.doubleValue() % f2.doubleValue() );
-		else if  ( "&".equals(op) )  	res = new Double( f1.doubleValue() + f2.doubleValue() ); // todo
-		else if  ( "|".equals(op) )  	res = new Double( f1.doubleValue() + f2.doubleValue() ); // todo
-		else if  ( "cos".equals(op) )  	res = new Double( Math.cos(f1.doubleValue()) );
-		else if  ( "sin".equals(op) )  	res = new Double( Math.sin(f1.doubleValue()) );
-		else if  ( "tan".equals(op) )  	res = new Double( Math.tan(f1.doubleValue()) );
-		else if  ( "acos".equals(op) )  res = new Double( Math.acos(f1.doubleValue()) );
-		else if  ( "asin".equals(op) )  res = new Double( Math.asin(f1.doubleValue()) );
-		else if  ( "atan".equals(op) )  res = new Double( Math.atan(f1.doubleValue()) );
-		else if  ( "sqr".equals(op) )  	res = new Double( f1.doubleValue() * f1.doubleValue() );
-		else if  ( "sqrt".equals(op) )  res = new Double( Math.sqrt(f1.doubleValue()) );
-		else if  ( "log".equals(op) )  	res = new Double( Math.log(f1.doubleValue()) );
-		else if  ( "min".equals(op) )  	res = new Double( Math.min(f1.doubleValue(), f2.doubleValue()) );
-		else if  ( "max".equals(op) )  	res = new Double( Math.max(f1.doubleValue(), f2.doubleValue()) );
-		else if  ( "exp".equals(op) )  	res = new Double( Math.exp(f1.doubleValue()) );
-		else if  ( "floor".equals(op) ) res = new Double( Math.floor(f1.doubleValue()) );
-		else if  ( "ceil".equals(op) )  res = new Double( Math.ceil(f1.doubleValue()) );
-		else if  ( "abs".equals(op) )  	res = new Double( Math.abs(f1.doubleValue()) );
-		else if  ( "neg".equals(op) )  	res = new Double( - f1.doubleValue() );
-		else if  ( "rnd".equals(op) ) 	res = new Double( Math.random() * f1.doubleValue() );
+		if      (op.equals("+"))     res =  d1 + d2;
+		else if (op.equals("-"))     res =  d1 - d2;
+		else if (op.equals("*"))     res =  d1 * d2;
+		else if (op.equals("/"))     res =  d1 / d2;
+		else if (op.equals("^"))     res =  Math.pow(d1, d2);
+		else if (op.equals("%"))     res =  d1 % d2;
+		else if (op.equals("&"))     res =  d1 + d2; // todo
+		else if (op.equals("|"))     res =  d1 + d2; // todo
+		else if (op.equals("cos"))   res =  Math.cos(d1);
+		else if (op.equals("sin"))   res =  Math.sin(d1);
+		else if (op.equals("tan"))   res =  Math.tan(d1);
+		else if (op.equals("acos"))  res =  Math.acos(d1);
+		else if (op.equals("asin"))  res =  Math.asin(d1);
+		else if (op.equals("atan"))  res =  Math.atan(d1);
+		else if (op.equals("sqr"))   res =  d1 * d1;
+		else if (op.equals("sqrt"))  res =  Math.sqrt(d1);
+		else if (op.equals("log"))   res =  Math.log(d1);
+		else if (op.equals("min"))   res =  Math.min(d1, d2);
+		else if (op.equals("max"))   res =  Math.max(d1, d2);
+		else if (op.equals("exp"))   res =  Math.exp(d1);
+		else if (op.equals("floor")) res =  Math.floor(d1);
+		else if (op.equals("ceil"))  res =  Math.ceil(d1);
+		else if (op.equals("abs"))   res =  Math.abs(d1);
+		else if (op.equals("neg"))   res =  - d1;
+		else if (op.equals("rnd"))   res =  Math.random() * d1;
 
 		return res;
-	}
-
-	private void InitializeOperators()
-	{
-		s_operators = new Operator
-		{
-			// Base on http://www.uni-bonn.de/~manfear/javaoperators.php
-			// Operator symbol, type (unary/binary) and priority
-			new Operator("+", 1, 2), // unary plus
-			new Operator("-", 1, 2), // unary minus
-			new Operator("~", 1, 2), // bitwise NOT
-//~ 			new Operator("!", 1, 2), // boolean (logical) NOT
-			new Operator("*", 2, 3), // multiplication
-			new Operator("/", 2, 3), // division
-			new Operator("%", 2, 3), // remainder
-			new Operator("+", 2, 4), // addition
-			new Operator("-", 2, 4), // substraction
-			new Operator("<<", 2, 5), // signed bit shift left
-			new Operator(">>", 2, 5), // signed bit shift right
-			new Operator(">>>", 2, 5), // unsigned bit shift right
-//~ 			new Operator("<", 2, 6), // less than
-//~ 			new Operator("<=", 2, 6), // less than or equal to
-//~ 			new Operator(">", 2, 6), // greater than
-//~ 			new Operator(">=", 2, 6), // greater than or equal to
-//~ 			new Operator("==", 2, 7), // equal to
-//~ 			new Operator("!=", 2, 7), // not equal to
-			new Operator("&", 2, 8), // bitwise AND
-//~ 			new Operator("&", 2, 8), // boolean (logical) XOR
-			new Operator("^", 2, 9), // bitwise AND
-//~ 			new Operator("^", 2, 9), // boolean (logical) XOR
-			new Operator("|", 2, 10), // bitwise OR
-//~ 			new Operator("|", 2, 10), // boolean (logical) OR
-//~ 			new Operator("&&", 2, 11), // boolean (logical) AND with shortcut
-//~ 			new Operator("||", 2, 12), // boolean (logical) OR with shortcut
-//~ 			new Operator("?", 2, 13), // conditional part 1
-//~ 			new Operator(":", 2, 13), // conditional part 2
-//~ 			new Operator("=", 2, 14), // assignment (and combinated assignments)
-			new Operator("abs", 1, 20),
-			new Operator("signum", 1, 20),
-			new Operator("floor", 1, 20),
-			new Operator("ceil", 1, 20),
-			new Operator("round", 1, 20),
-			new Operator("sin", 1, 20),
-			new Operator("cos", 1, 20),
-			new Operator("tan", 1, 20),
-			new Operator("asin", 1, 20),
-			new Operator("acos", 1, 20),
-			new Operator("atan", 1, 20),
-			new Operator("atan2", 2, 20),
-			new Operator("sinh", 1, 20),
-			new Operator("cosh", 1, 20),
-			new Operator("tanh", 1, 20),
-			new Operator("sqr", 1, 20), // square
-			new Operator("sqrt", 1, 20), // square root
-			new Operator("cbrt", 1, 20), // cube root
-			new Operator("log10", 1, 20),
-			new Operator("log", 1, 20),
-			new Operator("exp", 1, 20),
-			new Operator("pow", 2, 20),
-			new Operator("max", 2, 20),
-			new Operator("min", 2, 20),
-			new Operator("random", 0, 20),
-			new Operator("toDegrees", 1, 20),
-			new Operator("toRadians", 1, 20),
-		}
 	}
 
 	/***
@@ -276,7 +270,7 @@ public class ExpressionEvaluator
 		return (Double) m_variables.get(s);
 	}
 
-	private Double getDouble(String s)
+	protected Double getDouble(String s)
 	{
 		if ( s == null ) return null;
 
@@ -298,53 +292,59 @@ public class ExpressionEvaluator
 		return s_operators;
 	}
 
-	protected class Operator
+	protected static class Operator
 	{
-		private String op;
-		private int type;
-		private int priority;
+		private String m_operator;
+		private OperatorType m_type;
+		private int m_priority;
 
-		public Operator(String o, int t, int p)
+		public Operator(String o, OperatorType t, int p)
 		{
-			op = o;
-			type = t;
-			priority = p;
+			m_operator = o;
+			m_type = t;
+			m_priority = p;
 		}
 
-		public String getOperator()
+		public String GetOperator()
 		{
-			return op;
+			return m_operator;
 		}
 
-		public void setOperator(String o)
+		public void SetOperator(String o)
 		{
-			op = o;
+			m_operator = o;
 		}
 
-		public int getType()
+		public OperatorType GetType()
 		{
-			return type;
+			return m_type;
 		}
 
-		public int getPriority()
+		public int GetPriority()
 		{
-			return priority;
+			return m_priority;
 		}
 	}
 
-	protected class Node
+	protected static class Node
 	{
-		public String 	nString		= null;
-		public Operator nOperator 	= null;
-		public Node 	nLeft		= null;
-		public Node 	nRight		= null;
-		public Node 	nParent		= null;
-		public int		nLevel		= 0;
-		public Double  	nValue		= null;
+		public String  	nString;
+		public Operator nOperator;
+		public Node 	nLeft;
+		public Node 	nRight;
+		public Node 	nParent;
+		public int		nLevel;
+		public Double  	nValue;
 
 		public Node(String s) throws Exception
 		{
 			init(null, s, 0);
+		}
+
+		public void Dump()
+		{
+			// TODO Auto-generated method stub
+
 		}
 
 		public Node(Node parent, String s, int level) throws Exception
@@ -354,14 +354,14 @@ public class ExpressionEvaluator
 
 		private void init(Node parent, String s, int level) throws Exception
 		{
-			s = removeIllegalCharacters(s);
-			s = removeBrackets(s);
-			s = addZero(s);
-			if ( checkBrackets(s) != 0 ) throw new Exception("Wrong number of brackets in [" + s + "]");
+			s = RemoveIllegalCharacters(s);
+			s = RemoveBrackets(s);
+			s = AddZero(s);
+			if ( CheckBrackets(s) != 0 ) throw new Exception("Wrong number of brackets in [" + s + "]");
 
 			nParent				= parent;
 			nString 			= s;
-			nValue				= getDouble(s);
+			nValue				= 0d;//!!!getDouble(s);
 			nLevel 				= level;
 			int sLength  		= s.length();
 			int inBrackets		= 0;
@@ -375,14 +375,14 @@ public class ExpressionEvaluator
 					inBrackets--;
 				else
 				{
-					// the m_expression must be at "root" level
+					// the expression must be at "root" level
 					if ( inBrackets == 0 )
 					{
-						Operator o = getOperator(nString,i);
+						Operator o = GetOperator(nString,i);
 						if ( o != null )
 						{
 							// if first operator or lower priority operator
-							if ( nOperator == null || nOperator.getPriority() >= o.getPriority() )
+							if ( nOperator == null || nOperator.GetPriority() >= o.GetPriority() )
 							{
 								nOperator 		= o;
 								startOperator 	= i;
@@ -395,12 +395,12 @@ public class ExpressionEvaluator
 			if ( nOperator != null )
 			{
 				// one operand, should always be at the beginning
-				if ( startOperator==0 && nOperator.getType() == 1 )
+				if ( startOperator==0 && nOperator.GetType() == OperatorType.UNARY )
 				{
 					// the brackets must be ok
-					if ( checkBrackets( s.substring( nOperator.getOperator().length() ) ) == 0 )
+					if ( CheckBrackets( s.substring( nOperator.GetOperator().length() ) ) == 0 )
 					{
-						nLeft  = new Node( this, s.substring( nOperator.getOperator().length() ) , nLevel + 1);
+						nLeft  = new Node( this, s.substring( nOperator.GetOperator().length() ) , nLevel + 1);
 						nRight = null;
 						return;
 					}
@@ -408,29 +408,28 @@ public class ExpressionEvaluator
 						throw new Exception("Error during parsing... missing brackets in [" + s + "]");
 				}
 				// two operands
-				else if ( startOperator > 0 && nOperator.getType() == 2 )
+				else if ( startOperator > 0 && nOperator.GetType() == OperatorType.BINARY )
 				{
 					nOperator = nOperator;
 					nLeft 	= new Node( this, s.substring(0,  startOperator), nLevel + 1 );
-					nRight 	= new Node( this, s.substring(startOperator + nOperator.getOperator().length()), nLevel + 1);
+					nRight 	= new Node( this, s.substring(startOperator + nOperator.GetOperator().length()), nLevel + 1);
 				}
 			}
 		}
 
-		private Operator getOperator(String s, int start)
+		private Operator GetOperator(String s, int start)
 		{
-			Operator[] s_operators = getOperators();
 			String temp = s.substring(start);
-			temp = getNextWord(temp);
+			temp = GetNextWord(temp);
 			for (int i=0; i<s_operators.length; i++)
 			{
-				if ( temp.startsWith(s_operators[i].getOperator()) )
+				if ( temp.startsWith(s_operators[i].GetOperator()) )
 					return s_operators[i];
 			}
 			return null;
 		}
 
-		private String getNextWord(String s)
+		private String GetNextWord(String s)
 		{
 			int sLength = s.length();
 			for (int i=1; i<sLength; i++)
@@ -446,7 +445,7 @@ public class ExpressionEvaluator
 		 * checks if there is any missing brackets
 		 * @return true if s is valid
 		 */
-		protected int checkBrackets(String s)
+		protected int CheckBrackets(String s)
 		{
 			int sLength  	= s.length();
 			int inBracket   = 0;
@@ -463,16 +462,16 @@ public class ExpressionEvaluator
 		}
 
 		/***
-		 * returns a string that doesnt start with a + or a -
+		 * returns a string that doesn't start with a + or a -
 		 */
-		protected String addZero(String s)
+		protected String AddZero(String s)
 		{
 			if ( s.startsWith("+") || s.startsWith("-") )
 			{
 				int sLength  	= s.length();
 				for (int i=0; i<sLength; i++)
 				{
-					if ( getOperator(s, i) != null )
+					if ( GetOperator(s, i) != null )
 						return "0" + s;
 				}
 			}
@@ -481,52 +480,52 @@ public class ExpressionEvaluator
 		}
 
 		/***
-		 * displays the tree of the m_expression
+		 * displays the tree of the expression
 		 */
 		public void trace()
 		{
-			String op = getOperator() == null ? " " : getOperator().getOperator() ;
+			String op = nOperator == null ? " " : nOperator.GetOperator() ;
 			_D( op + " : " + getString() );
-			if ( this.hasChild() )
+			if (HasChild())
 			{
-				if ( hasLeft() )
-					getLeft().trace();
-				if ( hasRight() )
-					getRight().trace();
+				if (HasLeft())
+					GetLeft().trace();
+				if (HasRight())
+					GetRight().trace();
 			}
 		}
 
-		protected boolean hasChild()
+		protected boolean HasChild()
 		{
-			return ( nLeft != null || nRight != null );
+			return nLeft != null || nRight != null;
 		}
 
-		protected boolean hasOperator()
+		protected boolean HasOperator()
 		{
-			return ( nOperator != null );
+			return nOperator != null;
 		}
 
-		protected boolean hasLeft()
+		protected boolean HasLeft()
 		{
-			return ( nLeft != null );
+			return nLeft != null;
 		}
 
-		protected Node getLeft()
+		protected Node GetLeft()
 		{
 			return nLeft;
 		}
 
-		protected boolean hasRight()
+		protected boolean HasRight()
 		{
-			return ( nRight != null );
+			return nRight != null;
 		}
 
-		protected Node getRight()
+		protected Node GetRight()
 		{
 			return nRight;
 		}
 
-		protected Operator getOperator()
+		protected Operator GetOperator()
 		{
 			return nOperator;
 		}
@@ -536,14 +535,14 @@ public class ExpressionEvaluator
 			return nLevel;
 		}
 
-		protected Double Eval()
+		protected double Eval()
 		{
 			return nValue;
 		}
 
-		protected void setValue(Double f)
+		protected void SetValue(double d)
 		{
-			nValue = f;
+			nValue = d;
 		}
 
 		protected String getString()
@@ -552,17 +551,17 @@ public class ExpressionEvaluator
 		}
 
 		/***
-		 * Removes spaces, tabs and brackets at the begining
+		 * Removes spaces, tabs and brackets at the beginning
 		 */
-		public String removeBrackets(String s)
+		public String RemoveBrackets(String s)
 		{
 			String res = s;
-			if ( s.length() > 2 && res.startsWith("(") && res.endsWith(")") && checkBrackets(s.substring(1,s.length()-1)) == 0 )
+			if ( s.length() > 2 && res.startsWith("(") && res.endsWith(")") && CheckBrackets(s.substring(1,s.length()-1)) == 0 )
 			{
 				res = res.substring(1, res.length()-1 );
 			}
 			if ( res != s )
-				return removeBrackets(res);
+				return RemoveBrackets(res);
 			else
 		 	   return res;
 		}
@@ -570,7 +569,7 @@ public class ExpressionEvaluator
 		/***
 		 * Removes illegal characters
 		 */
-		public String removeIllegalCharacters(String s)
+		public String RemoveIllegalCharacters(String s)
 		{
 			char[] illegalCharacters = { ' ' };
 			String res = s;
@@ -594,6 +593,18 @@ public class ExpressionEvaluator
 			String nbSpaces = "";
 			for (int i=0; i<nLevel; i++) nbSpaces += "  ";
 			System.out.println(nbSpaces + "|" + s);
+		}
+	}
+
+	protected static enum OperatorType
+	{
+		UNARY(1), BINARY(2), FUNCTION_0(0), FUNCTION_1(1), FUNCTION_2(2);
+
+		private final int m_cardinality;
+
+		OperatorType(int cardinality)
+		{
+			m_cardinality = cardinality;
 		}
 	}
 
