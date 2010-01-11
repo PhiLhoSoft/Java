@@ -4,10 +4,10 @@ class Test
 {
   public static void main(String args[])
   {
-    List<String> l = new ArrayList<String>();
-    l.add("foo");
-    Object[] la = l.toArray();
-    System.out.println(la.length);
+    List<String> \u611b = new ArrayList<String>();
+    \u611b.add("foo");
+    Object[] \u6850 = \u611b.toArray();
+    System.out.println(\u6850.length);
   }
 }
 

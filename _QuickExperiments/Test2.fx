@@ -21,12 +21,11 @@ Stage
 	{
 		width:  200
 		height: 200
-		content:
-			DelegateShape
-			{
-				shape: bind geom
-				fill: Color.BLUE
-			}
+		content: DelegateShape
+		{
+			shape: bind geom
+			fill: Color.GREEN
+		}
 	}
 }
 
