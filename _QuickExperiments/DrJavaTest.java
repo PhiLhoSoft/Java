@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.Arrays;
 
 public class DrJavaTest
 {
@@ -7,13 +7,7 @@ public class DrJavaTest
 
     public static void main(String args[])
     {
-      Vector<Integer> numbers = new Vector();
-      numbers.add(1);
-      numbers.add(2);
-      numbers.add(3);
-      for (int i=0;i<numbers.size();i++) {
-         Integer num = numbers.elementAt(i);
-         System.out.println(num);
-      }
+      String[] sa = { "One", "Two", "Three" };
+      System.out.println("Foo: " + Arrays.toString(sa));
     }
 }
