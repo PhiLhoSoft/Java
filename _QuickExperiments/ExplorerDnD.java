@@ -8,20 +8,22 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
-public class ListDemo extends JFrame
-					  implements ListSelectionListener
+// Based on code found at http://www.codeproject.com/KB/list/dnd.aspx
+
+public class ExplorerDnD extends JFrame
+		implements ListSelectionListener
 {
 	private DroppableList list;
 	private JTextField fileName;
 
-	public ListDemo()
+	public ExplorerDnD()
 	{
-		super("ListDemo");
+		super("ExplorerDnD");
 
 		//Create the list and put it in a scroll pane
 
 		list = new DroppableList();
-		DefaultListModel listModel = (DefaultListModel)list.getModel();
+		DefaultListModel listModel = (DefaultListModel) list.getModel();
 		list.setCellRenderer(new CustomCellRenderer());
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setSelectedIndex(0);
@@ -36,17 +38,19 @@ public class ListDemo extends JFrame
 			File thisFile = new File(thisFileSt);
 			if (thisFile.isDirectory())
 				continue;
-			try {
+			try
+			{
 				listModel.addElement(makeNode(thisFile.getName(),
-											  thisFile.toURL().toString(),
-											  thisFile.getAbsolutePath()));
-			} catch (java.net.MalformedURLException e){
+						thisFile.toURL().toString(),
+						thisFile.getAbsolutePath()));
+			}
+			catch (java.net.MalformedURLException e)
+			{
 			}
 		}
 
 		fileName = new JTextField(50);
-		String name = listModel.getElementAt(
-							  list.getSelectedIndex()).toString();
+		String name = listModel.getElementAt(list.getSelectedIndex()).toString();
 		fileName.setText(name);
 
 		//Create a panel that uses FlowLayout (the default).
@@ -71,27 +75,31 @@ public class ListDemo extends JFrame
 		}
 	}
 
-	private static Hashtable makeNode(String name,
-		String url, String strPath)
+	protected class ListNode
 	{
-		Hashtable hashtable = new Hashtable();
-		hashtable.put("name", name);
-		hashtable.put("url", url);
-		hashtable.put("path", strPath);
-		return hashtable;
+		String m_name;
+		String m_url;
+		String m_path;
+
+		ListNode(String name, String url, String path)
+		{
+			m_name = name;
+			m_url = url;
+			m_path = path;
+		}
 	}
 
 	public class DroppableList extends JList
-		implements DropTargetListener, DragSourceListener, DragGestureListener
+			implements DropTargetListener, DragSourceListener, DragGestureListener
 	{
 		DropTarget dropTarget = new DropTarget (this, this);
 		DragSource dragSource = DragSource.getDefaultDragSource();
 
 		public DroppableList()
 		{
-		  dragSource.createDefaultDragGestureRecognizer(
-			  this, DnDConstants.ACTION_COPY_OR_MOVE, this);
-		  setModel(new DefaultListModel());
+			dragSource.createDefaultDragGestureRecognizer(
+				this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+			setModel(new DefaultListModel());
 		}
 
 		public void dragDropEnd(DragSourceDropEvent DragSourceDropEvent){}
@@ -102,7 +110,7 @@ public class ListDemo extends JFrame
 
 		public void dragEnter (DropTargetDragEvent dropTargetDragEvent)
 		{
-		  dropTargetDragEvent.acceptDrag (DnDConstants.ACTION_COPY_OR_MOVE);
+			dropTargetDragEvent.acceptDrag (DnDConstants.ACTION_COPY_OR_MOVE);
 		}
 
 		public void dragExit (DropTargetEvent dropTargetEvent) {}
@@ -123,22 +131,29 @@ public class ListDemo extends JFrame
 					Iterator iterator = fileList.iterator();
 					while (iterator.hasNext())
 					{
-					  File file = (File)iterator.next();
-					  Hashtable hashtable = new Hashtable();
-					  hashtable.put("name",file.getName());
-					  hashtable.put("url",file.toURL().toString());
-					  hashtable.put("path",file.getAbsolutePath());
-					  ((DefaultListModel)getModel()).addElement(hashtable);
+						File file = (File) iterator.next();
+						ListNode ln = new ListNode(
+							file.getName(),
+							file.toURI().toURL().toString(),
+							file.getAbsolutePath()
+						);
+						((DefaultListModel) getModel()).addElement(ln);
 					}
 					dropTargetDropEvent.getDropTargetContext().dropComplete(true);
-			  } else {
-				System.err.println ("Rejected");
-				dropTargetDropEvent.rejectDrop();
-			  }
-			} catch (IOException io) {
+				}
+				else
+				{
+					System.err.println ("Rejected");
+					dropTargetDropEvent.rejectDrop();
+				}
+			}
+			catch (IOException io)
+			{
 				io.printStackTrace();
 				dropTargetDropEvent.rejectDrop();
-			} catch (UnsupportedFlavorException ufe) {
+			}
+			catch (UnsupportedFlavorException ufe)
+			{
 				ufe.printStackTrace();
 				dropTargetDropEvent.rejectDrop();
 			}
@@ -149,47 +164,47 @@ public class ListDemo extends JFrame
 			if (getSelectedIndex() == -1)
 				return;
 			Object obj = getSelectedValue();
-			if (obj == null) {
+			if (obj == null)
+			{
 				// Nothing selected, nothing to drag
 				System.out.println ("Nothing selected - beep");
 				getToolkit().beep();
-			} else {
-				Hashtable table = (Hashtable)obj;
-				FileSelection transferable =
-				  new FileSelection(new File((String)table.get("path")));
+			}
+			else
+			{
+				ListNode ln = (ListNode) obj;
+				FileSelection transferable = new FileSelection(new File(ln.m_path));
 				dragGestureEvent.startDrag(
-				  DragSource.DefaultCopyDrop,
-				  transferable,
-				  this);
+						DragSource.DefaultCopyDrop,
+						transferable,
+						this);
 			}
 		}
 	}
 
 	public class CustomCellRenderer implements ListCellRenderer
 	{
-		DefaultListCellRenderer listCellRenderer =
-		  new DefaultListCellRenderer();
+		DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
 		public Component getListCellRendererComponent(
 			JList list, Object value, int index,
 			boolean selected, boolean hasFocus)
 		{
-			listCellRenderer.getListCellRendererComponent(
-			  list, value, index, selected, hasFocus);
+			listCellRenderer.getListCellRendererComponent(list, value, index, selected, hasFocus);
 			listCellRenderer.setText(getValueString(value));
 			return listCellRenderer;
 		}
+
 		private String getValueString(Object value)
 		{
-			String returnString = "null";
-			if (value != null) {
-			  if (value instanceof Hashtable) {
-				Hashtable h = (Hashtable)value;
-				String name = (String)h.get("name");
-				String url = (String)h.get("url");
-				returnString = name + " ==> " + url;
-			  } else {
-				returnString = "X: " + value.toString();
-			  }
+			String returnString = null;
+			if (value instanceof ListNode)
+			{
+				ListNode ln = (ListNode) value;
+				returnString = ln.m_name + " - " + ln.m_url;
+			}
+			else
+			{
+				returnString = "?: " + value.toString();
 			}
 			return returnString;
 		}
@@ -200,52 +215,72 @@ public class ListDemo extends JFrame
 		final static int FILE = 0;
 		final static int STRING = 1;
 		final static int PLAIN = 2;
-		DataFlavor flavors[] = {DataFlavor.javaFileListFlavor,
-								DataFlavor.stringFlavor,
-								DataFlavor.plainTextFlavor};
+
+		DataFlavor flavors[] =
+		{
+			DataFlavor.javaFileListFlavor,
+			DataFlavor.stringFlavor,
+			DataFlavor.plainTextFlavor
+		};
+
 		public FileSelection(File file)
 		{
 			addElement(file);
 		}
 		/* Returns the array of flavors in which it can provide the data. */
-		public synchronized DataFlavor[] getTransferDataFlavors() {
-		return flavors;
+		public synchronized DataFlavor[] getTransferDataFlavors()
+		{
+			return flavors;
 		}
 		/* Returns whether the requested flavor is supported by this object. */
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
+		public boolean isDataFlavorSupported(DataFlavor flavor)
+		{
 			boolean b  = false;
 			b |=flavor.equals(flavors[FILE]);
 			b |= flavor.equals(flavors[STRING]);
 			b |= flavor.equals(flavors[PLAIN]);
-			return (b);
+			return b;
 		}
+
 		/**
 		 * If the data was requested in the "java.lang.String" flavor,
 		 * return the String representing the selection.
 		 */
 		public synchronized Object getTransferData(DataFlavor flavor)
-				throws UnsupportedFlavorException, IOException {
-		if (flavor.equals(flavors[FILE])) {
-			return this;
-		} else if (flavor.equals(flavors[PLAIN])) {
-			return new StringReader(((File)elementAt(0)).getAbsolutePath());
-		} else if (flavor.equals(flavors[STRING])) {
-			return((File)elementAt(0)).getAbsolutePath();
-		} else {
-			throw new UnsupportedFlavorException(flavor);
-		}
+				throws UnsupportedFlavorException, IOException
+		{
+			if (flavor.equals(flavors[FILE]))
+			{
+				return this;
+			}
+			else if (flavor.equals(flavors[PLAIN]))
+			{
+				return new StringReader(((File) elementAt(0)).getAbsolutePath());
+			}
+			else if (flavor.equals(flavors[STRING]))
+			{
+				return((File) elementAt(0)).getAbsolutePath();
+			}
+			else
+			{
+				throw new UnsupportedFlavorException(flavor);
+			}
 		}
 	}
 
-	public static void main(String s[])
+	public static void main(String[] args)
 	{
-		JFrame frame = new ListDemo();
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-		frame.pack();
-		frame.setVisible(true);
+        // Schedule a job for the event-dispatching thread:
+        // creating and showing this application's GUI.
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                JFrame display = new ExplorerDnD();
+                display.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                display.pack();
+                display.setVisible(true);
+            }
+        });
 	}
 }
