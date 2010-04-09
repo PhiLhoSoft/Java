@@ -159,14 +159,14 @@ public class WrapGraphicsText extends JFrame
 				"But newlines are ignored, apparently.";
 
 		TextContainer label = new TextContainer(text, 200, 200);
-		cont.add(label) ;
+		cont.add(label);
 		RoundTextContainer roundLabel = new RoundTextContainer(text +
 				"This is ano ther quite long string to be wrap ped au to ma ti cal ly." +
 				"It can run on se ve ral li nes, and it will be wrap ped " +
 				"ni ce ly by Ja va. Nif ty, eh? " +
 				"But new li nes are ig no red, ap pa ren tly.",
 				400, 400);
-		cont.add(roundLabel) ;
+		cont.add(roundLabel);
 	}
 
 	/**
