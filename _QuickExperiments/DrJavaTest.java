@@ -1,40 +1,29 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.util.*;
+import java.io.*;
+import javax.xml.stream.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-public class GradientPaintDemo extends JPanel {
-  public void init() {
-    setBackground(Color.white);
+public class DrJavaTest
+{
+  public static void main(String args[])
+  {
+    String dirname = "D:/Dev/PhiLhoSoft/Java";
+    File f1 = new File(dirname);
+    FilenameFilter fnf = new ShowFile();
+    String s[] = f1.list(fnf);
+    /*
+    for (String fileName : s)
+    {
+      System.out.println(fileName);
+    }
+    */
   }
+}
 
-  public void paint(Graphics g) {
-    Graphics2D g2 = (Graphics2D) g;
-    g2.setPaint(new GradientPaint(0, 0, Color.lightGray, 200,
-        200, Color.blue, false));
-    Rectangle r = new Rectangle(5, 5, 200, 200);
-    g2.fill(r);
-  }
-
-  public static void main(String s[]) {
-    JFrame f = new JFrame();
-    f.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    });
-    GradientPaintDemo p = new GradientPaintDemo();
-    f.getContentPane().add("Center", p);
-    p.init();
-    f.pack();
-    f.setSize(new Dimension(250, 250));
-    f.show();
+class ShowFile implements FilenameFilter
+{
+  public boolean accept(File dir, String fileName)
+  {
+    System.out.println(dir.toString() + " -> " + fileName);
+    return true;
   }
 }

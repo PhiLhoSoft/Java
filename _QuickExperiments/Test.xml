@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><root><!--This is an attempt to create an XML file with StAX--><foo order="1"><meuh active="true">The cows are flying high this Spring</meuh></foo><separator/><bar order="2"><tcho kola="K">Content of tcho tag</tcho></bar></root>
