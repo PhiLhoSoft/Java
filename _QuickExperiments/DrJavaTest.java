@@ -27,3 +27,12 @@ class ShowFile implements FilenameFilter
     return true;
   }
 }
+
+abstract class Test
+{
+  public static void Gah()
+  {
+    System.out.println("In Gah");
+    double x = 3.1415926d;
+  }
+}

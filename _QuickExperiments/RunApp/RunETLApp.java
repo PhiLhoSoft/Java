@@ -30,9 +30,9 @@ public class RunETLApp extends Thread
 		"-Djava.ext.dirs=?i/lib;?i/jar/lib;?i/jar"
 	};
 
-	public RunETLApp( ETLAppDesc ead, String strInstallDir, String strConfigDir )
+	public RunETLApp(ETLAppDesc ead, String strInstallDir, String strConfigDir)
 	{
-		super( ead.GetThreadName() );
+		super(ead.GetThreadName());
 		m_ead = ead;
 		m_strInstallDir = strInstallDir;
 		m_strConfigDir = strConfigDir;
@@ -97,11 +97,11 @@ public class RunETLApp extends Thread
 	{
 		// Capture error messages
 		StreamGobbler errorGobbler = new
-				StreamGobbler( m_process.getErrorStream(), "E", m_ead.GetThreadName() );
+				StreamGobbler(m_process.getErrorStream(), "E", m_ead.GetThreadName());
 
 		// Capture output
 		StreamGobbler outputGobbler = new
-				StreamGobbler( m_process.getInputStream(), "O", m_ead.GetThreadName() );
+				StreamGobbler(m_process.getInputStream(), "O", m_ead.GetThreadName());
 
 		// Start output gobbler threads
 		errorGobbler.start();

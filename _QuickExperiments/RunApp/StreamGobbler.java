@@ -17,14 +17,14 @@ public class StreamGobbler extends Thread
 	String m_type;
 	String m_processName;
 
-	public StreamGobbler( InputStream is, String processName )
+	public StreamGobbler(InputStream is, String processName)
 	{
 		m_is = is;
 		m_type = "";
 		m_processName = processName;
 	}
 
-	public StreamGobbler( InputStream is, String type, String processName )
+	public StreamGobbler(InputStream is, String type, String processName)
 	{
 		m_is = is;
 		m_type = type;
@@ -33,27 +33,27 @@ public class StreamGobbler extends Thread
 
 	public void run()
 	{
-		InputStreamReader isr = new InputStreamReader( m_is );
-		BufferedReader br = new BufferedReader( isr );
+		InputStreamReader isr = new InputStreamReader(m_is);
+		BufferedReader br = new BufferedReader(isr);
 		String line = null;
 		try
 		{
-			while ( ( line = br.readLine()) != null )
+			while ((line = br.readLine()) != null)
 			{
-				HandleOutputLine( line );
+				HandleOutputLine(line);
 			}
 		}
-		catch ( IOException ioe )
+		catch (IOException ioe)
 		{
 			ioe.printStackTrace();
 		}
 	}
 
-	public String HandleOutputLine( String line )
+	public String HandleOutputLine(String line)
 	{
 		// Default implementation, to override
 		String l = m_processName + " " + m_type + "> " + line;
-		System.out.println( l );
+		System.out.println(l);
 		return l;
 	}
 }
