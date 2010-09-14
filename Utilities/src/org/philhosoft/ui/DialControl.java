@@ -1,10 +1,8 @@
 /*
- * Tests: A collection of little test programs to explore Java language.
- * Testing how to draw a dial control, showing an angle/direction,
- * that can be changed with the mouse.
+ * org.philhosoft.*: A collection of utility classes for Java.
  */
 /* File history:
- *  1.00.000 -- 2010/09/13 (PL) -- Creation
+ *  1.00.000 -- 2010/09/14 (PL) -- Creation (split from DialControlTest.java)
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
@@ -13,72 +11,24 @@ http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2010 Philippe Lhoste / PhiLhoSoft
 */
-package org.philhosoft.tests;
+package org.philhosoft.ui;
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.GradientPaint;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.DataBuffer;
-import java.awt.image.ComponentColorModel;
-import java.awt.color.ColorSpace;
-
-import java.io.*;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-
-public class DialControlTest
-{
-	public DialControlTest()
-	{
-	}
-
-	public JScrollPane GetGUI()
-	{
-		JPanel panel = new JPanel(new GridLayout(2, 2));
-
-		DialControl dc1 = new DialControl(200);
-		DialControl dc2 = new DialControl(100, new Color(180, 255, 220), false);
-		DialControl dc3 = new DialControl(100, new Color(180, 255, 220), true);
-		DialControl dc4 = new DialControl(300, new Color(250, 255, 220), true);
-		panel.add(dc1);
-		panel.add(dc2);
-		panel.add(dc3);
-		panel.add(dc4);
-
-		return new JScrollPane(panel);
-	}
-
-	public static void main(String[] args) throws IOException
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				JFrame f = new JFrame();
-				f.setTitle("Simple dial control");
-				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				DialControlTest cg = new DialControlTest();
-				f.setContentPane(cg.GetGUI());
-				f.setSize(500, 500);
-				f.setLocation(200, 200);
-				f.pack();
-				f.setVisible(true);
-			}
-		});
-	}
-}
-
-
-class DialControl extends JComponent implements MouseListener, MouseMotionListener
+/**
+ * A dial control, allowing to select an angle/direction with the mouse.
+ *
+ * @author Philippe Lhoste (PhiLho)
+ * @version 1.00.000
+ * @date 2010/09/14
+ */
+@SuppressWarnings("serial")
+public class DialControl extends JComponent implements MouseListener, MouseMotionListener
 {
 	private double m_angle;
 

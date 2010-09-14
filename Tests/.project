@@ -15,4 +15,16 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Utilities</name>
+			<type>2</type>
+			<location>D:/Dev/PhiLhoSoft/Java/Utilities</location>
+		</link>
+		<link>
+			<name>Utilities-src</name>
+			<type>2</type>
+			<location>D:/Dev/PhiLhoSoft/Java/Utilities/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>
