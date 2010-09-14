@@ -49,11 +49,11 @@ import org.philhosoft.io.*;
 public class SimpleFileFilter extends FileFilter
 {
 	/// List of accepted extensions
-	private HashMap m_filters;
+	private HashMap<String, String> m_filters;
 	/// Description of the set of extensions
-	private String m_description = null;
+	private String m_description;
 	/// Full description (may include the list of accepted extensions)
-	private String m_fullDescription = null;
+	private String m_fullDescription;
 	/// Indicates whether the extensions must be in the full description
 	private boolean m_bShowExtensionsInDescription = true;
 
@@ -66,7 +66,7 @@ public class SimpleFileFilter extends FileFilter
 	 */
 	public SimpleFileFilter()
 	{
-		m_filters = new HashMap();
+		m_filters = new HashMap<String, String>();
 	}
 
 	/**
@@ -147,6 +147,7 @@ public class SimpleFileFilter extends FileFilter
 	 * @see #getFileExtension
 	 * @see FileFilter#accepts
 	 */
+	@Override
 	public boolean accept(File f)
 	{
 		if (f != null)
@@ -177,6 +178,7 @@ public class SimpleFileFilter extends FileFilter
 	 * @see areExtensionsInDescription
 	 * @see FileFilter#getDescription
 	 */
+	@Override
 	public String getDescription()
 	{
 		if (m_fullDescription == null)
@@ -187,11 +189,11 @@ public class SimpleFileFilter extends FileFilter
 				if (m_filters.size() > 0)
 				{
 					m_fullDescription = m_description == null ? "" : m_description + " (";
-					Iterator it = m_filters.keySet().iterator();
-					m_fullDescription += "*." + (String)it.next();
+					Iterator<String> it = m_filters.keySet().iterator();
+					m_fullDescription += "*." + it.next();
 					while (it.hasNext())
 					{
-						m_fullDescription += ", *." + (String)it.next();
+						m_fullDescription += ", *." + it.next();
 					}
 					if (m_description != null)
 					{
@@ -259,7 +261,7 @@ public class SimpleFileFilter extends FileFilter
 	 * Determines whether the extension list (.jpg, .gif, etc) should
 	 * show up in the human readable description.
 	 *
-	 * Only relevent if a description was provided in the constructor
+	 * Only relevant if a description was provided in the constructor
 	 * or using setDescription();
 	 *
 	 * @see getDescription
@@ -287,9 +289,4 @@ public class SimpleFileFilter extends FileFilter
 	{
 		return m_bShowExtensionsInDescription;
 	}
-
-
-	/*===== Private methods =====*/
-
-
 }

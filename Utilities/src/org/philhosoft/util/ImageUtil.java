@@ -13,7 +13,6 @@ Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.util;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;

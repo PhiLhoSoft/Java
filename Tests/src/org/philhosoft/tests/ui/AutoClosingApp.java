@@ -13,7 +13,6 @@ Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
-import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -110,7 +109,12 @@ public class AutoClosingApp extends JFrame implements WindowListener
 
 	public static void main(String args[])
 	{
-		new AutoClosingApp();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				new AutoClosingApp();
+			}
+		});
 	}
-
 }
