@@ -34,9 +34,15 @@ public class DialControlTest
 		JPanel panel = new JPanel(new GridLayout(2, 2));
 
 		DialControl dc1 = new DialControl(200);
-		DialControl dc2 = new DialControl(100, new Color(180, 255, 220), false);
-		DialControl dc3 = new DialControl(100, new Color(180, 255, 220), true);
-		DialControl dc4 = new DialControl(300, new Color(250, 255, 220), true);
+		DialControl dc2 = new DialControl(100,
+				Color.BLACK,
+				new Color(180, 255, 220), false);
+		DialControl dc3 = new DialControl(100,
+				Color.WHITE,
+				new Color(180, 255, 220), true);
+		DialControl dc4 = new DialControl(300,
+				new Color(200, 55, 44),
+				new Color(250, 255, 220), true);
 		panel.add(dc1);
 		panel.add(dc2);
 		panel.add(dc3);

@@ -34,6 +34,7 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	private int m_size;
 	private int m_prevWidth;
+	private Color m_foreColor;
 	private Color m_backColor;
 	private boolean m_bGradient;
 	private Paint m_gpBackground;
@@ -42,9 +43,15 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 	private int m_centerX;
 	private int m_centerY;
 
+	/**
+	 * Simple constructor where only the size is defined.
+	 * Use a light gray color with gradient and black arrow.
+	 *
+	 * @param size  the pixel size (diameter) of the dial face. Must be above or equal to 32.
+	 */
 	public DialControl(int size)
 	{
-//~ 		m_backColor = getBackground();
+		m_foreColor = Color.BLACK;
 		m_backColor = Color.LIGHT_GRAY;
 		m_bGradient = true;
 
@@ -52,8 +59,18 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 		Resize(size);
 	}
 
-	public DialControl(int size, Color backColor, boolean bGradient)
+	/**
+	 * Constructor allowing to specify the size of the dial,
+	 * the color of the arrow, the color of the back, and if we use a pure color or a gradient.
+	 *
+	 * @param size       the pixel size (diameter) of the dial face
+	 * @param foreColor  the color of the arrow
+	 * @param backColor  the color of the back
+	 * @param bGradient  if false, use a pure back color, otherwise, make a gradient out of it
+	 */
+	public DialControl(int size, Color foreColor, Color backColor, boolean bGradient)
 	{
+		m_foreColor = foreColor;
 		m_backColor = backColor;
 		m_bGradient = bGradient;
 
@@ -69,6 +86,10 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	public void Resize(int size)
 	{
+		if (size < 32)
+		{
+			size = 32; // Impose a minimal size
+		}
 		m_size = size;
 		int lenArrow = (int) (m_size * 0.4) - 4;
 		int lenTip = lenArrow / 8;
@@ -91,11 +112,16 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	public double GetAngle()
 	{
-		return m_angle;
+		return 2 * Math.PI - m_angle;
 	}
 	public void SetBackColor(Color c)
 	{
 		m_backColor = c;
+		repaint();
+	}
+	public void SetForeColor(Color c)
+	{
+		m_foreColor = c;
 		repaint();
 	}
 
@@ -152,7 +178,7 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 		g2D.translate(m_centerX, m_centerY);
 		g2D.rotate(m_angle);
-		g2D.setColor(Color.BLACK);
+		g2D.setColor(m_foreColor);
 //~ 		g2D.rotate(m_angle - Math.PI / 2);
 //~ 		g2D.drawLine(0, 0, 0, (int) (m_size * 0.4) - 4);
 		g2D.drawPolygon(m_arrow);
@@ -183,6 +209,7 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	private void UpdateAngle(MouseEvent e, boolean bPressed)
 	{
+		boolean bConstraint = e.isControlDown();
 		int x = e.getX();
 		int y = e.getY();
 		float deltaX = (float) (x - m_centerX);
@@ -193,6 +220,14 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 			m_angle += 2 * Math.PI;
 		}
 //~ 		System.out.println("Drag " + 180 * m_angle / Math.PI);
+		if (bConstraint)
+		{
+			// angle between 0 and 16
+			m_angle = Math.ceil(8 * m_angle / Math.PI);
+			// Back to 0 - 2*PI
+			m_angle *= Math.PI / 8;
+		}
+		setToolTipText("Angle: " + Math.ceil(180 * GetAngle() * 100 / Math.PI) / 100);
 	}
 
 	@Override
