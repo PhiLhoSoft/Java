@@ -30,14 +30,22 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class DialControl extends JComponent implements MouseListener, MouseMotionListener
 {
+	/** The angle of the dial hand. */
 	private double m_angle;
 
+	/** The size of the dial face. */
 	private int m_size;
+	// To regenerate a gradient only if really needed
 	private int m_prevWidth;
+	/** The color of the hand. */
 	private Color m_foreColor;
+	/** The (base) color of the face. */
 	private Color m_backColor;
+	/** If true, the face uses a gradient. */
 	private boolean m_bGradient;
+	/** The gradient used to paint the face, if gradient is requested. */
 	private Paint m_gpBackground;
+	/** The polygon representing the hand, oriented to East. */
 	private Polygon m_arrow;
 
 	private int m_centerX;
@@ -51,12 +59,7 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 	 */
 	public DialControl(int size)
 	{
-		m_foreColor = Color.BLACK;
-		m_backColor = Color.LIGHT_GRAY;
-		m_bGradient = true;
-
-		InitListeners();
-		Resize(size);
+      this( size, Color.BLACK, Color.LIGHT_GRAY, true );
 	}
 
 	/**
@@ -70,6 +73,8 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 	 */
 	public DialControl(int size, Color foreColor, Color backColor, boolean bGradient)
 	{
+		super();
+
 		m_foreColor = foreColor;
 		m_backColor = backColor;
 		m_bGradient = bGradient;
@@ -110,9 +115,24 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 		repaint();
 	}
 
+	/**
+	 * Returns the chosen trigonometric angle, in radians.
+	 * @return the angle, in radians.
+	 */
+   // We have to convert the trigonometric angle to Java2D one (y axis toward South).
 	public double GetAngle()
 	{
 		return 2 * Math.PI - m_angle;
+	}
+	/**
+	 * Sets the trigonometric angle (counter-clockwise, 0 toward East), in radians.
+	 * @param angle  the angle to set, in radians.
+	 */
+	public void SetAngle( double angle )
+	{
+		m_angle = 2 * Math.PI - angle;
+		UpdateTooltip();
+		repaint();
 	}
 	public void SetBackColor(Color c)
 	{
@@ -153,35 +173,44 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 //~ 		g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 //~ 		g2D.setFont(m_font);
 
-		if (m_bGradient)
+		if (isEnabled())
 		{
-			UpdateBackColor();
-			g2D.setPaint(m_gpBackground);
+			if (m_bGradient)
+			{
+				UpdateBackColor();
+				g2D.setPaint(m_gpBackground);
+			}
+			else
+			{
+				g2D.setColor(m_backColor);
+			}
 		}
 		else
 		{
-			g2D.setColor(m_backColor);
+			g2D.setColor(Color.LIGHT_GRAY);
 		}
-		int margin = (getWidth() - m_size) / 2;
+
+		int margin = ( getWidth() - m_size ) / 2;
 		int size = m_size - 4;
-		m_centerX = getWidth() / 2 + 4;
-		m_centerY = getHeight() / 2 + 4;
+		m_centerX = getWidth() / 2;
+		m_centerY = getHeight() / 2;
 //~ 		System.out.println("W " + getWidth() + " M " + margin + " S " + size);
 
-		g2D.fillOval(margin, margin, size, size);
-		g2D.setColor(m_backColor.brighter());
-		g2D.drawOval(margin,     margin,     size, size);
-		g2D.drawOval(margin + 1, margin + 1, size, size);
-		g2D.setColor(m_backColor.darker().darker());
-		g2D.drawOval(margin + 2, margin + 2, size, size);
-		g2D.drawOval(margin + 3, margin + 3, size, size);
+		// Background of the dial face
+		g2D.fillOval( margin, margin, size, size );
+		// Draw the border, 4 circles of two colors to give a light 3D look
+		g2D.setColor( isEnabled() ? m_backColor.brighter() : Color.GRAY );
+		g2D.drawOval( margin,     margin,     size, size );
+		g2D.drawOval( margin + 1, margin + 1, size, size );
+		g2D.setColor( isEnabled() ? m_backColor.darker().darker() : Color.GRAY );
+		g2D.drawOval( margin + 2, margin + 2, size, size );
+		g2D.drawOval( margin + 3, margin + 3, size, size );
 
-		g2D.translate(m_centerX, m_centerY);
-		g2D.rotate(m_angle);
-		g2D.setColor(m_foreColor);
-//~ 		g2D.rotate(m_angle - Math.PI / 2);
-//~ 		g2D.drawLine(0, 0, 0, (int) (m_size * 0.4) - 4);
-		g2D.drawPolygon(m_arrow);
+		// Draw the dial hand
+		g2D.translate( m_centerX, m_centerY );
+		g2D.rotate( m_angle );
+		g2D.setColor( isEnabled() ? m_foreColor : Color.DARK_GRAY );
+		g2D.fillPolygon( m_arrow );
 
 		g2D.dispose();
 	}
@@ -207,8 +236,15 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 		return GetDimension();
 	}
 
+   private void UpdateTooltip()
+   {
+      setToolTipText( "Angle: " + Math.ceil( 180 * GetAngle() * 100 / Math.PI ) / 100 );
+   }
+
 	private void UpdateAngle(MouseEvent e, boolean bPressed)
 	{
+		if (!isEnabled())
+			return;
 		boolean bConstraint = e.isControlDown();
 		int x = e.getX();
 		int y = e.getY();
@@ -227,7 +263,7 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 			// Back to 0 - 2*PI
 			m_angle *= Math.PI / 8;
 		}
-		setToolTipText("Angle: " + Math.ceil(180 * GetAngle() * 100 / Math.PI) / 100);
+		UpdateTooltip();
 	}
 
 	@Override

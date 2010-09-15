@@ -31,22 +31,32 @@ public class DialControlTest
 
 	public JScrollPane GetGUI()
 	{
-		JPanel panel = new JPanel(new GridLayout(2, 2));
+		JPanel panel = new JPanel(new GridLayout(2, 3));
 
+		DialControl dc0 = new DialControl(10);
 		DialControl dc1 = new DialControl(200);
-		DialControl dc2 = new DialControl(100,
+		DialControl dc2 = new DialControl(300,
+				new Color(200, 55, 44),
+				new Color(250, 210, 220), true);
+		dc2.SetAngle(Math.PI / 4);
+		DialControl dc3 = new DialControl(100,
 				Color.BLACK,
 				new Color(180, 255, 220), false);
-		DialControl dc3 = new DialControl(100,
+		dc3.SetAngle(5 * Math.PI / 4);
+		DialControl dc4 = new DialControl(100,
 				Color.WHITE,
 				new Color(180, 255, 220), true);
-		DialControl dc4 = new DialControl(300,
-				new Color(200, 55, 44),
-				new Color(250, 255, 220), true);
+		DialControl dc5 = new DialControl(150,
+				new Color(66, 55, 44),
+				new Color(250, 155, 120), true);
+		dc5.SetAngle(-Math.PI / 4);
+		dc5.setEnabled(false);
+		panel.add(dc0);
 		panel.add(dc1);
 		panel.add(dc2);
 		panel.add(dc3);
 		panel.add(dc4);
+		panel.add(dc5);
 
 		return new JScrollPane(panel);
 	}
@@ -55,14 +65,15 @@ public class DialControlTest
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				JFrame f = new JFrame();
 				f.setTitle("Simple dial control");
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				DialControlTest cg = new DialControlTest();
-				f.setContentPane(cg.GetGUI());
-				f.setSize(500, 500);
+				DialControlTest dc = new DialControlTest();
+				f.setContentPane(dc.GetGUI());
+//				f.setSize(500, 500);
 				f.setLocation(200, 200);
 				f.pack();
 				f.setVisible(true);
