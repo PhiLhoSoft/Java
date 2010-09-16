@@ -35,8 +35,6 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	/** The size of the dial face. */
 	private int m_size;
-	// To regenerate a gradient only if really needed
-	private int m_prevWidth;
 	/** The color of the hand. */
 	private Color m_foreColor;
 	/** The (base) color of the face. */
@@ -48,8 +46,16 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 	/** The polygon representing the hand, oriented to East. */
 	private Polygon m_arrow;
 
+	// To regenerate a gradient only if really needed
+	private int m_prevWidth;
+   // Center of the control
 	private int m_centerX;
 	private int m_centerY;
+
+   public DialControl()
+   {
+      this( 64 );
+   }
 
 	/**
 	 * Simple constructor where only the size is defined.
@@ -91,6 +97,8 @@ public class DialControl extends JComponent implements MouseListener, MouseMotio
 
 	public void Resize(int size)
 	{
+      if ( size == m_size)
+         return;
 		if (size < 32)
 		{
 			size = 32; // Impose a minimal size
