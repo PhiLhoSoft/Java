@@ -61,7 +61,7 @@ public class StreamGobbler extends Thread
 		}
 		catch (IOException ioe)
 		{
-			ioe.printStackTrace();
+			HandleException(ioe);
 		}
 		finally
 		{
@@ -73,7 +73,7 @@ public class StreamGobbler extends Thread
 				}
 				catch (IOException ioe)
 				{
-					ioe.printStackTrace();
+					HandleException(ioe);
 				}
 			}
 		}
@@ -85,5 +85,11 @@ public class StreamGobbler extends Thread
 		String l = m_processName + " " + m_type + "> " + line;
 		System.out.println(l);
 		return l;
+	}
+
+	protected void HandleException(Exception ex)
+	{
+		// Default implementation, to override
+		ex.printStackTrace();
 	}
 }

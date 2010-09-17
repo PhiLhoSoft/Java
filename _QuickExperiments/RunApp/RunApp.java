@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Launcher of an external application.
  */
-public class RunApp extends Thread
+public class RunApp
 {
 	private Process m_process;
 	private AppDesc m_appDesc;
@@ -33,27 +33,9 @@ public class RunApp extends Thread
 
 	public RunApp(AppDesc ad, String installDir, String configDir)
 	{
-		super(ad.GetThreadName());
 		m_appDesc = ad;
 		m_installDir = installDir;
 		m_configDir = configDir;
-	}
-
-	@Override
-	public void run()
-	{
-		try
-		{
-			RunApplication();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	public void SetErrorGobbler(StreamGobbler eg)
@@ -78,7 +60,25 @@ public class RunApp extends Thread
 		return m_process.getOutputStream();
 	}
 
-	protected int RunApplication()
+	// Run and print out errors
+	public void Run()
+	{
+		try
+		{
+			RunApplication();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	// Run, letting user handling exceptions
+	public int RunApplication()
 			throws IOException, InterruptedException
 	{
 		List<String> params = new ArrayList<String>();
@@ -119,6 +119,11 @@ public class RunApp extends Thread
 
 		m_process = processBuilder.start();
 		return CaptureProcessOutput();
+	}
+
+	public void Stop()
+	{
+		m_process.destroy();
 	}
 
 	/**
@@ -167,11 +172,6 @@ public class RunApp extends Thread
 
 		// Get exit value
 		return m_process.waitFor();
-	}
-
-	public void Stop()
-	{
-		m_process.destroy();
 	}
 
 	protected ArrayList<String> ExpandStrings(String[] stra)
