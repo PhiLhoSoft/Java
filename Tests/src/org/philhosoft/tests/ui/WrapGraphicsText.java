@@ -15,19 +15,13 @@ package org.philhosoft.tests.ui;
 
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
 import javax.swing.*;
-
-
-import org.philhosoft.ui.*;
 
 
 @SuppressWarnings("serial")

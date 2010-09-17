@@ -33,13 +33,13 @@ import org.philhosoft.io.*;
 public class ImageFileView extends FileView
 {
 	/// List of accepted extensions
-	private HashMap m_imageTypes;
+	private HashMap<String, ImageType> m_imageTypes;
 	private ImageType m_gifType, m_jpegType, m_pngType, m_tiffType;
 //~ 	ImageType m_bmpType;
 
 	public ImageFileView()
 	{
-		m_imageTypes = new HashMap();
+		m_imageTypes = new HashMap<String, ImageType>();
 		m_gifType  = new ImageType("Gif",
 				"Graphics Interchange Format",
 				"image/gif", "images/gifIcon_s.png");
@@ -74,7 +74,7 @@ public class ImageFileView extends FileView
 		String extension = FileX.getFileExtension(f);
 		String name = null;
 
-		ImageType it = (ImageType)m_imageTypes.get(extension);
+		ImageType it = m_imageTypes.get(extension);
 		if (it != null)
 		{
 			name = f.getName() + " (" +
@@ -90,7 +90,7 @@ public class ImageFileView extends FileView
 		String extension = FileX.getFileExtension(f);
 		String desc = null;
 
-		ImageType it = (ImageType)m_imageTypes.get(extension);
+		ImageType it = m_imageTypes.get(extension);
 		if (it != null)
 		{
 			desc = it.getLongName();
@@ -108,7 +108,7 @@ public class ImageFileView extends FileView
 		String extension = FileX.getFileExtension(f);
 		String type = null;
 
-		ImageType it = (ImageType)m_imageTypes.get(extension);
+		ImageType it = m_imageTypes.get(extension);
 		if (it != null)
 		{
 			type = it.getShortName();
@@ -121,7 +121,7 @@ public class ImageFileView extends FileView
 		String extension = FileX.getFileExtension(f);
 		Icon icon = null;
 
-		ImageType it = (ImageType)m_imageTypes.get(extension);
+		ImageType it = m_imageTypes.get(extension);
 		if (it != null)
 		{
 			icon = it.getIcon();

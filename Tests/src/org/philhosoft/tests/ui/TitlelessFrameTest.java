@@ -155,6 +155,6 @@ class TestTitlelessFrame
 		frameCP.add(noTitle);
 		frameCP.add(rest);
 		frameCP.add(close);
-		m_frame.show();
+		m_frame.setVisible(true);
 	}
 }

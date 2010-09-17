@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/philhosoft/string/expression/" kind="src" path="Utilities-src"/>
 	<classpathentry kind="lib" path="/Utilities/bin"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Utilities"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/jre6/lib/plugin.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/JAI-1.1.2/jai_core.jar"/>
