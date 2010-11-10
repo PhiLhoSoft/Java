@@ -97,7 +97,8 @@ class RunnableClass implements Runnable
 		try
 		{
 			Thread.sleep((long)(maxTime * Math.random()));
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			System.out.println("\nMy sleep was interrupted!");
 		}
