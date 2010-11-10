@@ -26,7 +26,7 @@ public class RunApplication
 		});
 
 		System.out.println("Running " + trid.GetName());
-		ra.run();
+		ra.Run();
 		System.out.println("Result:\n" + raResult);
 	}
 }
