@@ -16,22 +16,36 @@ class FloatingPointTester
   private static final String Exp       = "[eE][+-]?" + Digits;
   // The RE as given by Sun in description of Double.valueOf
   private static final String fpRegex   =
-      "[\\x00-\\x20]*[+-]?(NaN|Infinity|(((" + Digits +
-      "(\\.)?(" + Digits + "?)(" + Exp + ")?)|(\\.(" + Digits + ")(" + Exp + ")?)|" +
-      "(((0[xX]" + HexDigits + "(\\.)?)|(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
-      ")[pP][+-]?" + Digits + "))[fFdD]?))[\\x00-\\x20]*";
-  // A simplified version, covering only the most common cases (skipping hexa),
-  // but deliberately keeping the numerous captures of the original
+      "[\\x00-\\x20]*" +  // Optional leading "whitespace"
+      "[+-]?(" + // Optional sign character
+      "NaN|" +           // "NaN" string
+      "Infinity|" +      // "Infinity" string
+      // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+      "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|" +
+      // . Digits ExponentPart_opt FloatTypeSuffix_opt
+      "(\\.(" + Digits + ")(" + Exp + ")?)|" +
+      // Hexadecimal strings
+      "((" +
+      // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+      "(0[xX]" + HexDigits + "(\\.)?)|" +
+      // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+      "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+      ")[pP][+-]?" + Digits + "))" +
+      "[fFdD]?))" +
+      "[\\x00-\\x20]*";// Optional trailing "whitespace"
+  // A simplified version, covering only the most common cases
+  // (dropping NaN & Infinity, better checked independely anyway, skipping hexa, only Ascii digits),
+  // but deliberately keeping the numerous captures of the original.
   private static final String fpSimpleRegexA =
       "[+-]?(" +
-      "((\\d+)(\\.?)(\\d+)?([eE][+-]?(\\d+))?)|" +
-      "(\\.(\\d+)([eE][+-]?(\\d+))?)" +
+      "((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|" +
+      "(\\.((\\d+))([eE][+-]?(\\d+))?)" +
       ")[fFdD]?";
   // Idem, avoiding captures. Doesn't seem to make a significant difference...
   private static final String fpSimpleRegexB =
       "[+-]?(?:" +
-      "(?:(?:\\d+)(?:\\.?)(?:\\d+)?(?:[eE][+-]?(?:\\d+))?)|" +
-      "(?:\\.(?:\\d+)(?:[eE][+-]?(?:\\d+))?)" +
+      "(?:(?:\\d+)(?:\\.)?(?:(?:\\d+)?)(?:[eE][+-]?(?:\\d+))?)|" +
+      "(?:\\.(?:(?:\\d+))(?:[eE][+-]?(?:\\d+))?)" +
       ")[fFdD]?";
   // Removing all the unneeded captures
   private static final String fpSimpleRegexC =
@@ -69,8 +83,10 @@ class FloatingPointTester
     "666",
     "42E7",
     "1e-7",
-    "55.e-7",
+    "55.e-77",
     ".333",
+    "-.333e-1",
+    "-77.77e-77",
   };
   public static final String[] testStringsKO =
   {
@@ -87,9 +103,10 @@ class FloatingPointTester
     "#666",
     "42F7",
     "1f-7",
-    "55.E.-7",
+    "55.E.-77",
     ".33.3",
-
+    "-.333.e-1",
+    "-77.77e-77.",
   };
 
   private static final Pattern fpPattern = Pattern.compile(fpRegex);
@@ -141,53 +158,153 @@ class FloatingPointTester
     Matcher m = fpFastPattern1.matcher(wouldBeFloatingPoint);
     return m.matches();
   }
+  private static boolean isDigit(char c)
+  {
+//~     return Character.isDigit(c); // If Unicode awareness if required
+    return c >= '0' && c <= '9';
+  }
   public static boolean checkFloatingPointNumberByHand(String pfp)
   {
     int len = pfp.length();
     if (len == 0)
       return false;
+//~     System.out.println("Checking: " + pfp);
     if (len == 1)
       return Character.isDigit(pfp.charAt(0));
 
+    int state = 0;
     int cursor = 0;
-    boolean hasDot = false;
-    while (cursor < len)
+    boolean bCheckAgain = false;
+    char c = ' ';
+    while (cursor < len || bCheckAgain)
     {
-      char c = pfp.charAt(cursor++);
-      if (cursor == 0 && (c == '+' || c == '-'))
-        continue;
-    }
-
-/*
-    int cursor = 0;
-    char c = pfp.charAt(0);
-    if (c == '+' || c == '-') cursor++;
-    c = pfp.charAt(cursor);
-    boolean hasDot = false;
-    if (c == '.')
-    {
-      hasDot = true;
-      cursor++;
-      c = pfp.charAt(cursor);
-    }
-    int digitNb = 0;
-    while (Character.isDigit(c))
-    {
-      digitNb++;
-      cursor++;
-      c = pfp.charAt(cursor);
-    }
-    if (digitNb == 0) return false;
-    if (!hasDot && c == '.')
-    {
-      c = pfp.charAt(++cursor);
-      while (Character.isDigit(c))
+      if (!bCheckAgain)
       {
-        c = pfp.charAt(++cursor);
+        c = pfp.charAt(cursor++);
+      }
+      else
+      {
+        bCheckAgain = false;
+      }
+//~       System.out.println("State: " + state);
+//~       System.out.println("Char: " + c);
+      switch (state)
+      {
+        case 0:
+          state = 1;
+          if (c == '+' || c == '-')
+          {
+            break;
+          }
+          bCheckAgain = true; // Not a sign, process current char
+          break;
+        case 1:
+          if (c == '.')
+          {
+            state = 2;
+          }
+          else if (isDigit(c))
+          {
+            state = 4;
+          }
+          else
+          {
+            return false; // Unexpected char
+          }
+          break;
+        case 2: // After prefixing dot, want digits
+          if (isDigit(c))
+          {
+            state = 3;
+          }
+          else
+          {
+            return false;
+          }
+          break;
+        case 3: // After dot, want more digits
+          if (isDigit(c))
+          {
+            break; // Continue on this state
+          }
+          else
+          {
+            state = 5; // Before exponent, if any
+            bCheckAgain = true; // Check for exponent or type symbol
+          }
+          break;
+        case 4: // After initial digit, want more digits or dot
+          if (c == '.')
+          {
+            state = 3;
+          }
+          else if (isDigit(c))
+          {
+            break; // Continue on this state
+          }
+          else
+          {
+            state = 5;
+            bCheckAgain = true; // Check for exponent or type symbol
+          }
+          break;
+        case 5: // Before exponent or type symbol
+          if (c == 'e' || c == 'E')
+          {
+            state = 6;
+          }
+          else
+          {
+            state = 9; // Check for type symbol
+            bCheckAgain = true; // Not an exponent, process current char
+          }
+          break;
+        case 6:
+          state = 7;
+          if (c == '+' || c == '-')
+          {
+            break;
+          }
+          bCheckAgain = true; // Not a sign, process current char
+          break;
+        case 7: // Expect a digit
+          if (isDigit(c))
+          {
+            state = 8;
+          }
+          else
+          {
+            return false;
+          }
+          break;
+        case 8: // Loop on digits
+          if (isDigit(c))
+          {
+            break;  // Continue on this state
+          }
+          else
+          {
+            state = 9;
+            bCheckAgain = true; // Not a sign, process current char
+          }
+          break;
+        case 9:
+          state = 10;
+          if (c == 'f' || c == 'F' || c == 'd' || c == 'D')
+          {
+            break;
+          }
+          return false; // We should have no more chars here!
+        case 10:
+          return false; // (at least) one char too much
       }
     }
-*/
-return true;
+    if (state == 3 || state == 4 || state == 8 || state == 10)
+    {
+      return cursor == len; // OK if there are no trailing chars
+    }
+//~     System.out.println("Stopping on state " + state);
+    return false;
   }
   public static boolean checkFloatingPointNumberAccurate(String wouldBeFloatingPoint)
   {
@@ -218,8 +335,10 @@ return true;
     fptb.timeFPCheckingSimpleDKO(1);
     fptb.timeFPCheckingFastOK(1);
     fptb.timeFPCheckingFastKO(1);
-    fptb.timeFloatingPointNumberAccurateOK(1);
-    fptb.timeFloatingPointNumberAccurateKO(1);
+    fptb.timeFPCheckingAccurateOK(1);
+    fptb.timeFPCheckingAccurateKO(1);
+    fptb.timeFPCheckingByHandOK(1);
+    fptb.timeFPCheckingByHandKO(1);
   }
   private static void testCheckers()
   {
@@ -231,7 +350,7 @@ return true;
       if (!checkFloatingPointNumberSimpleC(testString)) System.out.println("SimpleC: Error on " + testString);
       if (!checkFloatingPointNumberSimpleD(testString)) System.out.println("SimpleD: Error on " + testString);
       if (!checkFloatingPointNumberFast(testString)) System.out.println("Fast: Error on " + testString);
-//~       if (!checkFloatingPointNumberByHand(testString)) System.out.println("ByHand: Error on " + testString);
+      if (!checkFloatingPointNumberByHand(testString)) System.out.println("ByHand: Error on " + testString);
       if (!checkFloatingPointNumberAccurate(testString)) System.out.println("Accurate: Error on " + testString);
     }
     for (String testString : testStringsKO)
@@ -242,7 +361,7 @@ return true;
       if (checkFloatingPointNumberSimpleC(testString)) System.out.println("SimpleC: OK on " + testString);
       if (checkFloatingPointNumberSimpleD(testString)) System.out.println("SimpleD: OK on " + testString);
       if (checkFloatingPointNumberFast(testString)) System.out.println("Fast: OK on " + testString);
-//~       if (checkFloatingPointNumberByHand(testString)) System.out.println("ByHand: OK on " + testString);
+      if (checkFloatingPointNumberByHand(testString)) System.out.println("ByHand: OK on " + testString);
       if (checkFloatingPointNumberAccurate(testString)) System.out.println("Accurate: OK on " + testString);
     }
   }
@@ -397,7 +516,7 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
     }
   }
 
-  public void timeFloatingPointNumberAccurateOK(int reps)
+  public void timeFPCheckingAccurateOK(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
@@ -407,7 +526,7 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
       }
     }
   }
-  public void timeFloatingPointNumberAccurateKO(int reps)
+  public void timeFPCheckingAccurateKO(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
@@ -418,8 +537,71 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
     }
   }
 
+  public void timeFPCheckingByHandOK(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsOK)
+      {
+        FloatingPointTester.checkFloatingPointNumberByHand(testString);
+      }
+    }
+  }
+  public void timeFPCheckingByHandKO(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsKO)
+      {
+        FloatingPointTester.checkFloatingPointNumberByHand(testString);
+      }
+    }
+  }
+
   public static void main(String[] args) throws Exception
   {
     Runner.main(FloatingPointTesterBenchmark.class, args);
   }
 }
+
+/*
+>>> On an old computer.
+> java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTesterBenchmark
+ 0% Scenario{vm=java, trial=0, benchmark=FPCheckingOK} 29170,40 ns; ?=486,58 ns @ 10 trials
+ 6% Scenario{vm=java, trial=0, benchmark=FPCheckingKO} 46397,68 ns; ?=846,52 ns @ 10 trials
+13% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleAOK} 18295,58 ns; ?=141,39 ns @ 3 trials
+19% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleAKO} 24767,98 ns; ?=95,57 ns @ 3 trials
+25% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleBOK} 17565,72 ns; ?=113,22 ns @ 3 trials
+31% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleBKO} 24203,24 ns; ?=147,63 ns @ 3 trials
+38% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleCOK} 13368,73 ns; ?=120,19 ns @ 4 trials
+44% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleCKO} 17449,91 ns; ?=234,34 ns @ 10 trials
+50% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleDOK} 13567,15 ns; ?=159,90 ns @ 10 trials
+56% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleDKO} 18279,78 ns; ?=162,53 ns @ 4 trials
+63% Scenario{vm=java, trial=0, benchmark=FPCheckingFastOK} 13042,81 ns; ?=124,76 ns @ 8 trials
+69% Scenario{vm=java, trial=0, benchmark=FPCheckingFastKO} 15943,08 ns; ?=132,36 ns @ 4 trials
+75% Scenario{vm=java, trial=0, benchmark=FPCheckingAccurateOK} 7039,20 ns; ?=33,15 ns @ 3 trials
+81% Scenario{vm=java, trial=0, benchmark=FPCheckingAccurateKO} 67122,62 ns; ?=437,61 ns @ 3 trials
+88% Scenario{vm=java, trial=0, benchmark=FPCheckingByHandOK} 1394,36 ns; ?=23,77 ns @ 10 trials
+94% Scenario{vm=java, trial=0, benchmark=FPCheckingByHandKO} 1241,15 ns; ?=14,37 ns @ 10 trials
+
+           benchmark    us logarithmic runtime
+        FPCheckingOK 29,17 =======================
+        FPCheckingKO 46,40 ===========================
+ FPCheckingSimpleAOK 18,30 ====================
+ FPCheckingSimpleAKO 24,77 ======================
+ FPCheckingSimpleBOK 17,57 ====================
+ FPCheckingSimpleBKO 24,20 ======================
+ FPCheckingSimpleCOK 13,37 ==================
+ FPCheckingSimpleCKO 17,45 ====================
+ FPCheckingSimpleDOK 13,57 ==================
+ FPCheckingSimpleDKO 18,28 ====================
+    FPCheckingFastOK 13,04 ==================
+    FPCheckingFastKO 15,94 ===================
+FPCheckingAccurateOK  7,04 =============
+FPCheckingAccurateKO 67,12 ==============================
+  FPCheckingByHandOK  1,39 =
+  FPCheckingByHandKO  1,24 =
+
+vm: java
+trial: 0
+*/
