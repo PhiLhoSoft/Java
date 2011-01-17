@@ -2,6 +2,7 @@
  * org.philhosoft.*: A collection of utility classes for Java.
  */
 /* File history:
+ *  1.02.000 -- 2011/01/17 (PL) -- Normalize case of methods
  *  1.01.000 -- 2005/12/14 (PL) -- Transform the static class to an instanciable one,
  *              to add some flexibility.
  *  1.00.000 -- 2005/03/14 (PL) -- Creation
@@ -9,17 +10,14 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2010 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.string;
 
 /**
  * Simplistic plural management.
- *
- * Currently, this is more a template than a generic class,
- * since the line process code is hardcoded.
  *
  * !!TODO!!: Drop this class in favor of ChoiceFormat
  * http://java.sun.com/developer/JDCTechTips/2003/tt0926.html
@@ -56,7 +54,7 @@ public class Plural
     * @param nCount number
     * @param sName name to pluralize
     */
-   public static String GetPluralName_en(int nCount, String sName)
+   public static String getPluralName_en(int nCount, String sName)
    {
       String sCount = "" + nCount + " ";
 

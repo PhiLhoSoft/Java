@@ -1,3 +1,20 @@
+/*
+ * Tests: A collection of little test programs to explore Java language.
+ * Test of standard XML handing in Java.
+*/
+/* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods, moving to packages
+ *  1.00.000 -- 2009/10/01 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
+*/
+package org.philhosoft.tests.string;
+
 import java.io.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -12,17 +29,17 @@ public class XMLReadToDom
 {
 	public static void main(String[] args)
 	{
-		Document doc = ParseXMLFile("filename.xml", false);
+		Document doc = parseXMLFile("filename.xml", false);
 		// Use the Dom document
 		Element root = doc.getDocumentElement();
 		root.normalize(); // Collapse text nodes
 		NodeList nlOC = root.getElementsByTagName("one-child");
-		OutputList(nlOC, "a");
+		outputList(nlOC, "a");
 		nlOC = root.getElementsByTagName("other-child");
-		OutputList(nlOC, "param");
+		outputList(nlOC, "param");
 	}
 
-	public static void OutputList(NodeList nlOC, String attrToShow)
+	public static void outputList(NodeList nlOC, String attrToShow)
 	{
 		for (int i = 0; i < nlOC.getLength(); i++)
 		{
@@ -31,17 +48,20 @@ public class XMLReadToDom
 			String attr = el.getAttribute(attrToShow);
 			String txt = el.getTextContent();
 			System.out.println("Element " + el.getTagName() +
-			  (attr.length() > 0 ?
+				  (attr.length() > 0 ?
 						" with attribute " + attrToShow + " = '" + attr + "'" :
 						" without attribute") +
-			  (txt.length() > 0 ? " containing '" + txt + "'" : " (empty)")
+				  (txt.length() > 0 ? " containing '" + txt + "'" : " (empty)")
 			);
 		}
 	}
-	// Parses an XML file and returns a DOM document.
-	// If validating is true, the contents is validated against the DTD
-	// specified in the file.
-	public static Document ParseXMLFile(String fileName, boolean validating)
+
+	/**
+	 * Parses an XML file and returns a DOM document.
+	 * If validating is true, the contents is validated against the DTD
+	 * specified in the file.
+	 */
+	public static Document parseXMLFile(String fileName, boolean validating)
 	{
 		try
 		{
@@ -116,9 +136,9 @@ class XMLErrorHandler implements ErrorHandler
 		String systemId = e.getSystemId();
 
 		// Append details to message
-		message = message + ": " + e.getMessage() + ": line=" +
-        line + ", col=" + col + ", PUBLIC=" +
-        publicId + ", SYSTEM=" + systemId;
+		message += ": " + e.getMessage() + ": line=" +
+				line + ", col=" + col + ", PUBLIC=" +
+				publicId + ", SYSTEM=" + systemId;
 
 		// Log the message
 		logger.log(level, message);

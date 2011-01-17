@@ -1,3 +1,18 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ * Expression evaluation.
+ */
+/* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  1.00.000 -- 2009/11/24 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.string.expression;
 
 import java.util.HashMap;
@@ -70,9 +85,9 @@ public static class Operators
 
 	// Not pretty-pretty, but seems like a reasonable compromize between pure procedural solution
 	// and creating an anonymous class for each operator!
-	private static double EvaluateExpression(Operator operator, double d1, double d2)
+	private static double evaluateExpression(Operator operator, double d1, double d2)
 	{
-		String op = operator.GetOperator();
+		String op = operator.getOperator();
 		double res = 0;
 
 		if      (op.equals("+"))     res =  d1 + d2;
@@ -116,17 +131,17 @@ abstract class Operator
 		m_priority = p;
 	}
 
-	public String GetOperator()
+	public String getOperator()
 	{
 		return m_operator;
 	}
 
-	public String GetPriority()
+	public String getPriority()
 	{
 		return m_priority;
 	}
 
-	public double Evaluate();
+	public double evaluate();
 }
 class UnaryOperator extends Operator
 {

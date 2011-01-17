@@ -1,17 +1,24 @@
 /*
- * PluralTest.java
- *
- * Created on 23 mars 2006, 11:27
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Tests: A collection of little test programs to explore Java language.
+ * Test of the Plural class.
  */
+/* File history:
+ *  1.02.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  1.00.000 -- 2010/03/09 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2010-2011 Philippe Lhoste / PhiLhoSoft
+*/
+package org.philhosoft.tests.ui;
 
 package org.philhosoft.tests.util;
 
 /**
- *
- * @author PhiLho
+ * Testing plural of several English words.
  */
 public class PluralTest
 {
@@ -28,14 +35,14 @@ public class PluralTest
 	};
 
    /**
-    *   Get the string for a number
+    *   Gets the string for a number
     *   1 => "1st"
     *   2 => "2nd"
     *   ...
     *   works only for small integers...
     *
     */
-   public static String GetOrdinalNumberShortString(int nNumber)
+   public static String getOrdinalNumberShortString(int nNumber)
    {
       String sRet = "" + nNumber;
 
@@ -67,7 +74,7 @@ public class PluralTest
     * @param nCount number
     * @param sName name to pluralize
     */
-   public static String GetPluralName(int nCount, String sName)
+   public static String getPluralName(int nCount, String sName)
    {
       String sCount = "" + nCount + " ";
 
@@ -151,16 +158,16 @@ public class PluralTest
 	{
 		for (int i = 0; i < aWordList.length; i++)
 		{
-			System.out.println(GetPluralName(1, aWordList[i]));
-			System.out.println(GetPluralName(2, aWordList[i]));
+			System.out.println(getPluralName(1, aWordList[i]));
+			System.out.println(getPluralName(2, aWordList[i]));
 		}
 		for (int i = 1; i < 35; i++)
 		{
-			System.out.println(GetOrdinalNumberShortString(i));
+			System.out.println(getOrdinalNumberShortString(i));
 		}
 			for (int i = 99; i < 135; i++)
 		{
-			System.out.println(GetOrdinalNumberShortString(i));
+			System.out.println(getOrdinalNumberShortString(i));
 		}
 
 		System.exit(0);

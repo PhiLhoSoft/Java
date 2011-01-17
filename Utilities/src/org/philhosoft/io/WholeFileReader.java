@@ -7,36 +7,32 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2008-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.io;
 
 import java.io.*;
 
 /**
- * Read a file and return it as a StringBuilder.
- *
- * @author Philippe Lhoste
- * @version 1.00.000
- * @date 2008/11/28
+ * Reads a file and returns it as a StringBuilder.
  */
 public class WholeFileReader
 {
 	private static final int BUFFER_SIZE = 8192;
 
-	public static StringBuilder ReadFile(String fileName)
+	public static StringBuilder readFile(String fileName)
 			throws IOException
 	{
-		return ReadFile(fileName, null);
+		return readFile(fileName, null);
 	}
 
-	public static StringBuilder ReadFile(String fileName, String charsetName)
+	public static StringBuilder readFile(String fileName, String charsetName)
 			throws IOException
 	{
 		// No real need to close the BufferedReader/InputStreamReader
-		// as they're only wrapping the stream
+		// as they're only wrapping the stream: they are closed automatically by closing the stream.
 		FileInputStream stream = new FileInputStream(fileName);
 		InputStreamReader isr = null;
 		if (charsetName == null)
@@ -47,21 +43,21 @@ public class WholeFileReader
 		{
 			isr = new InputStreamReader(stream, charsetName);
 		}
+		StringBuilder builder = new StringBuilder();
 		try
 		{
 			Reader reader = new BufferedReader(isr);
-			StringBuilder builder = new StringBuilder();
 			char[] buffer = new char[BUFFER_SIZE];
 			int read;
 			while ((read = reader.read(buffer, 0, BUFFER_SIZE)) > 0)
 			{
 				builder.append(buffer, 0, read);
 			}
-			return builder;
 		}
 		finally
 		{
 			stream.close();
 		}
+		return builder;
 	}
 }

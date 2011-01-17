@@ -7,9 +7,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
@@ -68,6 +68,7 @@ public class ImageFileView extends FileView
 	 * Customize the displayed name:
 	 * add length to name.
 	 */
+	@Override
 	public String getName(File f)
 	{
 //~ 		return null; // Let the L&F FileView figure this out
@@ -79,14 +80,15 @@ public class ImageFileView extends FileView
 		{
 			name = f.getName() + " (" +
 					Math.ceil(f.length() / 102.4) / 10 +
-					"KB)";
+					"KiB)";
 		}
 		return name;
 	}
 
+	@Override
 	public String getDescription(File f)
 	{
-//		~ 		return null; // Let the L&F FileView figure this out
+//		return null; // Let the L&F FileView figure this out
 		String extension = FileX.getFileExtension(f);
 		String desc = null;
 
@@ -98,11 +100,13 @@ public class ImageFileView extends FileView
 		return desc;
 	}
 
+	@Override
 	public Boolean isTraversable(File f)
 	{
 		return null; // Let the L&F FileView figure this out
 	}
 
+	@Override
 	public String getTypeDescription(File f)
 	{
 		String extension = FileX.getFileExtension(f);
@@ -116,6 +120,7 @@ public class ImageFileView extends FileView
 		return type;
 	}
 
+	@Override
 	public Icon getIcon(File f)
 	{
 		String extension = FileX.getFileExtension(f);

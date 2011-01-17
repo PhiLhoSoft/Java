@@ -7,19 +7,20 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.io;
 
 import java.io.*;
 
 /**
- * Read a file and allow to access it line by line.
+ * Reads a file and allows to access it line by line.
  *
  * Currently, this is more a template than a generic class,
  * since the line process code is hard-coded.
+ * Note: bad code from my early Java days, to trash or to improve.
  *
  * @author Philippe Lhoste
  * @version 1.00.000

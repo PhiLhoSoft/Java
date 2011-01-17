@@ -19,9 +19,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
 */
 // I usually use slightly different code conventions
 // (prefixing member variables with m_ (or _s if static), initial capital at method names)
@@ -103,7 +103,7 @@ public class PLSVector
 	/** Squared length of the vector. Can be used to compare vectors as it is faster than {@link #length()}. */
 	public final float sqLength()
 	{
-		return (float) Math.sqrt(x * x + y * y + z * z);
+		return x * x + y * y + z * z;
 	}
 
 	public final PLSVector add(float scalar)
@@ -204,8 +204,8 @@ public class PLSVector
 		return (float) Math.acos(dot / length() / v.length());
 	}
 	/**
-	 * Computes the vector's direction in the XY plane (for example for 2D
-	 * points). The positive X axis equals 0 degrees.
+	 * Computes the vector's direction in the XY plane (for example for 2D points).
+	 * The positive X axis equals 0 degrees.
 	 *
 	 * @return rotation angle
 	 */
@@ -214,8 +214,8 @@ public class PLSVector
 	}
 
 	/**
-	 * Computes the vector's direction in the XZ plane. The positive X axis
-	 * equals 0 degrees.
+	 * Computes the vector's direction in the XZ plane.
+	 * The positive X axis equals 0 degrees.
 	 *
 	 * @return rotation angle
 	 */
@@ -224,8 +224,8 @@ public class PLSVector
 	}
 
 	/**
-	 * Computes the vector's direction in the YZ plane. The positive Z axis
-	 * equals 0 degrees.
+	 * Computes the vector's direction in the YZ plane.
+	 * The positive Z axis equals 0 degrees.
 	 *
 	 * @return rotation angle
 	 */

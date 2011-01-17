@@ -1,3 +1,19 @@
+/*
+ * Testing performance of various floating point checkers,
+ * telling if a string is a valid number.
+ * See http://phi.lho.free.fr/serendipity/index.php?/archives/28-Is-this-string-a-number.html
+ */
+/* File history:
+ *  1.01.000 -- 2010/12/07 (PL) -- Most test cases
+ *  1.00.000 -- 2010/12/01 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2010 Philippe Lhoste / PhiLhoSoft
+*/
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -9,6 +25,7 @@ import com.google.caliper.Param;
 import com.google.caliper.SimpleBenchmark;
 import com.google.caliper.Runner;
 
+// java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTester
 class FloatingPointTester
 {
   private static final String Digits    = "(\\p{Digit}+)";
@@ -71,11 +88,24 @@ class FloatingPointTester
 
   public static final String[] testStringsOK =
   {
-    "0",
-    "0.",
-    "0.1",
-    ".1",
-    "-.1",
+    "0",    "+0",    "-0",     "0d",    "+0D",    "-0d",     "0f",    "+0F",    "-0F",
+    "42",   "+42",   "-42",    "42D",   "+42d",   "-42d",    "42F",   "+42f",   "-42F",
+    "8.",   "+8.",   "-8.",    "8.d",   "+8.D",   "-8.d",    "8.f",   "+8.F",   "-8.F",
+    "18.",  "+18.",  "-18.",   "18.D",  "+18.d",  "-18.D",   "18.F",  "+18.f",  "-18.F",
+    "0.1",  "+0.1",  "-0.1",   "0.1d",  "+0.1D",  "-0.1D",   "0.1f",  "+0.1F",  "-0.1f",
+    "0.11", "+0.11", "-0.11",  "0.11D", "+0.11d", "-0.11D",  "0.11F", "+0.11f", "-0.11f",
+    ".3",   "+.3",   "-.3",    ".3d",   "+.3D",   "-.3d",    ".3f",   "+.3F",   "-.3f",
+    ".37",  "+.37",  "-.37",   ".37D",  "+.37d",  "-.37D",   ".37F",  "+.37f",  "-.37f",
+
+    "0",    "+0",    "-0",     "0d",    "+0D",    "-0d",     "0f",    "+0F",    "-0F",
+    "42",   "+42",   "-42",    "42D",   "+42d",   "-42d",    "42F",   "+42f",   "-42F",
+    "8.",   "+8.",   "-8.",    "8.d",   "+8.D",   "-8.d",    "8.f",   "+8.F",   "-8.F",
+    "18.",  "+18.",  "-18.",   "18.D",  "+18.d",  "-18.D",   "18.F",  "+18.f",  "-18.F",
+    "0.1",  "+0.1",  "-0.1",   "0.1d",  "+0.1D",  "-0.1D",   "0.1f",  "+0.1F",  "-0.1f",
+    "0.11", "+0.11", "-0.11",  "0.11D", "+0.11d", "-0.11D",  "0.11F", "+0.11f", "-0.11f",
+    ".3",   "+.3",   "-.3",    ".3d",   "+.3D",   "-.3d",    ".3f",   "+.3F",   "-.3f",
+    ".37",  "+.37",  "-.37",   ".37D",  "+.37d",  "-.37D",   ".37F",  "+.37f",  "-.37f",
+
     "3.14159265358979323d",
     "14140728F",
     "-0.001",
@@ -91,7 +121,7 @@ class FloatingPointTester
   public static final String[] testStringsKO =
   {
     ".0.",
-    "0..",
+    "8..",
     "0.1-",
     "..1",
     "--.1",
@@ -319,27 +349,6 @@ class FloatingPointTester
     }
   }
 
-  // Run the benchmark functions once to check if any exception is thrown
-  private static void testBenchmark()
-  {
-    FloatingPointTesterBenchmark fptb = new FloatingPointTesterBenchmark();
-    fptb.timeFPCheckingOK(1);
-    fptb.timeFPCheckingKO(1);
-    fptb.timeFPCheckingSimpleAOK(1);
-    fptb.timeFPCheckingSimpleAKO(1);
-    fptb.timeFPCheckingSimpleBOK(1);
-    fptb.timeFPCheckingSimpleBKO(1);
-    fptb.timeFPCheckingSimpleCOK(1);
-    fptb.timeFPCheckingSimpleCKO(1);
-    fptb.timeFPCheckingSimpleDOK(1);
-    fptb.timeFPCheckingSimpleDKO(1);
-    fptb.timeFPCheckingFastOK(1);
-    fptb.timeFPCheckingFastKO(1);
-    fptb.timeFPCheckingAccurateOK(1);
-    fptb.timeFPCheckingAccurateKO(1);
-    fptb.timeFPCheckingByHandOK(1);
-    fptb.timeFPCheckingByHandKO(1);
-  }
   private static void testCheckers()
   {
     for (String testString : testStringsOK)
@@ -364,6 +373,28 @@ class FloatingPointTester
       if (checkFloatingPointNumberByHand(testString)) System.out.println("ByHand: OK on " + testString);
       if (checkFloatingPointNumberAccurate(testString)) System.out.println("Accurate: OK on " + testString);
     }
+  }
+
+  // Run the benchmark functions once to check if any exception is thrown
+  private static void testBenchmark()
+  {
+    FloatingPointTesterBenchmark fptb = new FloatingPointTesterBenchmark();
+    fptb.timeFPCheckingOK(1);
+    fptb.timeFPCheckingKO(1);
+    fptb.timeFPCheckingSimpleAOK(1);
+    fptb.timeFPCheckingSimpleAKO(1);
+    fptb.timeFPCheckingSimpleBOK(1);
+    fptb.timeFPCheckingSimpleBKO(1);
+    fptb.timeFPCheckingSimpleCOK(1);
+    fptb.timeFPCheckingSimpleCKO(1);
+    fptb.timeFPCheckingSimpleDOK(1);
+    fptb.timeFPCheckingSimpleDKO(1);
+    fptb.timeFPCheckingFastOK(1);
+    fptb.timeFPCheckingFastKO(1);
+    fptb.timeFPCheckingByHandOK(1);
+    fptb.timeFPCheckingByHandKO(1);
+    fptb.timeFPCheckingAccurateOK(1);
+    fptb.timeFPCheckingAccurateKO(1);
   }
 
   public static void main(String args[])
@@ -516,27 +547,6 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
     }
   }
 
-  public void timeFPCheckingAccurateOK(int reps)
-  {
-    for (int i = 0; i < reps; i++)
-    {
-      for (String testString : FloatingPointTester.testStringsOK)
-      {
-        FloatingPointTester.checkFloatingPointNumberAccurate(testString);
-      }
-    }
-  }
-  public void timeFPCheckingAccurateKO(int reps)
-  {
-    for (int i = 0; i < reps; i++)
-    {
-      for (String testString : FloatingPointTester.testStringsKO)
-      {
-        FloatingPointTester.checkFloatingPointNumberAccurate(testString);
-      }
-    }
-  }
-
   public void timeFPCheckingByHandOK(int reps)
   {
     for (int i = 0; i < reps; i++)
@@ -561,6 +571,27 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
   public static void main(String[] args) throws Exception
   {
     Runner.main(FloatingPointTesterBenchmark.class, args);
+  }
+
+  public void timeFPCheckingAccurateOK(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsOK)
+      {
+        FloatingPointTester.checkFloatingPointNumberAccurate(testString);
+      }
+    }
+  }
+  public void timeFPCheckingAccurateKO(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsKO)
+      {
+        FloatingPointTester.checkFloatingPointNumberAccurate(testString);
+      }
+    }
   }
 }
 

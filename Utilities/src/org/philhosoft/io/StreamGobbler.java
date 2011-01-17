@@ -7,9 +7,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2008-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.io;
 
@@ -41,6 +41,7 @@ public class StreamGobbler extends Thread
 		m_type = type;
 	}
 
+	@Override
 	public void run()
 	{
 		InputStreamReader isr = new InputStreamReader(m_is);
@@ -59,7 +60,7 @@ public class StreamGobbler extends Thread
 		}
 	}
 
-	public String HandleOutputLine(String line)
+	public String handleOutputLine(String line)
 	{
 		// Default implementation, to override
 		String l = m_type + "> " + line;

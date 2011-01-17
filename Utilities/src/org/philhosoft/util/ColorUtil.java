@@ -2,14 +2,15 @@
  * org.philhosoft.*: A collection of utility classes for Java.
  */
 /* File history:
- *  1.00.000 -- 2009/03/10 (PL) -- Creation
+ *  1.00.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  0.01.000 -- 2009/03/10 (PL) -- Creation
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.util;
 
@@ -32,7 +33,7 @@ public class ColorUtil
 	/**
 	 * Checks if two given colors have enough contrast in a slightly lenient way.
 	 */
-	public static boolean IsColorConstrastOK(Color c1, Color c2, boolean bWithLargeFont)
+	public static boolean isColorConstrastOK(Color c1, Color c2, boolean bWithLargeFont)
 	{
 		return IsColorConstrastOKByLuminance(c1, c2, bWithLargeFont, false);
 	}
@@ -47,7 +48,7 @@ public class ColorUtil
 	 * @param bWithLargeFont   if true, it is more tolerant because big fonts have better contrast
 	 * @param bStrict   applies stricter rules (AAA instead of AA)
 	 */
-	public static boolean IsColorConstrastOKByLuminance(Color c1, Color c2, boolean bWithLargeFont, boolean bStrict)
+	public static boolean isColorConstrastOKByLuminance(Color c1, Color c2, boolean bWithLargeFont, boolean bStrict)
 	{
 		float minLumRatio = MIN_LUM_RATIO_NORMAL_AA;
 		if (bWithLargeFont)
@@ -78,7 +79,7 @@ public class ColorUtil
 	 * @param c1        second color to compare
 	 * @param bStrict   applies stricter rules (W3C instead of HP)
 	 */
-	public static boolean IsColorConstrastOKByColor(Color c1, Color c2, boolean bStrict)
+	public static boolean isColorConstrastOKByColor(Color c1, Color c2, boolean bStrict)
 	{
 		int minColorDiff = MIN_COLOR_DIFF;
 		if (bStrict)
@@ -92,7 +93,7 @@ public class ColorUtil
 		return bIsBrightnessOK && bIsColorDiffOK;
 	}
 
-	public static float GetLuminanceContrastRatio(Color c1, Color c2)
+	public static float getLuminanceContrastRatio(Color c1, Color c2)
 	{
 		float l1 = GetColorLuminance(c1);
 		float l2 = GetColorLuminance(c2);
@@ -101,7 +102,7 @@ public class ColorUtil
 		return (hl + 0.05F) / (ll + 0.05F);
 	}
 
-	public static int GetColorDifference(Color c1, Color c2)
+	public static int getColorDifference(Color c1, Color c2)
 	{
 		return
 				Math.abs(c1.getRed() - c2.getRed()) +
@@ -109,7 +110,7 @@ public class ColorUtil
 				Math.abs(c1.getBlue() - c2.getBlue());
 	}
 
-	public static float GetColorLuminance(Color c)
+	public static float getColorLuminance(Color c)
 	{
 		float[] facc = c.getRGBColorComponents(null);
 		return
@@ -122,7 +123,7 @@ public class ColorUtil
 	 * Computes brightness of a color using RGB to YIQ conversion.
 	 * YIQ: Y=Luminance. I=Red-Y, Q=Blue-Y
 	 */
-	public static float GetColorBrightness(Color c)
+	public static float getColorBrightness(Color c)
 	{
 		return (
 				299.0F * c.getRed() +
@@ -131,7 +132,7 @@ public class ColorUtil
 			) / 1000.0F;
 	}
 
-	public static float GetLinearisedColorComponent(float fcc)
+	public static float getLinearisedColorComponent(float fcc)
 	{
 		if (fcc <= 0.03928F)
 			return fcc / 12.92F;

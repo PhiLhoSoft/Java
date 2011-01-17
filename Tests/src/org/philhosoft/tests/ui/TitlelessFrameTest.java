@@ -7,9 +7,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
@@ -18,8 +18,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- * Show a full screen m_frame without title,
- * with buttons to act on m_frame
+ * Show a full screen frame without title,
+ * with buttons to act on frame
  * like system buttons on title bar.
  *
  * Code from http://www-128.ibm.com/developerworks/java/library/j-mer0717/
@@ -30,7 +30,6 @@ import javax.swing.*;
  */
 public class TitlelessFrameTest
 {
-
 	/**
 	 * @param args
 	 */
@@ -46,14 +45,13 @@ public class TitlelessFrameTest
 			}
 		});
 	}
-
 }
 
 class TestTitlelessFrame
 {
 	private final JFrame m_frame = new JFrame();
 	private Point m_origin = new Point();
-	private boolean m_bMaximized = false;
+	private boolean m_bMaximized;
 
 	TestTitlelessFrame()
 	{
@@ -92,7 +90,8 @@ class TestTitlelessFrame
 				m_origin.y = e.getY();
 			}
 		});
-		noTitle.addMouseMotionListener(new MouseMotionAdapter() {
+		noTitle.addMouseMotionListener(new MouseMotionAdapter()
+		{
 			public void mouseDragged(MouseEvent e)
 			{
 				// In Windows at least, a maximized window cannot be moved

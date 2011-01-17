@@ -7,9 +7,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.ui;
 
@@ -25,28 +25,30 @@ import org.philhosoft.string.ParseString;
 
 
 /**
- * Track a frame's size, position and state (maximized).
+ * Tracks a frame's size, position and state (maximized).
  * Allow to store and retrieve these values to/from properties files
  * and to set these settings when recreating the frame (on startup).
  */
 public class FrameState
 {
-	private static String m_propertiesFilename = System.getProperty("user.name") + ".properties";
-	/// Dimension & position of the window when not maximized
-	private Rectangle m_bounds;
+	private static String s_propertiesPath = System.getProperty("user.name") + ".properties";
 	/// Name of the frame
 	private String m_frameName;
 	/// True if system can do a real maximize
 	private boolean m_bCanMaximize;
+	/// Dimension & position of the window when not maximized
+	private Rectangle m_bounds;
 	/// True if window was maximized or must be maximized
 	/// (real maximizing or approximated by getting near screen size).
 	private boolean m_bMaximized;
 
-	private final static String PROP_WIDTH  = ".width";
-	private final static String PROP_HEIGHT = ".height";
-	private final static String PROP_XPOS   = ".xPos";
-	private final static String PROP_YPOS   = ".yPos";
-	private final static String PROP_MAX    = ".isMaximized";
+	private boolean m_bIgnoreChanges;
+
+	private static final String PROP_WIDTH  = ".width";
+	private static final String PROP_HEIGHT = ".height";
+	private static final String PROP_XPOS   = ".xPos";
+	private static final String PROP_YPOS   = ".yPos";
+	private static final String PROP_MAX    = ".isMaximized";
 
 	/**
 	 * Reads the user properties file
@@ -54,8 +56,10 @@ public class FrameState
 	 */
 	public FrameState(String frameName)
 	{
+		assert m_frameName != null;
+
 		m_frameName = frameName;
-		loadState();
+		init();
 	}
 
 	/**
@@ -63,86 +67,17 @@ public class FrameState
 	 */
 	public FrameState()
 	{
-		m_frameName = "window";
-		loadState();
-	}
-
-	private void loadState()
-	{
-		int x, y, w, h;
-		boolean bMax;
-
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		m_bCanMaximize = toolkit.isFrameStateSupported(Frame.MAXIMIZED_BOTH);
-
-		// Cannot read the properties, take default values
-		Dimension screenSize = toolkit.getScreenSize();
-		// Default size is two third of screen, centered
-		w = screenSize.width * 2 / 3;
-		h = screenSize.height * 2 / 3;
-		x = (screenSize.width - w) / 2;
-		y = (screenSize.height - h) / 2;
-		bMax = false;
-
-		// Read properties file
-		Properties properties = new Properties();
-		String prop;
-		try
-		{
-			properties.load(new FileInputStream(m_propertiesFilename));
-			prop = properties.getProperty(m_frameName + PROP_WIDTH);
-			w = ParseString.toInt(prop, w);
-			prop = properties.getProperty(m_frameName + PROP_HEIGHT);
-			h = ParseString.toInt(prop, h);
-			prop = properties.getProperty(m_frameName + PROP_XPOS);
-			x = ParseString.toInt(prop, x);
-			prop = properties.getProperty(m_frameName + PROP_YPOS);
-			y = ParseString.toInt(prop, y);
-			prop = properties.getProperty(m_frameName + PROP_MAX);
-			bMax = ParseString.toBoolean(prop, bMax);
-		}
-		catch (IOException e)
-		{
-			// Do nothing, use default values
-		}
-		m_bounds = new Rectangle(x, y, w, h);
-		m_bMaximized = bMax;
+		this("window");
 	}
 
 	/**
-	 * Store bounds (size & position) and maximized state if relevant.
+	 * Gets from given window current bounds (size & position) and maximized state if relevant.
 	 */
-	public void store(Frame window)
+	public void update(Frame window)
 	{
-		Properties properties = new Properties();
+		if (m_bIgnoreChanges)
+			return;
 
-		properties.setProperty(m_frameName + PROP_WIDTH, Integer.toString(m_bounds.width));
-		properties.setProperty(m_frameName + PROP_HEIGHT, Integer.toString(m_bounds.height));
-		properties.setProperty(m_frameName + PROP_XPOS, Integer.toString(m_bounds.x));
-		properties.setProperty(m_frameName + PROP_YPOS, Integer.toString(m_bounds.y));
-		if (m_bCanMaximize)
-		{
-			properties.setProperty(m_frameName + PROP_MAX,
-					m_bMaximized ? "true" : "false");
-		}
-		// Write properties file
-		try
-		{
-			properties.store(new FileOutputStream(m_propertiesFilename), null);
-		}
-		catch (IOException e)
-		{
-			System.err.println("Error while writing properties to '" +
-					m_propertiesFilename +
-					"': " + e.getMessage());
-		}
-	}
-
-	/**
-	 * Get current bounds (size & position) and maximized state if relevant.
-	 */
-	public void get(Frame window)
-	{
 		if (window.getExtendedState() == Frame.MAXIMIZED_BOTH)
 		{
 			// Don't memorize maximized position / size
@@ -156,18 +91,38 @@ public class FrameState
 	}
 
 	/**
-	 * Set bounds (size & position) and maximized state if relevant.
+	 * Sets to given window bounds (size & position) and maximized state if relevant.
 	 */
-	public void set(Frame window)
+	public void apply(Frame window)
 	{
+		// Don't call update() through listeners
+		m_bIgnoreChanges = true;
 		window.setBounds(m_bounds);
 		if (m_bCanMaximize && m_bMaximized)
 		{
 			window.setExtendedState(Frame.MAXIMIZED_BOTH);
 		}
+		// Now, business as usual
+		m_bIgnoreChanges = false;
+	}
+
+	@Override
+	public String toString()
+	{
+		return m_bounds + " (max? " + m_bMaximized + ")";
 	}
 
 	/*----- Accessors -----*/
+
+	public static void setPropertyPath(String path)
+	{
+		s_propertiesPath = path;
+	}
+
+	public static String getPropertyPath()
+	{
+		return s_propertiesPath;
+	}
 
 	public boolean isMaximized()
 	{
@@ -179,8 +134,90 @@ public class FrameState
 		return m_bounds;
 	}
 
-	/*----- Nested class allowing storing/loading settings to a properties file -----*/
+	/*----- Loading and saving from/to properties -----*/
 
+	/**
+	 * Loads from a properties file bounds (size & position) and maximized state if relevant.
+	 */
+	public boolean loadFromProperties()
+	{
+		assert s_propertiesPath != null;
+		assert m_frameName != null;
 
+		int x = m_bounds.x;
+		int y = m_bounds.y;
+		int w = m_bounds.width;
+		int h = m_bounds.height;
+		boolean bMax = m_bMaximized;
 
+		// Read properties file
+		boolean bOK = false;
+		Properties properties = new Properties();
+		try
+		{
+			properties.load(new FileInputStream(s_propertiesPath));
+			String prop = properties.getProperty(m_frameName + PROP_WIDTH);
+			w = ParseString.toInt(prop, w);
+			prop = properties.getProperty(m_frameName + PROP_HEIGHT);
+			h = ParseString.toInt(prop, h);
+			prop = properties.getProperty(m_frameName + PROP_XPOS);
+			x = ParseString.toInt(prop, x);
+			prop = properties.getProperty(m_frameName + PROP_YPOS);
+			y = ParseString.toInt(prop, y);
+			prop = properties.getProperty(m_frameName + PROP_MAX);
+			bMax = ParseString.toBoolean(prop, bMax);
+			bOK = true;
+		}
+		catch (IOException e)
+		{
+			// Do nothing, use default values
+		}
+		m_bounds = new Rectangle(x, y, w, h);
+		m_bMaximized = bMax;
+
+		return bOK;
+	}
+
+	/**
+	 * Saves to a properties file bounds (size & position) and maximized state if relevant.
+	 */
+	public void saveToProperties()
+			throws IOException
+	{
+		Properties properties = new Properties();
+
+		properties.setProperty(m_frameName + PROP_WIDTH, Integer.toString(m_bounds.width));
+		properties.setProperty(m_frameName + PROP_HEIGHT, Integer.toString(m_bounds.height));
+		properties.setProperty(m_frameName + PROP_XPOS, Integer.toString(m_bounds.x));
+		properties.setProperty(m_frameName + PROP_YPOS, Integer.toString(m_bounds.y));
+		if (m_bCanMaximize)
+		{
+			properties.setProperty(m_frameName + PROP_MAX,
+					m_bMaximized ? "true" : "false");
+		}
+		// Write properties file - throws IOException
+		properties.store(new FileOutputStream(s_propertiesPath), null);
+	}
+
+	/*----- Private area -----*/
+
+	private void init()
+	{
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		m_bCanMaximize = toolkit.isFrameStateSupported(Frame.MAXIMIZED_BOTH);
+
+		// Default settings
+		m_bMaximized = false;
+
+		int x, y, w, h;
+
+		// Cannot read the properties, take default values
+		Dimension screenSize = toolkit.getScreenSize();
+		// Default size is two third of screen, centered
+		w = screenSize.width * 2 / 3;
+		h = screenSize.height * 2 / 3;
+		x = (screenSize.width - w) / 2;
+		y = (screenSize.height - h) / 2;
+		m_bounds = new Rectangle(x, y, w, h);
+	}
 }

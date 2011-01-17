@@ -7,9 +7,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.ui;
 
@@ -34,8 +34,8 @@ public class ImagePreview
 {
 	private static final long serialVersionUID = 1L;
 
-	private static final int PREFERRED_WIDTH = 125;
-	private static final int PREFERRED_HEIGHT = 100;
+	protected static int PREFERRED_WIDTH = 125;
+	protected static int PREFERRED_HEIGHT = 100;
 
 	public ImagePreview(JFileChooser chooser)
 	{
@@ -50,7 +50,7 @@ public class ImagePreview
 		String changeName = changeEvent.getPropertyName();
 		if (changeName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
 		{
-			File file = (File)changeEvent.getNewValue();
+			File file = (File) changeEvent.getNewValue();
 			if (file != null)
 			{
 				ImageIcon icon = new ImageIcon(file.getPath());

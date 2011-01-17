@@ -1,3 +1,18 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ * Expression evaluation.
+ */
+/* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  1.00.000 -- 2009/11/24 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.string.expression;
 
 import java.util.HashMap;
@@ -5,23 +20,17 @@ import java.lang.Double;
 
 class Node
 {
-	public String  	nString;
-	public Operator nOperator;
-	public Node 	nLeft;
-	public Node 	nRight;
-	public Node 	nParent;
-	public int		nLevel;
-	public Double  	nValue;
+	public String m_string;
+	public Operator m_operator;
+	public Node m_left;
+	public Node m_right;
+	public Node m_parent;
+	public int m_level;
+	public Double m_value;
 
 	public Node(String s) throws Exception
 	{
 		init(null, s, 0);
-	}
-
-	public void Dump()
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 	public Node(Node parent, String s, int level) throws Exception
@@ -29,61 +38,62 @@ class Node
 		init(parent, s, level);
 	}
 
-	private Operator GetOperator(String s, int start)
+	private Operator getOperator(String str, int start)
 	{
-		String temp = s.substring(start);
-		temp = GetNextWord(temp);
-		for (int i=0; i<s_operators.length; i++)
+		String temp = str.substring(start);
+		temp = getNextWord(temp);
+		for (int i = 0; i < s_operators.length; i++)
 		{
-			if ( temp.startsWith(s_operators[i].GetOperator()) )
+			if (temp.startsWith(s_operators[i].getOperator()))
 				return s_operators[i];
 		}
 		return null;
 	}
 
-	private String GetNextWord(String s)
+	private String getNextWord(String str)
 	{
-		int sLength = s.length();
-		for (int i=1; i<sLength; i++)
+		int sLength = str.length();
+		for (int i = 1; i < sLength; i++)
 		{
-			char c = s.charAt(i);
-			if ( (c > 'z' || c < 'a') && (c > '9' || c < '0') )
-				return s.substring(0, i);
+			char c = str.charAt(i);
+			if ( (c < 'a' || c > 'z') && (c < '0' || c > '9') )
+				return str.substring(0, i);
 		}
 		return s;
 	}
 
-	/***
-	 * checks if there is any missing brackets
-	 * @return true if s is valid
+	/**
+	 * Checks if there is any missing brackets.
+	 * @return 0 if str is valid
 	 */
-	protected int CheckBrackets(String s)
+	protected int checkBrackets(String str)
 	{
-		int sLength  	= s.length();
-		int inBracket   = 0;
+		int sLength = str.length();
+		int inBracket = 0;
 
-		for (int i=0; i<sLength; i++)
+		for (int i = 0; i < sLength; i++)
 		{
-			if	  ( s.charAt(i) == '(' && inBracket >= 0 )
+			char c = str.charAt(i);
+			if (c == '(' && inBracket >= 0)
 				inBracket++;
-			else if ( s.charAt(i) == ')' )
+			else if (c == ')')
 				inBracket--;
 		}
 
 		return inBracket;
 	}
 
-	/***
-	 * returns a string that doesn't start with a + or a -
+	/**
+	 * Returns a string that doesn't start with a + or a -
 	 */
-	protected String AddZero(String s)
+	protected String addZero(String str)
 	{
-		if ( s.startsWith("+") || s.startsWith("-") )
+		if (str.startsWith("+") || str.startsWith("-"))
 		{
-			int sLength  	= s.length();
-			for (int i=0; i<sLength; i++)
+			int sLength = str.length();
+			for (int i = 0; i < sLength; i++)
 			{
-				if ( GetOperator(s, i) != null )
+				if (getOperator(s, i) != null)
 					return "0" + s;
 			}
 		}
@@ -92,118 +102,124 @@ class Node
 	}
 
 	/***
-	 * displays the tree of the expression
+	 * Displays the tree of the expression.
 	 */
 	public void trace()
 	{
-		String op = nOperator == null ? " " : nOperator.GetOperator() ;
-		_D( op + " : " + getString() );
-		if (HasChild())
+		String op = m_operator == null ? " " : m_operator.getOperator() ;
+		_D(op + " : " + getString());
+		if (hasChild())
 		{
-			if (HasLeft())
-				GetLeft().trace();
-			if (HasRight())
-				GetRight().trace();
+			if (hasLeft())
+			{
+				getLeft().trace();
+			}
+			if (hasRight())
+			{
+				getRight().trace();
+			}
 		}
 	}
 
-	protected boolean HasChild()
+	protected boolean hasChild()
 	{
-		return nLeft != null || nRight != null;
+		return m_left != null || m_right != null;
 	}
 
-	protected boolean HasOperator()
+	protected boolean hasOperator()
 	{
-		return nOperator != null;
+		return m_operator != null;
 	}
 
-	protected boolean HasLeft()
+	protected boolean hasLeft()
 	{
-		return nLeft != null;
+		return m_left != null;
 	}
 
-	protected Node GetLeft()
+	protected Node getLeft()
 	{
-		return nLeft;
+		return m_left;
 	}
 
-	protected boolean HasRight()
+	protected boolean hasRight()
 	{
-		return nRight != null;
+		return m_right != null;
 	}
 
-	protected Node GetRight()
+	protected Node getRight()
 	{
-		return nRight;
+		return m_right;
 	}
 
-	protected Operator GetOperator()
+	protected Operator getOperator()
 	{
-		return nOperator;
+		return m_operator;
 	}
 
 	protected int getLevel()
 	{
-		return nLevel;
+		return m_level;
 	}
 
-	protected double Eval()
+	protected double eval()
 	{
-		return nValue;
+		return m_value;
 	}
 
-	protected void SetValue(double d)
+	protected void setValue(double d)
 	{
-		nValue = d;
+		m_value = d;
 	}
 
 	protected String getString()
 	{
-		return nString;
+		return m_string;
 	}
 
 	/***
-	 * Removes spaces, tabs and brackets at the beginning
+	 * Removes spaces, tabs and brackets at the beginning.
 	 */
-	public String RemoveBrackets(String s)
+	public String removeBrackets(String str)
 	{
-		String res = s;
-		if ( s.length() > 2 && res.startsWith("(") && res.endsWith(")") && CheckBrackets(s.substring(1,s.length()-1)) == 0 )
+		String res = str;
+		if (str.length() > 2 && res.startsWith("(") && res.endsWith(")") &&
+				checkBrackets(str.substring(1, str.length()-1)) == 0)
 		{
-			res = res.substring(1, res.length()-1 );
+			res = res.substring(1, res.length()-1);
 		}
-		if ( res != s )
-			return RemoveBrackets(res);
+		if (res != str)
+			return removeBrackets(res);
 		else
 		   return res;
 	}
 
 	/***
-	 * Removes illegal characters
+	 * Removes illegal characters.
 	 */
-	public String RemoveIllegalCharacters(String s)
+	public String removeIllegalCharacters(String str)
 	{
 		char[] illegalCharacters = { ' ' };
-		String res = s;
+		String res = str;
 
-		for ( int j=0; j<illegalCharacters.length; j++)
+		for (int j = 0; j < illegalCharacters.length; j++)
 		{
 			int i = res.lastIndexOf(illegalCharacters[j], res.length());
-			while ( i != -1 )
+			while (i != -1)
 			{
 				String temp = res;
-				res = temp.substring(0,i);
+				res = temp.substring(0, i);
 				res += temp.substring(i + 1);
-				i = res.lastIndexOf(illegalCharacters[j], s.length());
+				i = res.lastIndexOf(illegalCharacters[j], str.length());
 			}
 		}
 		return res;
 	}
 
-	protected void _D(String s)
+	protected void _D(String str)
 	{
 		String nbSpaces = "";
-		for (int i=0; i<nLevel; i++) nbSpaces += "  ";
-		System.out.println(nbSpaces + "|" + s);
+		for (int i = 0; i < m_level; i++)
+			nbSpaces += "  ";
+		System.out.println(nbSpaces + "|" + str;
 	}
 }

@@ -2,14 +2,15 @@
  * org.philhosoft.*: A collection of utility classes for Java.
  */
 /* File history:
- *  1.00.000 -- 2010/09/14 (PL) -- Creation (split from DialControlTest.java)
+ *  1.00.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  0.01.000 -- 2010/09/14 (PL) -- Creation (split from DialControlTest.java)
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
 http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2010 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2010-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.ui;
 
@@ -22,10 +23,6 @@ import javax.swing.*;
 
 /**
  * A dial control, allowing to select an angle/direction with the mouse.
- *
- * @author Philippe Lhoste (PhiLho)
- * @version 1.00.000
- * @date 2010/09/14
  */
 @SuppressWarnings("serial")
 public class AngleChooser extends JComponent implements MouseListener, MouseMotionListener
@@ -48,14 +45,14 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 
 	// To regenerate a gradient only if really needed
 	private int m_prevWidth;
-   // Center of the control
+	// Center of the control
 	private int m_centerX;
 	private int m_centerY;
 
-   public AngleChooser()
-   {
-      this(64);
-   }
+	public AngleChooser()
+	{
+		this(64);
+	}
 
 	/**
 	 * Simple constructor where only the size is defined.
@@ -63,9 +60,9 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	 *
 	 * @param size  the pixel size (diameter) of the dial face. Must be above or equal to 32.
 	 */
-   public AngleChooser(int size)
+	public AngleChooser(int size)
 	{
-      this(size, Color.BLACK, Color.LIGHT_GRAY, true);
+		this(size, Color.BLACK, Color.LIGHT_GRAY, true);
 	}
 
 	/**
@@ -77,7 +74,7 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	 * @param backColor  the color of the back
 	 * @param bGradient  if false, use a pure back color, otherwise, make a gradient out of it
 	 */
-   public AngleChooser(int size, Color foreColor, Color backColor, boolean bGradient)
+	public AngleChooser(int size, Color foreColor, Color backColor, boolean bGradient)
 	{
 		super();
 
@@ -85,20 +82,20 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 		m_backColor = backColor;
 		m_bGradient = bGradient;
 
-		InitListeners();
-		Resize(size);
+		initListeners();
+		resize(size);
 	}
 
-	private void InitListeners()
+	private void initListeners()
 	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
 
-	public void Resize(int size)
+	public void resize(int size)
 	{
-      if (size == m_size)
-         return;
+		if (size == m_size)
+			return;
 		if (size < 32)
 		{
 			size = 32; // Impose a minimal size
@@ -127,8 +124,8 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	 * Returns the chosen trigonometric angle, in radians.
 	 * @return the angle, in radians.
 	 */
-   // We have to convert the trigonometric angle to Java2D one (y axis toward South).
-	public double GetAngle()
+	// We have to convert the trigonometric angle to Java2D one (y axis toward South).
+	public double getAngle()
 	{
 		return 2 * Math.PI - m_angle;
 	}
@@ -136,24 +133,24 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	 * Sets the trigonometric angle (counter-clockwise, 0 toward East), in radians.
 	 * @param angle  the angle to set, in radians.
 	 */
-	public void SetAngle(double angle)
+	public void setAngle(double angle)
 	{
 		m_angle = 2 * Math.PI - angle;
-		UpdateTooltip();
+		updateTooltip();
 		repaint();
 	}
-	public void SetBackColor(Color c)
+	public void setBackColor(Color c)
 	{
 		m_backColor = c;
 		repaint();
 	}
-	public void SetForeColor(Color c)
+	public void setForeColor(Color c)
 	{
 		m_foreColor = c;
 		repaint();
 	}
 
-	private void UpdateBackColor()
+	private void updateBackColor()
 	{
 		if (m_prevWidth == getWidth())
 			return;	// No need to generate a new gradient
@@ -185,7 +182,7 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 		{
 			if (m_bGradient)
 			{
-				UpdateBackColor();
+				updateBackColor();
 				g2D.setPaint(m_gpBackground);
 			}
 			else
@@ -223,7 +220,7 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 		g2D.dispose();
 	}
 
-	private Dimension GetDimension()
+	private Dimension getDimension()
 	{
 		Insets insets = getInsets();
 		return new Dimension(
@@ -235,21 +232,21 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	@Override
 	public Dimension getPreferredSize()
 	{
-		return GetDimension();
+		return getDimension();
 	}
 
 	@Override
 	public Dimension getMinimumSize()
 	{
-		return GetDimension();
+		return getDimension();
 	}
 
-   private void UpdateTooltip()
-   {
-      setToolTipText("Angle: " + Math.ceil(180 * GetAngle() * 10 / Math.PI) / 10);
-   }
+	private void updateTooltip()
+	{
+		setToolTipText("Angle: " + Math.ceil(180 * getAngle() * 10 / Math.PI) / 10);
+	}
 
-	private void UpdateAngle(MouseEvent e, boolean bPressed)
+	private void updateAngle(MouseEvent e, boolean bPressed)
 	{
 		if (!isEnabled())
 			return;
@@ -271,20 +268,20 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 			// Back to 0 - 2*PI
 			m_angle *= Math.PI / 8;
 		}
-		UpdateTooltip();
+		updateTooltip();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		UpdateAngle(e, true);
+		updateAngle(e, true);
 		repaint();
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		UpdateAngle(e, false);
+		updateAngle(e, false);
 		repaint();
 	}
 
@@ -293,51 +290,4 @@ public class AngleChooser extends JComponent implements MouseListener, MouseMoti
 	@Override public void mouseEntered(MouseEvent e) {}
 	@Override public void mouseExited(MouseEvent e) {}
 	@Override public void mouseClicked(MouseEvent e) {}
-
-   // Kind of unit test
-   public static void main(String[] args)
-   {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            JFrame f = new JFrame();
-            f.setTitle("Simple dial control");
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            JPanel panel = new JPanel(new GridLayout(2, 3));
-
-            AngleChooser ac0 = new AngleChooser();
-            AngleChooser ac1 = new AngleChooser(200);
-            AngleChooser ac2 = new AngleChooser(100,
-                  Color.BLACK,
-                  new Color(180, 255, 220), false);
-            AngleChooser ac3 = new AngleChooser(100,
-                  Color.WHITE,
-                  new Color(180, 255, 220), true);
-            ac3.SetAngle(5 * Math.PI / 4);
-            AngleChooser ac4 = new AngleChooser(300,
-                  new Color(200, 55, 44),
-                  new Color(250, 255, 220), true);
-            AngleChooser ac5 = new AngleChooser(100,
-                  new Color(66, 55, 44),
-                  new Color(250, 155, 120), true);
-            ac5.SetAngle(-Math.PI / 4);
-            ac5.setEnabled(false);
-            panel.add(ac0);
-            panel.add(ac1);
-            panel.add(ac2);
-            panel.add(ac3);
-            panel.add(ac4);
-            panel.add(ac5);
-
-            f.setContentPane(panel);
-//~             f.setSize(500, 500);
-            f.setLocation(200, 200);
-            f.pack();
-            f.setVisible(true);
-         }
-      });
-   }
 }

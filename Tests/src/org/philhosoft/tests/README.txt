@@ -1,0 +1,1 @@
+This is NOT a unit test area, but more a place to test informally the org.philhosoft packages, and to make some other various experimentations.

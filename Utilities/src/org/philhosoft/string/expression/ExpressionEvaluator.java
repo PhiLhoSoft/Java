@@ -1,22 +1,40 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ * Expression evaluation.
+ */
+/* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  1.00.000 -- 2009/11/24 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.string.expression;
 
 import java.util.HashMap;
 import java.lang.Double;
 
 /************************************************************************
- * <i>Mathematical expression evaluator.</i>
- *  Supports the following functions:
- * +, -, *, /, ^, %, cos, sin, tan, acos, asin, atan, sqrt, sqr, log, min, max, ceil, floor, abs, neg, rndr.<br>
- * When the Eval() is called, a Double object is returned. If it returns null, an error occurred.<p>
+ * <p>Mathematical expression evaluator.<br>
+ * Supports the following functions:<br>
+ * +, -, *, /, ^, %,
+ * cos, sin, tan, acos, asin, atan,
+ * sqrt, sqr, log, min, max, ceil, floor, abs, neg, rndr.<br>
+ * When the eval() method is called, a Double object is returned.
+ * If it returns null, an error occurred.</p>
  * <pre>
  * Sample:
  * ExpressionEvaluator m = new ExpressionEvaluator("-5-6/(-2) + sqr(15+x)");
  * m.addVariable("x", 15.1d);
- * System.out.println( m.Eval() );
+ * System.out.println(m.eval());
  * </pre>
  * @version 1.1
- * @author 	The-Son LAI, <a href="mailto:Lts@writeme.com">Lts@writeme.com</a>
- * @date	 April 2001
+ * @author The-Son LAI, <a href="mailto:Lts@writeme.com">Lts@writeme.com</a>
+ * @date April 2001
  ************************************************************************/
 // Yes, yet another expression evaluator. Mostly for Java 1.5, as with Java 1.6 we can use ScriptEngine...
 public class ExpressionEvaluator
@@ -31,7 +49,7 @@ public class ExpressionEvaluator
 	 */
 	public static void main(String[] args)
 	{
-		if ( args == null || args.length != 1)
+		if (args == null || args.length != 1)
 		{
 			System.err.println("Mathematical Expression Evaluator");
 			System.err.println("Usage: java ExpressionEvaluator.main \"math expression\"");
@@ -146,7 +164,7 @@ public class ExpressionEvaluator
 
 	private static double Evaluate(Node node)
 	{
-		if (node.HasOperator() && node.HasChild() )
+		if (node.HasOperator() && node.HasChild())
 		{
 			if (node.GetOperator().GetType() == OperatorType.UNARY) // Unary
 			{
@@ -176,7 +194,7 @@ public class ExpressionEvaluator
 
 	protected Double getDouble(String s)
 	{
-		if ( s == null ) return null;
+		if (s == null) return null;
 
 		Double res = null;
 		try
@@ -201,7 +219,7 @@ public class ExpressionEvaluator
 			s = RemoveIllegalCharacters(s);
 			s = RemoveBrackets(s);
 			s = AddZero(s);
-			if ( CheckBrackets(s) != 0 ) throw new Exception("Wrong number of brackets in [" + s + "]");
+			if (CheckBrackets(s) != 0) throw new Exception("Wrong number of brackets in [" + s + "]");
 
 			nParent				= parent;
 			nString 			= s;
@@ -213,20 +231,20 @@ public class ExpressionEvaluator
 
 			for (int i=0; i<sLength; i++)
 			{
-				if ( s.charAt(i) == '(' )
+				if (s.charAt(i) == '(')
 					inBrackets++;
-				else if ( s.charAt(i) == ')' )
+				else if (s.charAt(i) == ')')
 					inBrackets--;
 				else
 				{
 					// the expression must be at "root" level
-					if ( inBrackets == 0 )
+					if (inBrackets == 0)
 					{
 						Operator o = GetOperator(nString,i);
-						if ( o != null )
+						if (o != null)
 						{
 							// if first operator or lower priority operator
-							if ( nOperator == null || nOperator.GetPriority() >= o.GetPriority() )
+							if (nOperator == null || nOperator.GetPriority() >= o.GetPriority())
 							{
 								nOperator 		= o;
 								startOperator 	= i;
@@ -236,15 +254,15 @@ public class ExpressionEvaluator
 				}
 			}
 
-			if ( nOperator != null )
+			if (nOperator != null)
 			{
 				// one operand, should always be at the beginning
-				if ( startOperator==0 && nOperator.GetType() == OperatorType.UNARY )
+				if (startOperator==0 && nOperator.GetType() == OperatorType.UNARY)
 				{
 					// the brackets must be ok
-					if ( CheckBrackets( s.substring( nOperator.GetOperator().length() ) ) == 0 )
+					if (CheckBrackets(s.substring(nOperator.GetOperator().length())) == 0)
 					{
-						nLeft  = new Node( this, s.substring( nOperator.GetOperator().length() ) , nLevel + 1);
+						nLeft  = new Node(this, s.substring(nOperator.GetOperator().length()) , nLevel + 1);
 						nRight = null;
 						return;
 					}
@@ -252,11 +270,11 @@ public class ExpressionEvaluator
 						throw new Exception("Error during parsing... missing brackets in [" + s + "]");
 				}
 				// two operands
-				else if ( startOperator > 0 && nOperator.GetType() == OperatorType.BINARY )
+				else if (startOperator > 0 && nOperator.GetType() == OperatorType.BINARY)
 				{
 					nOperator = nOperator;
-					nLeft 	= new Node( this, s.substring(0,  startOperator), nLevel + 1 );
-					nRight 	= new Node( this, s.substring(startOperator + nOperator.GetOperator().length()), nLevel + 1);
+					nLeft 	= new Node(this, s.substring(0,  startOperator), nLevel + 1);
+					nRight 	= new Node(this, s.substring(startOperator + nOperator.GetOperator().length()), nLevel + 1);
 				}
 			}
 		}

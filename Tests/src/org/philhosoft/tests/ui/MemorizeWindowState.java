@@ -2,14 +2,15 @@
  * Tests: A collection of little test programs to explore Java language.
  */
 /* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods
  *  1.00.000 -- 2005/12/29 (PL) -- Creation
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
@@ -27,13 +28,8 @@ import org.philhosoft.ui.FrameState;
 
 
 /**
- * Test of method to store and retreive the bounds and state
- * of a Swing application.
+ * Test of method to store and retreive the bounds and state of a Swing application.
  * Can also be used as boilerplate code for Swing app.
- *
- * @author Philippe Lhoste
- * @version 1.00.000
- * @date 2005/12/29
  */
 public class MemorizeWindowState
 {
@@ -88,10 +84,13 @@ class MainFrame extends JFrame implements ComponentListener
 
 		// Retreive the user preferences for window position/state, if any
 		m_frameState = new FrameState();
-
+		if (m_frameState.loadFromProperties())
+		{
+			System.out.println("Read state: " + m_frameState);
+		}
 		// Display the window
 		pack();
-		m_frameState.set(this);
+		m_frameState.apply(this);
 //~ 		setSize(750, 500);
 		setVisible(true);
 	}
@@ -138,7 +137,15 @@ class MainFrame extends JFrame implements ComponentListener
 //~ 		// Close data source
 //~ 		m_da.close();
 		// Store window state
-		m_frameState.store(this);
+		System.out.println("Saving properties");
+		try
+		{
+			m_frameState.saveToProperties();
+		}
+		catch (java.io.IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
 		// Kill the window
 		setVisible(false);
 		dispose();
@@ -151,14 +158,14 @@ class MainFrame extends JFrame implements ComponentListener
 
 	public void componentMoved(ComponentEvent e)
 	{
-		m_frameState.get(this);
+		m_frameState.update(this);
 //~ 		Point newLoc = getLocation();
 //~ 		Rectangle bounds = getBounds();
 //~ 		System.out.println("Main frame moved to " + bounds.x + ", " + bounds.y);
 	}
 	public void componentResized(ComponentEvent e)
 	{
-		m_frameState.get(this);
+		m_frameState.update(this);
 //~ 		Dimension newSize = getSize();
 //~ 		Rectangle bounds = getBounds();
 //~ 		System.out.println("Main frame resized to " + bounds.width + ", " + bounds.height);
@@ -170,10 +177,6 @@ class MainFrame extends JFrame implements ComponentListener
 /**
  * The GUI layer.
  * On a real application, I would move it to its own file...
- *
- * @author Philippe Lhoste
- * @version 1.00.000
- * @date 2005/12/29
  */
 class GUI extends JPanel implements ActionListener
 {

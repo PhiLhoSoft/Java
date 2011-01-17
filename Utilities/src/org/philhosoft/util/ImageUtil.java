@@ -2,14 +2,15 @@
  * org.philhosoft.*: A collection of utility classes for Java.
  */
 /* File history:
- *  1.00.000 -- 2009/03/20 (PL) -- Creation
+ *  1.00.000 -- 2011/01/17 (PL) -- Normalize case of methods
+ *  0.01.000 -- 2009/03/20 (PL) -- Creation
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.util;
 
@@ -42,7 +43,7 @@ public class ImageUtil
 	 * @param height   height of the image
 	 * @return a BufferedImage of TYPE_INT_ARGB type
 	 */
-	public static BufferedImage ImageToBufferedImage(Image image, int width, int height)
+	public static BufferedImage imageToBufferedImage(Image image, int width, int height)
 	{
 		return ImageToBufferedImage(image, width, height, BufferedImage.TYPE_INT_ARGB);
 	}
@@ -57,7 +58,7 @@ public class ImageUtil
 	 * @param height   height of the image
 	 * @return a BufferedImage of given type
 	 */
-	public static BufferedImage ImageToBufferedImage(Image image, int width, int height, int type)
+	public static BufferedImage imageToBufferedImage(Image image, int width, int height, int type)
 	{
 		BufferedImage dest = new BufferedImage(width, height, type);
 		Graphics2D g2 = dest.createGraphics();
@@ -72,7 +73,7 @@ public class ImageUtil
 	 * @param srcImage   the image to convert
 	 * @return a BufferedImage of TYPE_BYTE_INDEXED type
 	 */
-	public static BufferedImage ConvertRGBAToIndexed(BufferedImage srcImage)
+	public static BufferedImage convertRGBAToIndexed(BufferedImage srcImage)
 	{
 		// Create a non-transparent palletized image
 		Image flattenedImage = TransformTransparencyToMagenta(srcImage);
@@ -82,7 +83,7 @@ public class ImageUtil
 		return destImage;
 	}
 
-	private static Image TransformTransparencyToMagenta(BufferedImage image)
+	private static Image transformTransparencyToMagenta(BufferedImage image)
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
@@ -118,7 +119,7 @@ public class ImageUtil
 	 * @param y       the vertical coordinate of the pixel whose color must be transparent
 	 * @return the converted image
 	 */
-	public static BufferedImage MakeColorTransparent(BufferedImage image, int x, int y)
+	public static BufferedImage makeColorTransparent(BufferedImage image, int x, int y)
 	{
 		ColorModel cm = image.getColorModel();
 		if (!(cm instanceof IndexColorModel))

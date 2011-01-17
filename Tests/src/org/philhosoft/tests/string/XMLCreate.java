@@ -1,3 +1,20 @@
+/*
+ * Tests: A collection of little test programs to explore Java language.
+ * Test of standard XML handing in Java.
+*/
+/* File history:
+ *  1.01.000 -- 2011/01/17 (PL) -- Normalize case of methods, moving to packages
+ *  1.00.000 -- 2009/10/01 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
+*/
+package org.philhosoft.tests.string;
+
 import java.io.*;
 
 import javax.xml.parsers.*;
@@ -11,10 +28,10 @@ public class XMLCreate
 {
 	public static void main(String[] args)
 	{
-		CreateXMLFile("filename.xml", false);
+		createXMLFile("filename.xml", false);
 	}
 
-	public static void CreateXMLFile(String fileName, boolean validating)
+	public static void createXMLFile(String fileName, boolean validating)
 	{
 		try
 		{
@@ -23,9 +40,9 @@ public class XMLCreate
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.newDocument();
 
-			Element root = document.createElementNS("http://test", "root");
+			Element root = document.createElementNS("http://example.com", "root");
 			document.appendChild(root);
-			Attr rootAttribute = document.createAttributeNS("http://test", "attribute");
+			Attr rootAttribute = document.createAttributeNS("http://example.com", "attribute");
 			rootAttribute.setValue("value");
 			root.setAttributeNodeNS(rootAttribute);
 
@@ -78,7 +95,7 @@ public class XMLCreate
 		}
 		catch (IOException e)
 		{
-			System.out.println("Cannot read file " + fileName);
+			System.out.println("Cannot write file " + fileName);
 		}
 	}
 }

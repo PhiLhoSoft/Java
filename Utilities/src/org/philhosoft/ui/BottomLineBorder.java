@@ -8,9 +8,9 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2008-2009 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2008-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.ui;
 
@@ -44,6 +44,7 @@ class BottomLineBorder extends AbstractBorder
 		m_color = color;
 	}
 
+	@Override
 	public void paintBorder(Component c, Graphics g,
 			int x, int y, int width, int height)
 	{
@@ -63,14 +64,17 @@ class BottomLineBorder extends AbstractBorder
 		}
 	}
 
+	@Override
 	public boolean isBorderOpaque()
 	{
 		return true;
 	}
+	@Override
 	public Insets getBorderInsets(Component c)
 	{
 		return new Insets(0, 0, m_thickness, 0);
 	}
+	@Override
 	public Insets getBorderInsets(Component c, Insets i)
 	{
 		i.left = i.top = i.right = 0;
