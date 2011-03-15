@@ -12,8 +12,8 @@ class Test
     long maxMem = Runtime.getRuntime().maxMemory();
     System.out.println("Max memory: " + nf.format(maxMem) + " (" + maxMem/1024/1024 + ")");
 
-    int mm = (int) maxMem;
-    System.out.println("Max memory: " + nf.format(mm) + " (" + mm/1024/1024 + ")");
+    int mµ = (int) maxMem;
+    System.out.println("Max memory: " + nf.format(mµ) + " (" + mµ/1024/1024 + ")");
     System.out.println("Max int: " + nf.format(Integer.MAX_VALUE));
     System.out.println("Max long: " + nf.format(Long.MAX_VALUE));
 
