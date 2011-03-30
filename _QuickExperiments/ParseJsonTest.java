@@ -22,7 +22,7 @@ class ParseJsonTest
       fileName = args[0];
     }
     ParseWeather pw = new ParseWeather(fileName);
-    pw.parse();
+    pw.parse("data/weather:0/hourly");
   }
 }
 
@@ -30,6 +30,7 @@ class ParseJsonTest
 class ParseWeather
 {
   JsonParser m_parser;
+  String[] m_path;
 
   public ParseWeather(String fileName)
   {
@@ -44,11 +45,11 @@ class ParseWeather
     }
   }
 
-  public void parse()
+  public void parse(String path)
   {
     try
     {
-      goToPath("data/wheather/hourly");
+      goToPath(path);
     }
     catch (IOException ioe)
     {
@@ -76,46 +77,117 @@ class ParseWeather
   {
     String[] nodes = path.split("/");
     int currentNodeIndex = 0;
-    JsonToken token;
+    int arrayIndex = -1;
+    int targetArrayIndex = 0;
+
+    JsonToken token = m_parser.nextToken(); // Start of top-level Json object
+    println("Token 0: " + token);
+    if (token != JsonToken.START_OBJECT)
+    {
+      println("No start object");
+      return false;
+    }
+
     do
     {
-      token = m_parser.nextToken(); // should return the START_OBJECT
+      token = m_parser.nextToken();
       println("Token A: " + token);
-      if (!token.equals(JsonToken.START_OBJECT))
+      switch (token)
       {
-        println("No start object");
+        case JsonToken.START_OBJECT:
+          break;
+        case JsonToken.START_ARRAY:
+          break;
+        case JsonToken.FIELD_NAME:
+          break;
+        case JsonToken.END_OBJECT:
+          break;
+        case JsonToken.END_ARRAY:
+          break;
+        default:
+          println("Unexpected token: " + token);
+      }
+
+      if (arrayIndex >= 0)
+      {
+        if (targetArrayIndex > arrayIndex)
+        {
+          println("Skipping " + arrayIndex);
+          m_parser.skipChildren();
+          arrayIndex++;
+        }
+      }
+      else if (token == JsonToken.FIELD_NAME)
+      {
+      }
+      else
+      {
+        println("Wrong kind of token: " + token);
         return false;
-      }
-      token = m_parser.nextToken(); // should return the node token
-      println("Token B: " + token);
-      String nodeName = m_parser.getCurrentName();
-      println("Reading node: " + nodeName);
-      if (!nodeName.equals(nodes[currentNodeIndex++]))
-      {
-        token = m_parser.nextToken(); // Try the next token
-        println("Token C: " + token);
-        continue;
-      }
-      if (currentNodeIndex == nodes.length)
-      {
-        println("Yeah!");
-        return true; // We reached the path!
       }
 
       token = m_parser.nextToken(); // move to value, or START_OBJECT/START_ARRAY
-      println("Token D: " + token);
-      if (token.equals(JsonToken.END_OBJECT))
+      println("Token C: " + token);
+      if (token == JsonToken.START_OBJECT)
       {
-        println("End of Json");
-        return false;
+        continue; // Next object
       }
-      if (!token.equals(JsonToken.START_OBJECT))
+      if (token == JsonToken.START_ARRAY)
       {
-        println("No start object");
-        return false;
+        arrayIndex = 0;
+        continue;
       }
+      println("No start: " + token);
+      if (token == JsonToken.FIELD_NAME)
+      {
+        println("@ " + m_parser.getCurrentName());
+      }
+      return false;
     } while (token != JsonToken.END_OBJECT);
     return false;
+  }
+
+  void parseName()
+  {
+    String nodeName = m_parser.getCurrentName();
+    println("Reading node: " + nodeName);
+    String currentNode = nodes[currentNodeIndex];
+    if (currentNode.contains(":"))
+    {
+      String[] p = currentNode.split(":");
+      currentNode = p[0];
+      try
+      {
+        targetArrayIndex = Integer.parseInt(p[1]);
+      }
+      catch (NumberFormatException nfe)
+      {
+        println("Error in array index for " + currentNode + ": " + p[1]);
+        return false;
+      }
+    }
+    if (!nodeName.equals(currentNode))
+    {
+      // Not the good token, skip it
+      token = m_parser.nextToken(); // Try the next token
+      println("Token B: " + token);
+      if (token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY)
+      {
+        println("Skipping " + nodeName + " " + token + "...");
+        m_parser.skipChildren();
+      }
+      continue;
+    }
+    else
+    {
+      println("OK");
+      currentNodeIndex++;
+    }
+    if (currentNodeIndex == nodes.length)
+    {
+      println("Yeah!");
+      return true; // We reached the path!
+    }
   }
 
   void println(String message)
