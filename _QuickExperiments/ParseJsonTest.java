@@ -31,6 +31,8 @@ class ParseWeather
 {
   JsonParser m_parser;
   String[] m_path;
+  int m_currentJsonLevel;
+  int m_currentPathLevel;
 
   public ParseWeather(String fileName)
   {
@@ -76,8 +78,8 @@ class ParseWeather
   boolean goToPath(String path) throws IOException
   {
     String[] nodes = path.split("/");
-    int currentNodeIndex = 0;
-    int arrayIndex = -1;
+    int level = 0;
+    int currentArrayIndex = -1;
     int targetArrayIndex = 0;
 
     JsonToken token = m_parser.nextToken(); // Start of top-level Json object
@@ -91,23 +93,37 @@ class ParseWeather
     do
     {
       token = m_parser.nextToken();
+      if (token == null)
+      {
+        // End of Json data
+        println("End...");
+        return false;
+      }
       println("Token A: " + token);
       switch (token)
       {
-        case JsonToken.START_OBJECT:
+        case START_OBJECT:
+          println("Start O");
           break;
-        case JsonToken.START_ARRAY:
+        case START_ARRAY:
+          println("Start A");
           break;
-        case JsonToken.FIELD_NAME:
+        case FIELD_NAME:
+          println("Name: " + m_parser.getCurrentName());
           break;
-        case JsonToken.END_OBJECT:
+        case VALUE_STRING:
+          println("Value: " + m_parser.getText());
           break;
-        case JsonToken.END_ARRAY:
+        case END_OBJECT:
+          println("End O " + m_parser.getCurrentName());
+          break;
+        case END_ARRAY:
+          println("End A " + m_parser.getCurrentName());
           break;
         default:
           println("Unexpected token: " + token);
       }
-
+/*
       if (arrayIndex >= 0)
       {
         if (targetArrayIndex > arrayIndex)
@@ -144,9 +160,12 @@ class ParseWeather
       }
       return false;
     } while (token != JsonToken.END_OBJECT);
+*/
+    } while (token != null);
     return false;
   }
 
+  /*
   void parseName()
   {
     String nodeName = m_parser.getCurrentName();
@@ -189,6 +208,7 @@ class ParseWeather
       return true; // We reached the path!
     }
   }
+  */
 
   void println(String message)
   {
