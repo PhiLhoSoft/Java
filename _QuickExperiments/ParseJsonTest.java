@@ -77,7 +77,6 @@ class ParseWeather
   // with the names separated by a slash.
   boolean goToPath(String path) throws IOException
   {
-    String[] nodes = path.split("/");
     int level = 0;
     int currentArrayIndex = -1;
     int targetArrayIndex = 0;
@@ -166,48 +165,6 @@ class ParseWeather
   }
 
   /*
-  void parseName()
-  {
-    String nodeName = m_parser.getCurrentName();
-    println("Reading node: " + nodeName);
-    String currentNode = nodes[currentNodeIndex];
-    if (currentNode.contains(":"))
-    {
-      String[] p = currentNode.split(":");
-      currentNode = p[0];
-      try
-      {
-        targetArrayIndex = Integer.parseInt(p[1]);
-      }
-      catch (NumberFormatException nfe)
-      {
-        println("Error in array index for " + currentNode + ": " + p[1]);
-        return false;
-      }
-    }
-    if (!nodeName.equals(currentNode))
-    {
-      // Not the good token, skip it
-      token = m_parser.nextToken(); // Try the next token
-      println("Token B: " + token);
-      if (token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY)
-      {
-        println("Skipping " + nodeName + " " + token + "...");
-        m_parser.skipChildren();
-      }
-      continue;
-    }
-    else
-    {
-      println("OK");
-      currentNodeIndex++;
-    }
-    if (currentNodeIndex == nodes.length)
-    {
-      println("Yeah!");
-      return true; // We reached the path!
-    }
-  }
   */
 
   void println(String message)
@@ -216,3 +173,27 @@ class ParseWeather
   }
 }
 
+class PathHandler
+{
+  /** Raw path. */
+  private String m_path;
+  /** The parts of the path. */
+  PathPart[] parts;
+
+  public PathHandler(String path)
+  {
+    m_path = path;
+    String[] nodes = path.split("/");
+    parts = new PathPart(nodes.length);
+  }
+
+  void parseName()
+  {
+  }
+
+  class PathPart
+  {
+    String name;
+    int pos;
+  }
+}
