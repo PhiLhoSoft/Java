@@ -7,6 +7,8 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
+// javac -cp C:\Java\libraries\jackson-core-asl-1.7.2.jar ParseJsonTest.java
+// java -cp .;C:\Java\libraries\jackson-core-asl-1.7.2.jar ParseJsonTest
 class ParseJsonTest
 {
   public static void main(String args[])
@@ -15,7 +17,8 @@ class ParseJsonTest
     if (args.length == 0)
     {
       // Default to a known file
-      fileName = "D:/Dev/PhiLhoSoft/Processing/_QuickExperiments/_XML_JSON/UsingJackson/data/weather.json";
+//~       fileName = "D:/Dev/PhiLhoSoft/Processing/_QuickExperiments/_XML_JSON/UsingJackson/data/weather.json";
+      fileName = "H:/PhiLhoSoft/Processing/_QuickExperiments/_XML_JSON/UsingJackson/data/weather.json";
     }
     else
     {
@@ -77,9 +80,10 @@ class ParseWeather
   // with the names separated by a slash.
   boolean goToPath(String path) throws IOException
   {
+    PathHandler ph = new PathHandler(path);
+
     int level = 0;
     int currentArrayIndex = -1;
-    int targetArrayIndex = 0;
 
     JsonToken token = m_parser.nextToken(); // Start of top-level Json object
     println("Token 0: " + token);
@@ -123,6 +127,8 @@ class ParseWeather
           println("Unexpected token: " + token);
       }
 /*
+    int targetArrayIndex = 0;
+
       if (arrayIndex >= 0)
       {
         if (targetArrayIndex > arrayIndex)
@@ -178,22 +184,87 @@ class PathHandler
   /** Raw path. */
   private String m_path;
   /** The parts of the path. */
-  PathPart[] parts;
+  private PathPart[] m_parts;
+  /** Index used by the iterator. */
+  private int m_index;
 
   public PathHandler(String path)
   {
     m_path = path;
     String[] nodes = path.split("/");
-    parts = new PathPart(nodes.length);
+    m_parts = new PathPart[nodes.length];
+
+    int count = 0;
+    for (String nodeName : nodes)
+    {
+      m_parts[count++] = parseName(nodeName);
+    }
   }
 
-  void parseName()
+  // Almost the iterator interface, but not quite as next() is void (I keep PathPart private)
+  public void next()
   {
+    if (m_index == m_parts.length)
+    {
+      throw new NoSuchElementException();
+    }
+    m_index++;
+  }
+  public boolean hasNext()
+  {
+    return m_index < m_parts.length - 1;
+  }
+  public void remove()
+  {
+    throw new UnsupportedOperationException();
+  }
+
+  public String getCurrentName()
+  {
+    return m_parts[m_index].m_name;
+  }
+  public int getCurrentPos()
+  {
+    return m_parts[m_index].m_pos;
+  }
+
+  private PathPart parseName(String name)
+  {
+    if (name.contains(":"))
+    {
+      String[] ps = name.split(":");
+      int pos = 0;
+      try
+      {
+        pos = Integer.parseInt(ps[1]);
+      }
+      catch (Exception e)
+      {
+        System.out.println("Bad index: " + name);
+        return null;
+      }
+      return new PathPart(ps[0], pos);
+    }
+    else
+    {
+      return new PathPart(name);
+    }
   }
 
   class PathPart
   {
-    String name;
-    int pos;
+    String m_name;
+    int m_pos;
+
+    public PathPart(String name, int pos)
+    {
+      m_name = name;
+      m_pos = pos;
+    }
+    public PathPart(String name)
+    {
+      m_name = name;
+      m_pos = -1;
+    }
   }
 }
