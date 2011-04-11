@@ -25,6 +25,7 @@ class ParseJsonTest
       fileName = args[0];
     }
     ParseWeather pw = new ParseWeather(fileName);
+    // Test path
     pw.parse("data/weather:0/hourly");
   }
 }
@@ -82,8 +83,10 @@ class ParseWeather
   {
     PathHandler ph = new PathHandler(path);
 
+    boolean bInArray = false;
     int level = 0;
     int currentArrayIndex = -1;
+    int targetArrayIndex = -1;
 
     JsonToken token = m_parser.nextToken(); // Start of top-level Json object
     println("Token 0: " + token);
@@ -107,9 +110,17 @@ class ParseWeather
       {
         case START_OBJECT:
           println("Start O");
+          level++;
+          if (bInArray && currentArrayIndex < targetArrayIndex)
+          {
+            m_parser.skipChildren();
+          }
           break;
         case START_ARRAY:
           println("Start A");
+          level++;
+          bInArray = true;
+          currentArrayIndex = 0;
           break;
         case FIELD_NAME:
           println("Name: " + m_parser.getCurrentName());
@@ -119,53 +130,16 @@ class ParseWeather
           break;
         case END_OBJECT:
           println("End O " + m_parser.getCurrentName());
+          level--;
           break;
         case END_ARRAY:
           println("End A " + m_parser.getCurrentName());
+          level--;
+          bInArray = false;
           break;
         default:
           println("Unexpected token: " + token);
       }
-/*
-    int targetArrayIndex = 0;
-
-      if (arrayIndex >= 0)
-      {
-        if (targetArrayIndex > arrayIndex)
-        {
-          println("Skipping " + arrayIndex);
-          m_parser.skipChildren();
-          arrayIndex++;
-        }
-      }
-      else if (token == JsonToken.FIELD_NAME)
-      {
-      }
-      else
-      {
-        println("Wrong kind of token: " + token);
-        return false;
-      }
-
-      token = m_parser.nextToken(); // move to value, or START_OBJECT/START_ARRAY
-      println("Token C: " + token);
-      if (token == JsonToken.START_OBJECT)
-      {
-        continue; // Next object
-      }
-      if (token == JsonToken.START_ARRAY)
-      {
-        arrayIndex = 0;
-        continue;
-      }
-      println("No start: " + token);
-      if (token == JsonToken.FIELD_NAME)
-      {
-        println("@ " + m_parser.getCurrentName());
-      }
-      return false;
-    } while (token != JsonToken.END_OBJECT);
-*/
     } while (token != null);
     return false;
   }
@@ -227,6 +201,10 @@ class PathHandler
   {
     return m_parts[m_index].m_pos;
   }
+  public boolean isCurrentAnArray()
+  {
+    return m_pos >= 0;
+  }
 
   private PathPart parseName(String name)
   {
@@ -251,7 +229,7 @@ class PathHandler
     }
   }
 
-  class PathPart
+  private class PathPart
   {
     String m_name;
     int m_pos;
