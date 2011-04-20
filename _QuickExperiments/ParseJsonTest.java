@@ -26,7 +26,22 @@ class ParseJsonTest
     }
     ParseWeather pw = new ParseWeather(fileName);
     // Test path
-    pw.parse("data/weather:0/hourly");
+    String[] temperatures = null;
+    try
+    {
+      temperatures = pw.parse("data/weather:0/hourly/@waterTemp_C");
+    }
+    catch (ParseException pe)
+    {
+      pe.printStackTrace();
+    }
+    if (temperatures != null)
+    {
+      for (String temp : temperatures)
+      {
+        System.out.println("* " + temp);
+      }
+    }
   }
 }
 
@@ -51,11 +66,23 @@ class ParseWeather
     }
   }
 
-  public void parse(String path)
+  public String[] parse(String path) throws ParseException
   {
+    int pos = path.indexOf("@");
+    if (pos < 0)
+      throw new ParseException("Missing attribute in the path", pos);
+
+    String attribute = path.substring(pos + 1);
+    path = path.substring(0, pos - 1);
+    println("Finding " + attribute + " in " + path);
+
+    String[] result = null;
     try
     {
-      goToPath(path);
+      if (goToPath(path))
+      {
+        result = null; // TODO
+      }
     }
     catch (IOException ioe)
     {
@@ -75,6 +102,7 @@ class ParseWeather
         println("Cannot close file: " + ioe);
       }
     }
+    return result;
   }
 
   // Path is a simple path of intermediary nodes whole values are objects, and a final node (any kind),
@@ -105,20 +133,20 @@ class ParseWeather
         println("End...");
         return false;
       }
-      println("Token A: " + token);
+      println("Token: " + token);
       switch (token)
       {
         case START_OBJECT:
-          println("Start O");
           level++;
+          println("Start Object: " + level);
           if (bInArray && currentArrayIndex < targetArrayIndex)
           {
             m_parser.skipChildren();
           }
           break;
         case START_ARRAY:
-          println("Start A");
           level++;
+          println("Start Array: " + level);
           bInArray = true;
           currentArrayIndex = 0;
           break;
@@ -129,12 +157,12 @@ class ParseWeather
           println("Value: " + m_parser.getText());
           break;
         case END_OBJECT:
-          println("End O " + m_parser.getCurrentName());
           level--;
+          println("End Object: " + level + " for " + m_parser.getCurrentName());
           break;
         case END_ARRAY:
-          println("End A " + m_parser.getCurrentName());
           level--;
+          println("End Array: " + level + " for " + m_parser.getCurrentName());
           bInArray = false;
           break;
         default:
@@ -147,7 +175,7 @@ class ParseWeather
   /*
   */
 
-  void println(String message)
+  public static void println(String message)
   {
     System.out.println(message);
   }
@@ -203,7 +231,7 @@ class PathHandler
   }
   public boolean isCurrentAnArray()
   {
-    return m_pos >= 0;
+    return m_parts[m_index].m_pos >= 0;
   }
 
   private PathPart parseName(String name)
