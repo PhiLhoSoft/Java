@@ -26,9 +26,9 @@ import com.google.caliper.Runner;
 class BenchmarkTester
 {
   public static final int SIZE = 10000;
-  public static ArrayList<String> stuff = new ArrayList<String>(SIZE);
+  public ArrayList<String> stuff = new ArrayList<String>(SIZE);
 
-  public static void init()
+  public void init()
   {
     System.out.println("Init");
     for (int i = 0; i < SIZE; i++)
@@ -37,52 +37,52 @@ class BenchmarkTester
     }
   }
 
-  public static boolean check1()
+  public boolean check1()
   {
-//~     StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < SIZE; i++)
     {
       String el = stuff.get(i);
-//~       sb.append(el);
+      sb.append(el);
     }
-    return true;
-//~     return sb.length() > 0;
+//~     return true;
+    return sb.length() > 0;
   }
-  public static boolean check2()
+  public boolean check2()
   {
-//~     StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < stuff.size(); i++)
     {
       String el = stuff.get(i);
-//~       sb.append(el);
+      sb.append(el);
     }
-    return true;
-//~     return sb.length() > 0;
+//~     return true;
+    return sb.length() > 0;
   }
-  public static boolean check3()
+  public boolean check3()
   {
-//~     StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0, s = stuff.size(); i < s; i++)
     {
       String el = stuff.get(i);
-//~       sb.append(el);
+      sb.append(el);
     }
-    return true;
-//~     return sb.length() > 0;
+//~     return true;
+    return sb.length() > 0;
   }
-  public static boolean check4()
+  public boolean check4()
   {
-//~     StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     for (String str : stuff)
     {
       String el = str;
-//~       sb.append(el);
+      sb.append(el);
     }
-    return true;
-//~     return sb.length() > 0;
+//~     return true;
+    return sb.length() > 0;
   }
 
-  private static void testCheckers()
+  private void testCheckers()
   {
     if (!check1()) System.out.println("Error on 1");
     if (!check2()) System.out.println("Error on 2");
@@ -91,7 +91,7 @@ class BenchmarkTester
   }
 
   // Run the benchmark functions once to check if any exception is thrown
-  private static void testBenchmark()
+  private void testBenchmark()
   {
     CaliperBenchmark cb = new CaliperBenchmark();
     cb.timeChecking1(1);
@@ -102,13 +102,14 @@ class BenchmarkTester
 
   public static void main(String args[])
   {
+    BenchmarkTester bt = new BenchmarkTester();
     if (args.length == 0)
     {
 //~       System.err.println("Usage: BenchmarkTester <something>");
 //~       System.exit(1);
-      init();
-      testCheckers();
-      testBenchmark();
+      bt.init();
+      bt.testCheckers();
+      bt.testBenchmark();
       System.out.println("Done");
       return;
     }
@@ -124,37 +125,39 @@ public class CaliperBenchmark extends SimpleBenchmark
     Runner.main(CaliperBenchmark.class, args);
   }
 
+  BenchmarkTester objectToTest = new BenchmarkTester();
+
   @Override
   protected void setUp()
   {
-    BenchmarkTester.init();
+    objectToTest.init();
   }
   public void timeChecking1(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
-      BenchmarkTester.check1();
+      objectToTest.check1();
     }
   }
   public void timeChecking2(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
-      BenchmarkTester.check2();
+      objectToTest.check2();
     }
   }
   public void timeChecking3(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
-      BenchmarkTester.check3();
+      objectToTest.check3();
     }
   }
   public void timeChecking4(int reps)
   {
     for (int i = 0; i < reps; i++)
     {
-      BenchmarkTester.check4();
+      objectToTest.check4();
     }
   }
 }
