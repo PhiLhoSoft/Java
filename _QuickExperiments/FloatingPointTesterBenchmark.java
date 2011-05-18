@@ -25,7 +25,7 @@ import com.google.caliper.Param;
 import com.google.caliper.SimpleBenchmark;
 import com.google.caliper.Runner;
 
-// java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTester
+// java -cp .;C:\Java\libraries\caliper.jar FloatingPointTester
 class FloatingPointTester
 {
   private static final String Digits    = "(\\p{Digit}+)";
@@ -405,6 +405,7 @@ class FloatingPointTester
 //~       System.exit(1);
       testCheckers();
       testBenchmark();
+      System.out.println("Done");
       return;
     }
     System.out.println("Is '" + args[0] + "' a valid floating point number? " +
@@ -412,8 +413,8 @@ class FloatingPointTester
   }
 }
 
-// javac -cp D:\Archives\_Recent\caliper.jar FloatingPointTesterBenchmark.java
-// java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTesterBenchmark
+// javac -cp C:\Java\libraries\caliper.jar FloatingPointTesterBenchmark.java
+// java -cp .;C:\Java\libraries\caliper.jar FloatingPointTesterBenchmark
 public class FloatingPointTesterBenchmark extends SimpleBenchmark
 {
   @Override
@@ -597,7 +598,7 @@ public class FloatingPointTesterBenchmark extends SimpleBenchmark
 
 /*
 >>> On an old computer.
-> java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTesterBenchmark
+> java -cp .;C:\Java\libraries\caliper.jar FloatingPointTesterBenchmark
  0% Scenario{vm=java, trial=0, benchmark=FPCheckingOK} 29170,40 ns; ?=486,58 ns @ 10 trials
  6% Scenario{vm=java, trial=0, benchmark=FPCheckingKO} 46397,68 ns; ?=846,52 ns @ 10 trials
 13% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleAOK} 18295,58 ns; ?=141,39 ns @ 3 trials

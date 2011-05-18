@@ -1,0 +1,458 @@
+Is this string a number?
+
+<p>A blog post (<a href="http://www.jroller.com/ethdsy/entry/double_parsing_regexp" title="Scratch Where It's Itching">Double Parsing Regexp</a>)
+caught my attention. The base problem is to check if a string is a valid number, without necessarily needing the real value.
+Or, perhaps, to skip the conversion if we are sure it will fail, as Double.valueOf throws an exception in this case,
+and the try/catch mechanism is known to be slow.
+</p>
+<p>The numbers given were intriguing, and I wondered if the given regular expression could be optimized.
+Somehow, it was a great opportunity to use <a href="http://code.google.com/p/caliper/" title="caliper - Project Hosting on Google Code">Caliper</a>
+a library to do correctly micro-benchmarks.
+</p>
+
+
+<p>Indeed, it is tempting, when we wonder which of two (or more) methods  is the fastest, to write a simple loop
+around the code snippet, to run it lot of time, and to measure the run time to compare the results.<br/>
+But there are several caveats of such tests: you have to run them several times to ensure multitask OS isn't busy elsewhere,
+you can see some of the code optimized away by the compiler (detecting operations doing nothing),
+and in the case of Java, the Hotspot <acronym title="Just In Time">Jit</acronym> compiler takes some time to kick in.
+</p>
+<p>Caliper is supposed to take care of most of these issues, automating the warm up sequence, averaging several runs, etc.
+</p>
+
+<p>So I have to get the library first. The project offers no files yet, but being lazy (and not wanting to waste time),
+I found a caliper.jar in the Vogar project's VCS, and used it. I don't know if it is cutting edge, but it seems to fit the job.
+</p>
+
+<p>I give only parts of the code here, as it is a bit repetitive, but if you are curious, you can find the whole file at
+<a href="http://bazaar.launchpad.net/%7Ephilho/%2Bjunk/Java/annotate/head%3A/_QuickExperiments/FloatingPointTesterBenchmark.java"
+title="~philho/+junk/Java : contents of _QuickExperiments/FloatingPointTesterBenchmark.java at revision 57">FloatingPointTesterBenchmark.java</a>
+</p>
+<p>I kept the idea from Scratch's blog to test separately the cases where we have real numbers to the cases where the numbers are wrong.
+</p>
+
+<p>I spare you with the full regex, as taken straight from JavaDoc for Double.valueOf. It is used as "worst case" test.<br/>
+The test code is quite simple, used in most of the tests against the regular expressions below, just changing the name of the pattern:
+</p>
+<pre>  private static final Pattern fpPattern = Pattern.compile(fpRegex);
+
+public static boolean checkFloatingPointNumber(String wouldBeFloatingPoint)
+  {
+    Matcher m = fpPattern.matcher(wouldBeFloatingPoint);
+    return m.matches();
+  }
+</pre>
+<p>I simplified the expression, removing the cases of NaN and Infinity (it is much preferable to test them up front before using a regex, anyway),
+the trimming, the hexa case, but keeping the case of numbers starting with a dot, as it is a quite commonly used notation,
+and it offers an interesting case to avoid alternation in the <abbrev title="Regular Expression">RE</abbrev>.
+</p>
+<p>That makes my fpSimpleRegexA. I deliberately kept as many captures as there were in the original RE.
+So I made fpSimpleRegexB to see if I transform them to non-capturing grouping, there was a speed gain.
+Apparently, no.
+</p>
+<pre>  private static final String fpSimpleRegexA =
+      "[+-]?(" +
+      "((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|" +
+      "(\\.((\\d+))([eE][+-]?(\\d+))?)" +
+      ")[fFdD]?";
+  private static final String fpSimpleRegexB =
+      "[+-]?(?:" +
+      "(?:(?:\\d+)(?:\\.)?(?:(?:\\d+)?)(?:[eE][+-]?(?:\\d+))?)|" +
+      "(?:\\.(?:(?:\\d+))(?:[eE][+-]?(?:\\d+))?)" +
+      ")[fFdD]?";
+</pre>
+<p>fpSimpleRegexC removes all the unneeded captures/grouping, and there we see a little speed gain.
+It seems that the non-capturing case isn't optimized by the Sun Java implementation of regexes.
+</p>
+<pre>  private static final String fpSimpleRegexC =
+      "[+-]?(" +
+      "\\d+\\.?\\d*([eE][+-]?\\d+)?|" +
+      "\\.\\d+([eE][+-]?\\d+)?" +
+      ")[fFdD]?";
+</pre>
+<p>I also tried with fpSimpleRegexD to see if a smaller alternative branch helps, but curiously it seems to be the reverse!
+</p>
+<pre>  private static final String fpSimpleRegexD =
+      "[+-]?(" +
+      "\\d+\\.?\\d*|" +
+      "\\.\\d+" +
+      ")([eE][+-]?\\d+)?[fFdD]?";
+</pre>
+<p>Lastly, I tried one of my pet peeve: I believe that some tests before applying a RE can go a long way to simplify them,
+and even to speed them up. So I made fpFastRegex1 and fpFastRegex2, and a little code to choose if I must apply the first one
+or the second one. And indeed, I gain a little speed, although less than I thought initially, as I first checked against the first REs above.
+</p>
+<pre>  private static final String fpFastRegex1 =
+      "[+-]?" +
+      "(\\d+\\.?\\d*([eE][+-]?\\d+)?)" +
+      "[fFdD]?";
+  private static final String fpFastRegex2 =
+      "[+-]?" +
+      "\\.\\d+([eE][+-]?\\d+)?" +
+      "[fFdD]?";
+
+  private static final Pattern fpFastPattern1 = Pattern.compile(fpFastRegex1);
+  private static final Pattern fpFastPattern2 = Pattern.compile(fpFastRegex2);
+
+  public static boolean checkFloatingPointNumberFast(String wouldBeFloatingPoint)
+  {
+    if (wouldBeFloatingPoint.length() >= 2)
+    {
+      char c0 = wouldBeFloatingPoint.charAt(0);
+      char c1 = wouldBeFloatingPoint.charAt(1);
+      if (c0 == '.' ||
+          (c0 == '+' || c0 == '-') && c1 == '.')
+      {
+        Matcher m = fpFastPattern2.matcher(wouldBeFloatingPoint);
+        return m.matches();
+      }
+    }
+    Matcher m = fpFastPattern1.matcher(wouldBeFloatingPoint);
+    return m.matches();
+  }
+</pre>
+<p>The test code is slightly more complex but still simple and it allows to use simpler expressions.<br/>
+I compared all these regex matching methods against the classical method of using Double.valueOf and
+catching exceptions if it isn't a good string:
+</p>
+<pre>  public static boolean checkFloatingPointNumberAccurate(String wouldBeFloatingPoint)
+  {
+    try
+    {
+      Double d = Double.valueOf(wouldBeFloatingPoint);
+      return true;
+    }
+    catch (NumberFormatException e)
+    {
+      return false;
+    }
+  }
+</pre>
+<p>Indeed, this one is much faster on good cases (valid numbers) and much slower (the issue of try/catch mechanism)
+on bad cases.<br/>
+My test cases are not exhaustive, it could be beefed up a bit.
+</p>
+<pre>  public static final String[] testStringsOK =
+  {
+    "0",
+    "0.",
+    "0.1",
+    ".1",
+    "-.1",
+    "3.14159265358979323d",
+    "14140728F",
+    "-0.001",
+    "-898",
+    "666",
+    "42E7",
+    "1e-7",
+    "55.e-77",
+    ".333",
+    "-.333e-1",
+    "-77.77e-77",
+  };
+  public static final String[] testStringsKO =
+  {
+    ".0.",
+    "0..",
+    "0.1-",
+    "..1",
+    "--.1",
+    "3,14159265358979323D",
+    "14 140 728f",
+    "0.1%",
+    "-0.001$",
+    "-8/98",
+    "#666",
+    "42F7",
+    "1f-7",
+    "55.E.-77",
+    ".33.3",
+    "-.333.e-1",
+    "-77.77e-77.",
+  };
+</pre>
+<p>I made some code to verify my routines are working OK, without exception or errors:
+</p>
+<pre>  private static void testCheckers()
+  {
+    for (String testString : testStringsOK)
+    {
+      if (!checkFloatingPointNumber(testString)) System.out.println("RE: Error on " + testString);
+      if (!checkFloatingPointNumberSimpleA(testString)) System.out.println("SimpleA: Error on " + testString);
+	  // etc;
+    }
+    for (String testString : testStringsKO)
+    {
+      if (checkFloatingPointNumber(testString)) System.out.println("RE: OK on " + testString);
+      if (checkFloatingPointNumberSimpleA(testString)) System.out.println("SimpleA: OK on " + testString);
+	  // etc;
+    }
+  }
+
+  public static void main(String args[])
+  {
+    if (args.length == 0)
+    {
+      testCheckers();
+      testBenchmark();
+      return;
+    }
+    System.out.println("Is '" + args[0] + "' a valid floating point number? " +
+        checkFloatingPointNumber(args[0]));
+  }
+}
+</pre>
+<p>The testBenchmark() was made before the testCheckers, to verify my Caliper code was OK, not throwing exceptions.
+</p>
+<pre>  private static void testBenchmark()
+  {
+    FloatingPointTesterBenchmark fptb = new FloatingPointTesterBenchmark();
+    fptb.timeFPCheckingOK(1);
+    fptb.timeFPCheckingKO(1);
+    fptb.timeFPCheckingSimpleAOK(1);
+    fptb.timeFPCheckingSimpleAKO(1);
+	// etc.
+  }
+</pre>
+<p>The FloatingPointTesterBenchmark class is the Caliper dedicated class that is run to time to various routines.
+The timeFPXxxOK() routines are quite simple.
+</p>
+<pre>public class FloatingPointTesterBenchmark extends SimpleBenchmark
+{
+  @Override
+  protected void setUp()
+  {
+  }
+
+  public void timeFPCheckingSimpleAOK(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsOK)
+      {
+        FloatingPointTester.checkFloatingPointNumberSimpleA(testString);
+      }
+    }
+  }
+  public void timeFPCheckingSimpleAKO(int reps)
+  {
+    for (int i = 0; i < reps; i++)
+    {
+      for (String testString : FloatingPointTester.testStringsKO)
+      {
+        FloatingPointTester.checkFloatingPointNumberSimpleA(testString);
+      }
+    }
+  }
+  // Etc.
+
+  public static void main(String[] args) throws Exception
+  {
+    Runner.main(FloatingPointTesterBenchmark.class, args);
+  }
+}
+</pre>
+<p>I was feeling we could do better. Somehow, writing a simple finite state machine to match the RE isn't that hard
+and can fail fast if needed. So I drawn such FSM, implemented it and after some adjustments, I found out it was
+beating all the above methods hands down! It might still have some bugs: as I wrote, the test set should be expanded
+to test it more thoroughly.<br/>
+The FSM (a quick drawing made with Inkscape):<br/>
+<img src="http://Phi.Lho.free.fr/images/designs/FSM-Double.png" title="Finite State Machine - Double" alt="The finite state machine to parse a double"/><br/>
+This FSM works better than I expected, blowing out all the concurrents, particularly on bad cases:
+it can exit early, not throwing exception, so it is fast.<br/>
+The coding of the FSM:
+</p>
+<pre>  private static boolean isDigit(char c)
+  {
+//~     return Character.isDigit(c); // If Unicode awareness if required
+    return c >= '0' && c <= '9';
+  }
+  public static boolean checkFloatingPointNumberByHand(String pfp)
+  {
+    int len = pfp.length();
+    if (len == 0)
+      return false;
+    if (len == 1)
+      return Character.isDigit(pfp.charAt(0));
+
+    int state = 0;
+    int cursor = 0;
+    boolean bCheckAgain = false;
+    char c = ' ';
+    while (cursor < len || bCheckAgain)
+    {
+      if (!bCheckAgain)
+      {
+        c = pfp.charAt(cursor++);
+      }
+      else
+      {
+        bCheckAgain = false;
+      }
+      switch (state)
+      {
+        case 0:
+          state = 1;
+          if (c == '+' || c == '-')
+          {
+            break;
+          }
+          bCheckAgain = true; // Not a sign, process current char
+          break;
+        case 1:
+          if (c == '.')
+          {
+            state = 2;
+          }
+          else if (isDigit(c))
+          {
+            state = 4;
+          }
+          else
+          {
+            return false; // Unexpected char
+          }
+          break;
+        case 2: // After prefixing dot, want digits
+          if (isDigit(c))
+          {
+            state = 3;
+          }
+          else
+          {
+            return false;
+          }
+          break;
+        case 3: // After dot, want more digits
+          if (isDigit(c))
+          {
+            break; // Continue on this state
+          }
+          else
+          {
+            state = 5; // Before exponent, if any
+            bCheckAgain = true; // Check for exponent or type symbol
+          }
+          break;
+        case 4: // After initial digit, want more digits or dot
+          if (c == '.')
+          {
+            state = 3;
+          }
+          else if (isDigit(c))
+          {
+            break; // Continue on this state
+          }
+          else
+          {
+            state = 5;
+            bCheckAgain = true; // Check for exponent or type symbol
+          }
+          break;
+        case 5: // Before exponent or type symbol
+          if (c == 'e' || c == 'E')
+          {
+            state = 6;
+          }
+          else
+          {
+            state = 9; // Check for type symbol
+            bCheckAgain = true; // Not an exponent, process current char
+          }
+          break;
+        case 6:
+          state = 7;
+          if (c == '+' || c == '-')
+          {
+            break;
+          }
+          bCheckAgain = true; // Not a sign, process current char
+          break;
+        case 7: // Expect a digit
+          if (isDigit(c))
+          {
+            state = 8;
+          }
+          else
+          {
+            return false;
+          }
+          break;
+        case 8: // Loop on digits
+          if (isDigit(c))
+          {
+            break;  // Continue on this state
+          }
+          else
+          {
+            state = 9;
+            bCheckAgain = true; // Not a sign, process current char
+          }
+          break;
+        case 9:
+          state = 10;
+          if (c == 'f' || c == 'F' || c == 'd' || c == 'D')
+          {
+            break;
+          }
+          return false; // We should have no more chars here!
+        case 10:
+          return false; // (at least) one char too much
+      }
+    }
+    if (state == 3 || state == 4 || state == 8 || state == 10)
+    {
+      return cursor == len; // OK if there are no trailing chars
+    }
+    return false;
+  }
+</pre>
+<p>The run of the benchmark is as follows (on an old computer):
+</p>
+<pre>> java -cp .;D:\Archives\_Recent\caliper.jar FloatingPointTesterBenchmark
+ 0% Scenario{vm=java, trial=0, benchmark=FPCheckingOK} 29170,40 ns; ?=486,58 ns @ 10 trials
+ 6% Scenario{vm=java, trial=0, benchmark=FPCheckingKO} 46397,68 ns; ?=846,52 ns @ 10 trials
+13% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleAOK} 18295,58 ns; ?=141,39 ns @ 3 trials
+19% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleAKO} 24767,98 ns; ?=95,57 ns @ 3 trials
+25% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleBOK} 17565,72 ns; ?=113,22 ns @ 3 trials
+31% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleBKO} 24203,24 ns; ?=147,63 ns @ 3 trials
+38% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleCOK} 13368,73 ns; ?=120,19 ns @ 4 trials
+44% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleCKO} 17449,91 ns; ?=234,34 ns @ 10 trials
+50% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleDOK} 13567,15 ns; ?=159,90 ns @ 10 trials
+56% Scenario{vm=java, trial=0, benchmark=FPCheckingSimpleDKO} 18279,78 ns; ?=162,53 ns @ 4 trials
+63% Scenario{vm=java, trial=0, benchmark=FPCheckingFastOK} 13042,81 ns; ?=124,76 ns @ 8 trials
+69% Scenario{vm=java, trial=0, benchmark=FPCheckingFastKO} 15943,08 ns; ?=132,36 ns @ 4 trials
+75% Scenario{vm=java, trial=0, benchmark=FPCheckingAccurateOK} 7039,20 ns; ?=33,15 ns @ 3 trials
+81% Scenario{vm=java, trial=0, benchmark=FPCheckingAccurateKO} 67122,62 ns; ?=437,61 ns @ 3 trials
+88% Scenario{vm=java, trial=0, benchmark=FPCheckingByHandOK} 1394,36 ns; ?=23,77 ns @ 10 trials
+94% Scenario{vm=java, trial=0, benchmark=FPCheckingByHandKO} 1241,15 ns; ?=14,37 ns @ 10 trials
+
+           benchmark    us logarithmic runtime
+        FPCheckingOK 29,17 =======================
+        FPCheckingKO 46,40 ===========================
+ FPCheckingSimpleAOK 18,30 ====================
+ FPCheckingSimpleAKO 24,77 ======================
+ FPCheckingSimpleBOK 17,57 ====================
+ FPCheckingSimpleBKO 24,20 ======================
+ FPCheckingSimpleCOK 13,37 ==================
+ FPCheckingSimpleCKO 17,45 ====================
+ FPCheckingSimpleDOK 13,57 ==================
+ FPCheckingSimpleDKO 18,28 ====================
+    FPCheckingFastOK 13,04 ==================
+    FPCheckingFastKO 15,94 ===================
+FPCheckingAccurateOK  7,04 =============
+FPCheckingAccurateKO 67,12 ==============================
+  FPCheckingByHandOK  1,39 =
+  FPCheckingByHandKO  1,24 =
+
+vm: java
+trial: 0
+</pre>
+
+<p>Overall, it was an interesting experience, with test of a useful library (allowing to choose between alternative designs
+when speed is important) and a routine that can be used in many cases.<br/>
+Note 1: all these methods, except, obviously the Double.valueOf method, check for syntax, but not for bounds: they will happily accept an exponent with a dozen of digits! I suppose that's the price of speed...<br/>
+Note 2: I forgot to put my usual headers, but this code is thereby put under my usual zlib/libpng license, a kind of BSD license.
+Feel free to reuse if you want.
+</p>
