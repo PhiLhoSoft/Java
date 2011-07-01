@@ -12,7 +12,7 @@ public class SQLiteTest
     stat.executeUpdate("create table manga (author, title);");
     PreparedStatement prep = conn.prepareStatement("insert into manga values (?, ?);");
 
-    prep.setString(1, "Tsukasa Hôjô");
+    prep.setString(1, "Tsukasa Hōjō");
     prep.setString(2, "City Hunter");
     prep.addBatch();
     prep.setString(1, "Rumiko Takahashi");
@@ -26,7 +26,7 @@ public class SQLiteTest
     prep.executeBatch();
     conn.setAutoCommit(true);
 
-    ResultSet rs = stat.executeQuery("select * from manga;");
+    ResultSet rs = stat.executeQuery("select author, title from manga;");
     while (rs.next())
     {
       System.out.println("Mangaka = " + rs.getString("author"));
