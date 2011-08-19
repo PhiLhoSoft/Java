@@ -34,16 +34,21 @@ class BenchmarkTester
     "a", "b",
   };
 
-  public static boolean check(String toTest)
+  public void init()
+  {
+    System.out.println("Init");
+  }
+
+  public boolean check(String toTest)
   {
     return Character.isUpperCase(toTest.charAt(0));
   }
-  public static boolean checkToo(String toTest)
+  public boolean checkToo(String toTest)
   {
     return Character.isUpperCase(toTest.trim().charAt(0));
   }
 
-  private static void testCheckers()
+  private void testCheckers()
   {
     for (String testString : testStringsOK)
     {
@@ -58,23 +63,25 @@ class BenchmarkTester
   }
 
   // Run the benchmark functions once to check if any exception is thrown
-  private static void testBenchmark()
+  private void testBenchmark()
   {
-    CaliperBenchmarkTemplate bm = new CaliperBenchmarkTemplate();
-    bm.timeCheckingOK(1);
-    bm.timeCheckingKO(1);
-    bm.timeCheckingTooOK(1);
-    bm.timeCheckingTooKO(1);
+    CaliperBenchmarkTemplate cbt = new CaliperBenchmarkTemplate();
+    cbt.timeCheckingOK(1);
+    cbt.timeCheckingKO(1);
+    cbt.timeCheckingTooOK(1);
+    cbt.timeCheckingTooKO(1);
   }
 
   public static void main(String args[])
   {
+    BenchmarkTester bt = new BenchmarkTester();
     if (args.length == 0)
     {
 //~       System.err.println("Usage: BenchmarkTester <something>");
 //~       System.exit(1);
-      testCheckers();
-      testBenchmark();
+      bt.init();
+      bt.testCheckers();
+      bt.testBenchmark();
       System.out.println("Done");
       return;
     }
@@ -90,10 +97,12 @@ public class CaliperBenchmarkTemplate extends SimpleBenchmark
     Runner.main(CaliperBenchmarkTemplate.class, args);
   }
 
+  BenchmarkTester objectToTest = new BenchmarkTester();
+
   @Override
   protected void setUp()
   {
-//~     BenchmarkTester.makePattern();
+    objectToTest.init();
   }
   public void timeCheckingOK(int reps)
   {
@@ -101,7 +110,7 @@ public class CaliperBenchmarkTemplate extends SimpleBenchmark
     {
       for (String testString : BenchmarkTester.testStringsOK)
       {
-        BenchmarkTester.check(testString);
+        objectToTest.check(testString);
       }
     }
   }
@@ -111,7 +120,7 @@ public class CaliperBenchmarkTemplate extends SimpleBenchmark
     {
       for (String testString : BenchmarkTester.testStringsKO)
       {
-        BenchmarkTester.check(testString);
+        objectToTest.check(testString);
       }
     }
   }
@@ -122,7 +131,7 @@ public class CaliperBenchmarkTemplate extends SimpleBenchmark
     {
       for (String testString : BenchmarkTester.testStringsOK)
       {
-        BenchmarkTester.checkToo(testString);
+        objectToTest.checkToo(testString);
       }
     }
   }
@@ -132,7 +141,7 @@ public class CaliperBenchmarkTemplate extends SimpleBenchmark
     {
       for (String testString : BenchmarkTester.testStringsKO)
       {
-        BenchmarkTester.checkToo(testString);
+        objectToTest.checkToo(testString);
       }
     }
   }
