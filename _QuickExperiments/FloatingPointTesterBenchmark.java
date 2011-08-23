@@ -1,10 +1,12 @@
 /*
  * Testing performance of various floating point checkers,
  * telling if a string is a valid number.
+ * Shows abd test hand-coded automatons.
  * See http://phi.lho.free.fr/serendipity/index.php?/archives/28-Is-this-string-a-number.html
  */
 /* File history:
- *  1.01.000 -- 2010/12/07 (PL) -- Most test cases
+ *  1.02.000 -- 2011/08/20 (PL) -- Even more test cases, add the FSM version.
+ *  1.01.000 -- 2010/12/07 (PL) -- More test cases
  *  1.00.000 -- 2010/12/01 (PL) -- Creation
  */
 /*
@@ -12,7 +14,7 @@ Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
 http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2010 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2010-2011 Philippe Lhoste / PhiLhoSoft
 */
 import java.io.*;
 import java.net.*;
@@ -25,7 +27,9 @@ import com.google.caliper.Param;
 import com.google.caliper.SimpleBenchmark;
 import com.google.caliper.Runner;
 
+// This implements the checkers, and allows to test them against a test set.
 // java -cp .;C:\Java\libraries\caliper.jar FloatingPointTester
+// Just displays Done if all is OK, will shows some error messages otherwise.
 class FloatingPointTester
 {
   private static final String Digits    = "(\\p{Digit}+)";
@@ -122,6 +126,10 @@ class FloatingPointTester
   };
   public static final String[] testStringsKO =
   {
+    "", ".",
+    "+", "-",
+    "+.", "-.",
+    "55.e", "55.e-", "55.e+",
     ".0.",
     "8..",
     "0.1-",
@@ -486,7 +494,8 @@ class FloatingPointTester
       }
     }
 //~     System.out.println("Stopping on state " + state);
-    return true;
+    // Must stop on one of these states
+    return state == 3 || state == 4 || state == 7 || state == 8;
   }
   public static boolean checkFloatingPointNumberAccurate(String wouldBeFloatingPoint)
   {
