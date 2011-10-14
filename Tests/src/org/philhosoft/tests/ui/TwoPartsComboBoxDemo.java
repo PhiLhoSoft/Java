@@ -48,6 +48,9 @@ public class TwoPartsComboBoxDemo extends JFrame
 				System.out.println(si == null ? "No item selected" : si.toString());
 			}
 		});
+
+		JComboBox combo = new JComboBox(itemsRecent);
+		cont.add(combo);
 	}
 
 	/**
