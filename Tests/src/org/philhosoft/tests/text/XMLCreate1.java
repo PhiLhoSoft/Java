@@ -13,7 +13,7 @@ http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2009-2011 Philippe Lhoste / PhiLhoSoft
 */
-package org.philhosoft.tests.string;
+package org.philhosoft.tests.text;
 
 import java.io.*;
 
@@ -24,14 +24,14 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
-public class XMLCreate
+public class XMLCreate1
 {
 	public static void main(String[] args)
 	{
-		createXMLFile("filename.xml", false);
+		createXMLFile("filename1.xml");
 	}
 
-	public static void createXMLFile(String fileName, boolean validating)
+	public static void createXMLFile(String fileName)
 	{
 		try
 		{
