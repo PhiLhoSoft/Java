@@ -45,7 +45,7 @@ public class ImageUtil
 	 */
 	public static BufferedImage imageToBufferedImage(Image image, int width, int height)
 	{
-		return ImageToBufferedImage(image, width, height, BufferedImage.TYPE_INT_ARGB);
+		return imageToBufferedImage(image, width, height, BufferedImage.TYPE_INT_ARGB);
 	}
 
 	/**
@@ -76,10 +76,10 @@ public class ImageUtil
 	public static BufferedImage convertRGBAToIndexed(BufferedImage srcImage)
 	{
 		// Create a non-transparent palletized image
-		Image flattenedImage = TransformTransparencyToMagenta(srcImage);
-		BufferedImage flatImage = ImageToBufferedImage(flattenedImage,
+		Image flattenedImage = transformTransparencyToMagenta(srcImage);
+		BufferedImage flatImage = imageToBufferedImage(flattenedImage,
 				srcImage.getWidth(), srcImage.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
-		BufferedImage destImage = MakeColorTransparent(flatImage, 0, 0);
+		BufferedImage destImage = makeColorTransparent(flatImage, 0, 0);
 		return destImage;
 	}
 

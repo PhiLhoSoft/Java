@@ -13,8 +13,6 @@ http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2010-2011 Philippe Lhoste / PhiLhoSoft
 */
-package org.philhosoft.tests.ui;
-
 package org.philhosoft.tests.util;
 
 /**

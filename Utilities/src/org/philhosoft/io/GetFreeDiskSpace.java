@@ -94,7 +94,7 @@ public class GetFreeDiskSpace
 		{
 			space = getFreeSpace("C:\\");
 			System.out.println("Free disk space for C: " + space);
-			space = GetFreeSpace("D:\\");
+			space = getFreeSpace("D:\\");
 			System.out.println("Free disk space for D: " + space);
 		}
 		catch (IOException e)

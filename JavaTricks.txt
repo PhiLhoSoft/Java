@@ -386,6 +386,67 @@ private void removeButtons(Container c)
    }
 }
 
+### Merge Sort
+
+// Efficient and stable, with just some use of extra space
+public class MergeSorter
+{
+   private static int[] original;
+   private static int[] auxiliary;
+
+   public static void sort(int[] oa)
+   {
+      original = oa;
+      int n = original.length;
+      auxiliary = new int[(n + 1) / 2];
+      mergesort(0, n - 1);
+   }
+
+   private static void mergesort(int lo, int hi)
+   {
+      if (lo < hi)
+      {
+         int m = (lo + hi) / 2;
+         mergesort(lo, m);
+         mergesort(m + 1, hi);
+         merge(lo, m, hi);
+      }
+   }
+
+   private static void merge(int lo, int m, int hi)
+   {
+      int i, j, k;
+
+      i = 0; j = lo;
+      // copy first half of array a to auxiliary array b
+      while (j <= m)
+      {
+         auxiliary[i++] = original[j++];
+      }
+
+      i = 0; k = lo;
+      // copy back next-greatest element at each time
+      while (k < j && j <= hi)
+      {
+         if (auxiliary[i] <= original[j])
+         {
+            original[k++] = auxiliary[i++];
+         }
+         else
+         {
+            original[k++] = original[j++];
+         }
+      }
+
+      // copy back remaining elements of first half (if any)
+      while (k < j)
+      {
+         original[k++] = auxiliary[i++];
+      }
+   }
+}
+
+
 ### Printing
 
 http://java.sun.com/docs/books/tutorial/2d/printing/index.html
