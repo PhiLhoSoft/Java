@@ -1,0 +1,11 @@
+#Fri Nov 25 18:43:05 CET 2011
+spellingIndicationColor=255,174,136
+spellingEngine=org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine
+writeOccurrenceIndicationColor=255,200,255
+printMargin=true
+printMarginColor=226,135,220
+eclipse.preferences.version=1
+isOccurrenceGoToNextNavigationTarget=true
+AbstractTextEditor.Navigation.SmartHomeEnd=false
+printMarginColumn=100
+overviewRuler_migration=migrated_3.1

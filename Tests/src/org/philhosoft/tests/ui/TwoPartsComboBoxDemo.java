@@ -2,7 +2,7 @@
  * Tests: A collection of little test programs to explore Java language.
  */
 /* File history:
- *  1.01.000 -- 2012/01/04 (PL) -- Update
+ *  1.01.000 -- 2012/01/04 (PL) -- Update aiming to address the issues mentioned in a StackOverflow comment
  *  1.00.000 -- 2008/09/20 (PL) -- Creation
  */
 /*
@@ -50,6 +50,7 @@ public class TwoPartsComboBoxDemo extends JFrame
 			}
 		});
 
+		// Reference, to check we have similar behavior to standard combo
 		JComboBox combo = new JComboBox(itemsRecent);
 		cont.add(combo);
 	}
