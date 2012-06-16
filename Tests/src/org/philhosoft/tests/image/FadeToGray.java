@@ -49,9 +49,12 @@ class FadeToGray extends Component implements Icon
 		m_rop = new RescaleOp(m_scales, m_offsets, null);
 	}
 
+	@Override
 	public int getIconWidth() { return m_w; }
+	@Override
 	public int getIconHeight() { return m_h; }
 
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y)
 	{
 		Graphics2D g2d = (Graphics2D) g;

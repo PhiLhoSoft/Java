@@ -51,7 +51,7 @@ public class StreamGobbler extends Thread
 		{
 			while ((line = br.readLine()) != null)
 			{
-				HandleOutputLine(line);
+				handleOutputLine(line);
 			}
 		}
 		catch (IOException ioe)

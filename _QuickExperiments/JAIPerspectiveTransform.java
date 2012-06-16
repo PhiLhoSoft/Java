@@ -18,7 +18,9 @@ import javax.swing.JPanel;
 
 public class JAIPerspectiveTransform extends JFrame
 {
-  static class Panel extends JPanel
+  private BufferedImage m_image;
+
+  private class DisplayPanel extends JPanel
   {
     @Override
     protected void paintComponent(Graphics g)
@@ -26,9 +28,8 @@ public class JAIPerspectiveTransform extends JFrame
       Graphics2D g2d = (Graphics2D) g;
       try
       {
-        BufferedImage image = GetImage();
-        g2d.drawImage(image, 20, 20, null);
-        g2d.drawImage(a(image), 20 + image.getWidth() + 10, 20, null);
+        g2d.drawImage(m_image, 20, 20, null);
+        g2d.drawImage(a(m_image), 20 + m_image.getWidth() + 10, 20, null);
       }
       catch (IOException e)
       {
@@ -43,17 +44,6 @@ public class JAIPerspectiveTransform extends JFrame
         e.printStackTrace();
       }
     }
-  }
-
-  static BufferedImage GetImage() throws IOException
-  {
-    BufferedImage src = ImageIO.read(JAIPerspectiveTransform.class.getResource("TestImage.jpg"));
-    BufferedImage image = new BufferedImage(src.getWidth(), src.getHeight(),
-        BufferedImage.TYPE_INT_ARGB_PRE);
-    Graphics2D g2d = (Graphics2D) image.getGraphics();
-    g2d.drawImage(src, 0, 0, null);
-
-    return image;
   }
 
   public static BufferedImage a(BufferedImage image)
@@ -80,15 +70,33 @@ public class JAIPerspectiveTransform extends JFrame
     return planarImage.getAsBufferedImage();
   }
 
+  private BufferedImage getImage(String path) throws IOException
+  {
+    BufferedImage src = ImageIO.read(JAIPerspectiveTransform.class.getResource("TestImage.jpg"));
+    BufferedImage image = new BufferedImage(src.getWidth(), src.getHeight(),
+        BufferedImage.TYPE_INT_ARGB_PRE);
+    Graphics2D g2d = (Graphics2D) image.getGraphics();
+    g2d.drawImage(src, 0, 0, null);
+
+    return image;
+  }
+
   public static void main(String[] args)
   {
+    String path = "";
+    if (args.length > 0)
+    {
+      path = args[0];
+    }
+    m_image = getImage(path);
     SwingUtilities.invokeLater(new Runnable()
     {
         public void run()
         {
           JAIPerspectiveTransform frame = new JAIPerspectiveTransform();
+          frame.setTitle("JAI Perspective Transform");
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.getContentPane().add(new Panel());
+          frame.getContentPane().add(new DisplayPanel());
           frame.setSize(800, 600);
           frame.setVisible(true);
         }

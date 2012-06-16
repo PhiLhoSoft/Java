@@ -93,6 +93,7 @@ public class TestImageMask
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
+			@Override
 			public final int filterRGB(int x, int y, int rgb)
 			{
 				return (rgb << 8) & 0xFF000000;

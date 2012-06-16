@@ -27,40 +27,13 @@ public class AddTransparency
 {
 	AddTransparency() throws IOException
 	{
-		String imagePath = "E:/Documents/images/";
-		File inFile = new File(imagePath, "map.png");
-		BufferedImage image = ImageIO.read(inFile);
-
-		Image transpImg1 = TransformGrayToTransparency(image);
-		BufferedImage resultImage1 = org.philhosoft.util.ImageUtil.ImageToBufferedImage(
-				transpImg1, image.getWidth(), image.getHeight());
-
-		File outFile1 = new File(imagePath, "map_with_transparency1.png");
-		ImageIO.write(resultImage1, "PNG", outFile1);
-
-		Image transpImg2 = TransformColorToTransparency(image, new Color(0, 50, 77), new Color(200, 200, 255));
-		BufferedImage resultImage2 = org.philhosoft.util.ImageUtil.ImageToBufferedImage(
-				transpImg2, image.getWidth(), image.getHeight());
-
-		File outFile2 = new File(imagePath, "map_with_transparency2.png");
-		ImageIO.write(resultImage2, "PNG", outFile2);
-
-		// Save to Gif format
-		BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.ConvertRGBAToIndexed(resultImage2);
-
-		File outFile3 = new File(imagePath, "map_with_transparency2.gif");
-		ImageIO.write(resultImage3, "GIF", outFile3);
-
-		File globeFile = new File("E:/Documents/Images/TransparentPNG/globe-scene-fish-bowl-pngcrush.png");
-		BufferedImage globe = ImageIO.read(globeFile);
-		BufferedImage resultImage4 = org.philhosoft.util.ImageUtil.ConvertRGBAToIndexed(globe);
-		ImageIO.write(resultImage4, "GIF", new File(imagePath, "globe.gif"));
 	}
 
-	private Image TransformGrayToTransparency(BufferedImage image)
+	private Image transformGrayToTransparency(BufferedImage image)
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
+			@Override
 			public final int filterRGB(int x, int y, int rgb)
 			{
 				return (rgb << 8) & 0xFF000000;
@@ -71,7 +44,7 @@ public class AddTransparency
 	    return Toolkit.getDefaultToolkit().createImage(ip);
 	}
 
-	private Image TransformColorToTransparency(BufferedImage image, Color c1, Color c2)
+	private Image transformColorToTransparency(BufferedImage image, Color c1, Color c2)
 	{
 		// Primitive test, just an example
 		final int r1 = c1.getRed();
@@ -82,6 +55,7 @@ public class AddTransparency
 		final int b2 = c2.getBlue();
 		ImageFilter filter = new RGBImageFilter()
 		{
+			@Override
 			public final int filterRGB(int x, int y, int rgb)
 			{
 				int r = (rgb & 0xFF0000) >> 16;
@@ -105,5 +79,34 @@ public class AddTransparency
 	public static void main(String[] args) throws IOException
 	{
 		AddTransparency at = new AddTransparency();
+
+		String imagePath = "G:/images/";
+		File inFile = new File(imagePath, "map.png");
+		BufferedImage image = ImageIO.read(inFile);
+
+		Image transpImg1 = at.transformGrayToTransparency(image);
+		BufferedImage resultImage1 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
+				transpImg1, image.getWidth(), image.getHeight());
+
+		File outFile1 = new File(imagePath, "map_with_transparency1.png");
+		ImageIO.write(resultImage1, "PNG", outFile1);
+
+		Image transpImg2 = at.transformColorToTransparency(image, new Color(0, 50, 77), new Color(200, 200, 255));
+		BufferedImage resultImage2 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
+				transpImg2, image.getWidth(), image.getHeight());
+
+		File outFile2 = new File(imagePath, "map_with_transparency2.png");
+		ImageIO.write(resultImage2, "PNG", outFile2);
+
+		// Save to Gif format
+		BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(resultImage2);
+
+		File outFile3 = new File(imagePath, "map_with_transparency2.gif");
+		ImageIO.write(resultImage3, "GIF", outFile3);
+
+		File globeFile = new File(imagePath + "TransparentPNG/globe-scene-fish-bowl-pngcrush.png");
+		BufferedImage globe = ImageIO.read(globeFile);
+		BufferedImage resultImage4 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(globe);
+		ImageIO.write(resultImage4, "GIF", new File(imagePath, "globe.gif"));
 	}
 }

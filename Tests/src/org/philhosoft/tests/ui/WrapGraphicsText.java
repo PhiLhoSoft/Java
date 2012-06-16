@@ -53,11 +53,13 @@ public class WrapGraphicsText extends JFrame
 			return m_text;
 		}
 
+		@Override
 		public Dimension getPreferredSize()
 		{
 		    return new Dimension(m_width, m_height);
 		}
 
+		@Override
 		public void paint(Graphics g)
 		{
 			super.paintComponent(g);
@@ -109,11 +111,13 @@ public class WrapGraphicsText extends JFrame
 			return m_text;
 		}
 
+		@Override
 		public Dimension getPreferredSize()
 		{
 		    return new Dimension(m_width, m_height);
 		}
 
+		@Override
 		public void paint(Graphics g)
 		{
 			super.paintComponent(g);
@@ -175,6 +179,7 @@ public class WrapGraphicsText extends JFrame
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				JFrame demoFrame = new WrapGraphicsText();

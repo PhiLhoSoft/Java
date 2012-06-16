@@ -148,6 +148,7 @@ public class CompositeGraphics
 		}
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				JFrame f = new JFrame();

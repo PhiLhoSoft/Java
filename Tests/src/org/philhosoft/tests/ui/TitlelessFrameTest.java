@@ -39,6 +39,7 @@ public class TitlelessFrameTest
 		// creating and showing this application's GUI.
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				new TestTitlelessFrame();
@@ -84,6 +85,7 @@ class TestTitlelessFrame
 		// Add a mouse listener to allow dragging of the m_frame using the label
 		noTitle.addMouseListener(new MouseAdapter()
 		{
+			@Override
 			public void mousePressed(MouseEvent e)
 			{
 				m_origin.x = e.getX();
@@ -92,6 +94,7 @@ class TestTitlelessFrame
 		});
 		noTitle.addMouseMotionListener(new MouseMotionAdapter()
 		{
+			@Override
 			public void mouseDragged(MouseEvent e)
 			{
 				// In Windows at least, a maximized window cannot be moved
@@ -109,6 +112,7 @@ class TestTitlelessFrame
 		Button max = new Button("Maximize");
 		max.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				m_bMaximized = true;
@@ -119,6 +123,7 @@ class TestTitlelessFrame
 		Button min = new Button("Minimize (Iconify)");
 		min.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				// Preserve maximized
@@ -131,6 +136,7 @@ class TestTitlelessFrame
 		Button rest = new Button("Restore (Normal)");
 		rest.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				m_bMaximized = false;
@@ -141,6 +147,7 @@ class TestTitlelessFrame
 		Button close = new Button("Close");
 		close.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				System.exit(0);

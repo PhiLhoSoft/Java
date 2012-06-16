@@ -12,7 +12,6 @@
  */
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 
@@ -45,6 +44,7 @@ public class CursorTest extends JFrame
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				CursorTest testFrame = new CursorTest();

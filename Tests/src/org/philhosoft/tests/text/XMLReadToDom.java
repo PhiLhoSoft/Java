@@ -106,18 +106,21 @@ public class XMLReadToDom
 class XMLErrorHandler implements ErrorHandler
 {
 	//  Called in the event of a non-recoverable error
+	@Override
 	public void fatalError(SAXParseException e)
 	{
 		log(Level.SEVERE, "Fatal Error", e);
 	}
 
 	//  Called in the event of a recoverable error
+	@Override
 	public void error(SAXParseException e)
 	{
 		log(Level.SEVERE, "Error", e);
 	}
 
 	//  Called in the event of a warning
+	@Override
 	public void warning(SAXParseException e)
 	{
 		log(Level.WARNING, "Warning", e);

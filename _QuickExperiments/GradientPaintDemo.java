@@ -62,14 +62,14 @@ public class GradientPaintDemo extends JFrame
   {
     SwingUtilities.invokeLater(new Runnable()
     {
-     public void run()
-     {
-      JFrame demoFrame = new GradientPaintDemo();
-      demoFrame.setTitle("Test Gradient Paint");
-      demoFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      demoFrame.setSize(500, 500);
-      demoFrame.setVisible(true);
-     }
+      public void run()
+      {
+        JFrame demoFrame = new GradientPaintDemo();
+        demoFrame.setTitle("Test Gradient Paint");
+        demoFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        demoFrame.setSize(500, 500);
+        demoFrame.setVisible(true);
+      }
     });
   }
 }

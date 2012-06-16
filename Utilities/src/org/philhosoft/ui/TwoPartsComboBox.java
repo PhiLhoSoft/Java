@@ -48,6 +48,7 @@ public class TwoPartsComboBox extends JComboBox
 //			m_lastRecent.setBorder(new BottomThickLineBorder(10, Color.BLUE));
 		}
 
+		@Override
 		public Component getListCellRendererComponent(
 				JList list,
 				Object value,

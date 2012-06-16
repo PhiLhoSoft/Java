@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class GetGnatsData
+public class POSTRequest //GetGnatsData
 {
 	private static final String HOST =
 			"Host: www.mycom-int.fr";
@@ -41,18 +41,18 @@ public class GetGnatsData
 
 	public static void main(String args[])
 	{
-		GetGnatsData ggd = new GetGnatsData();
+		POSTRequest pr = new POSTRequest();
 		boolean bOK = false;
 		// Send the request
-		bOK = gdd.SendRequest();
+		bOK = pr.SendRequest();
 		if (!bOK)
 		{
 			// Report problem
 		}
 
 		// Get the answer of the server
-		int rc = ggd.GetResponseCode();
-		String feedback = gdd.GetServerFeedback();
+		int rc = pr.GetResponseCode();
+		String feedback = pr.GetServerFeedback();
 		System.out.println("----- " + rc + " -----\n" + feedback + "---------------");
 
 		// Extract the information from the server feedback
@@ -63,10 +63,10 @@ public class GetGnatsData
 		}
 	}
 
-	public GetGnatsData()
+	public POSTRequest()
 	{
 		// Mime boundary of the various parts of the message.
-		boundary = "-----GetGnatsData-----Mycom-----" + System.currentTimeMillis();
+		boundary = "-----POSTRequest-----Mycom-----" + System.currentTimeMillis();
 		// We can add optional parameters, eg. a string given by the user, parameters used, etc.
 		uploadURL = BASE_URL + "/" + SCRIPT_NAME;// + "?optionalParam=value&foo=bar";
 	}

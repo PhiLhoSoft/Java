@@ -47,6 +47,7 @@ public class DatabaseAccessException extends SQLException
 
 		m_message = errorMsg.toString();
 	}
+	@Override
 	public String toString()
 	{
 		return "### [" + m_dba + "]: Exception! " + m_message;

@@ -42,6 +42,7 @@ public class TwoPartsComboBoxDemo extends JFrame
 		cont.add(m_combo);
 		m_combo.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent ae)
 			{
 				String si = (String) m_combo.getSelectedItem();
@@ -65,6 +66,7 @@ public class TwoPartsComboBoxDemo extends JFrame
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				JFrame demoFrame = new TwoPartsComboBoxDemo();

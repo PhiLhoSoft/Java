@@ -45,6 +45,7 @@ public class ImagePreview
 		chooser.addPropertyChangeListener(this);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent changeEvent)
 	{
 		String changeName = changeEvent.getPropertyName();

@@ -42,6 +42,7 @@ public class MemorizeWindowState
 		// creating and showing this application's GUI.
 		javax.swing.SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				new MainFrame();
@@ -75,6 +76,7 @@ class MainFrame extends JFrame implements ComponentListener
 		// and store preferences.
 		addWindowListener(new WindowAdapter()
 		{
+			@Override
 			public void windowClosing(WindowEvent e)
 			{
 				closeWindow();
@@ -156,6 +158,7 @@ class MainFrame extends JFrame implements ComponentListener
 
 	// Component listener methods
 
+	@Override
 	public void componentMoved(ComponentEvent e)
 	{
 		m_frameState.update(this);
@@ -163,6 +166,7 @@ class MainFrame extends JFrame implements ComponentListener
 //~ 		Rectangle bounds = getBounds();
 //~ 		System.out.println("Main frame moved to " + bounds.x + ", " + bounds.y);
 	}
+	@Override
 	public void componentResized(ComponentEvent e)
 	{
 		m_frameState.update(this);
@@ -170,7 +174,9 @@ class MainFrame extends JFrame implements ComponentListener
 //~ 		Rectangle bounds = getBounds();
 //~ 		System.out.println("Main frame resized to " + bounds.width + ", " + bounds.height);
 	}
+	@Override
 	public void componentShown(ComponentEvent e) {}
+	@Override
 	public void componentHidden(ComponentEvent e) {}
 }
 
@@ -236,6 +242,7 @@ class GUI extends JPanel implements ActionListener
 
 	 * Manage the buttons.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent ae)
 	{
 		String buttonPressed = ae.getActionCommand();

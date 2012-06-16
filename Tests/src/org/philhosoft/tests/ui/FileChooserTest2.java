@@ -54,6 +54,7 @@ public class FileChooserTest2
 		// creating and showing this application's GUI.
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				new FileChooserTest2();
@@ -171,9 +172,9 @@ public class FileChooserTest2
 	}
 }
 
+@SuppressWarnings("serial")
 class ExtendedJFileChooser extends JFileChooser
 {
-
    public ExtendedJFileChooser()
    {
       super( CreateFileSystemView( ) );
@@ -202,7 +203,8 @@ System.out.println(">> ExtendedJFileChooser/s: " + sCurrentDirectoryPath);
       {
          addPropertyChangeListener(new PropertyChangeListener()
          {
-            public void propertyChange(PropertyChangeEvent e)
+            @Override
+			public void propertyChange(PropertyChangeEvent e)
             {
                String s = e.getPropertyName();
 System.out.println("> ExtendedJFileChooser > propertyChange: " + s);
@@ -222,15 +224,18 @@ System.out.println("> ExtendedJFileChooser > propertyChange: " + s);
             // After reading a directory the model calls this method
             // but if the directory is empty this method is not called.
             // In this case, the method intervalRemoved will be called instead
-            public void contentsChanged(ListDataEvent e)
+            @Override
+			public void contentsChanged(ListDataEvent e)
             {
                ResetDefaultCursor( );
             }
-            public void intervalAdded(ListDataEvent e)
+            @Override
+			public void intervalAdded(ListDataEvent e)
             {
                ResetDefaultCursor( );
             }
-            public void intervalRemoved(ListDataEvent e)
+            @Override
+			public void intervalRemoved(ListDataEvent e)
             {
                ResetDefaultCursor( );
             }
@@ -305,7 +310,8 @@ System.out.println("> ExtendedJFileChooser > propertyChange: " + s);
 
    // Need for fixing PR #702/900/1306/1490
    // find the combo box manually and select the correct item!
-   public void setCurrentDirectory( File aPathFile )
+   @Override
+public void setCurrentDirectory( File aPathFile )
    {
       super.setCurrentDirectory( aPathFile );
 System.out.println("> ExtendedJFileChooser > setCurrentDirectory: " + aPathFile);
@@ -382,6 +388,7 @@ class WindowsAltFileSystemView extends FileSystemView
    /**
     * Returns true if the given file is a root.
     */
+   @Override
    public boolean isRoot(File f)
    {
       if( !f.isAbsolute() )
@@ -404,7 +411,8 @@ class WindowsAltFileSystemView extends FileSystemView
    /**
     * creates a new folder with a default folder name.
     */
-   public File createNewFolder(File containingDir) throws IOException
+   @Override
+public File createNewFolder(File containingDir) throws IOException
    {
 System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
       if( containingDir == null )
@@ -437,6 +445,7 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
     * there is currently no way to get this information from
     * io.File, therefore always return false.
     */
+   @Override
    public boolean isHiddenFile(File f)
    {
       return false;
@@ -446,6 +455,7 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
     * Returns all root partitions on this system. On Windows, this
     * will be the A: through Z: drives.
     */
+   @Override
    public File[] getRoots()
    {
       Vector rootsVector = new Vector();
@@ -471,6 +481,7 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
       return roots;
    }
 
+   @SuppressWarnings("serial")
    class FileSystemRoot extends File
    {
       public FileSystemRoot(File f)
@@ -478,11 +489,14 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
          super(f, "");
       }
 
-      public FileSystemRoot(String s) {
+      public FileSystemRoot(String s)
+      {
          super(s);
       }
 
-      public boolean isDirectory() {
+      @Override
+      public boolean isDirectory()
+      {
          return true;
       }
    }

@@ -35,7 +35,7 @@ public class ColorUtil
 	 */
 	public static boolean isColorConstrastOK(Color c1, Color c2, boolean bWithLargeFont)
 	{
-		return IsColorConstrastOKByLuminance(c1, c2, bWithLargeFont, false);
+		return isColorConstrastOKByLuminance(c1, c2, bWithLargeFont, false);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ColorUtil
 		{
 			minLumRatio = MIN_LUM_RATIO_NORMAL_AAA;
 		}
-		boolean bIsLuminanceContrastOK = GetLuminanceContrastRatio(c1, c2) > minLumRatio;
+		boolean bIsLuminanceContrastOK = getLuminanceContrastRatio(c1, c2) > minLumRatio;
 		return bIsLuminanceContrastOK;
 	}
 
@@ -86,17 +86,17 @@ public class ColorUtil
 		{
 			minColorDiff = MIN_COLOR_DIFF_STRICT;
 		}
-		float b1 = GetColorBrightness(c1);
-		float b2 = GetColorBrightness(c2);
+		float b1 = getColorBrightness(c1);
+		float b2 = getColorBrightness(c2);
 		boolean bIsBrightnessOK = Math.abs(b1 - b2) > MIN_BRIGHT_DIFF;
-		boolean bIsColorDiffOK = GetColorDifference(c1, c2) > minColorDiff;
+		boolean bIsColorDiffOK = getColorDifference(c1, c2) > minColorDiff;
 		return bIsBrightnessOK && bIsColorDiffOK;
 	}
 
 	public static float getLuminanceContrastRatio(Color c1, Color c2)
 	{
-		float l1 = GetColorLuminance(c1);
-		float l2 = GetColorLuminance(c2);
+		float l1 = getColorLuminance(c1);
+		float l2 = getColorLuminance(c2);
 		float ll = Math.min(l1, l2);
 		float hl = Math.max(l1, l2);
 		return (hl + 0.05F) / (ll + 0.05F);
@@ -114,9 +114,9 @@ public class ColorUtil
 	{
 		float[] facc = c.getRGBColorComponents(null);
 		return
-				0.2126F * GetLinearisedColorComponent(facc[0]) +
-				0.7152F * GetLinearisedColorComponent(facc[1]) +
-				0.0722F * GetLinearisedColorComponent(facc[2]);
+				0.2126F * getLinearisedColorComponent(facc[0]) +
+				0.7152F * getLinearisedColorComponent(facc[1]) +
+				0.0722F * getLinearisedColorComponent(facc[2]);
 	}
 
 	/**

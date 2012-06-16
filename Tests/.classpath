@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="C:/Java/libraries/JAI-ImageIO-1.1/jai_imageio.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/jh.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Utilities"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/Java/jre6/lib/plugin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -47,16 +47,19 @@ public class AutoClosingApp extends JFrame implements WindowListener
 		m_clock.start();
 	}
 
+	@Override
 	public void windowOpened(WindowEvent e)
 	{
 		System.out.println("windowOpened: " + e);
 	}
 	// Called when user closes the window (X button for example)
+	@Override
 	public void windowClosing(WindowEvent e)
 	{
 		System.out.println("windowClosing: " + e);
 	}
 	// Called when dispose() is called on frame
+	@Override
 	public void windowClosed(WindowEvent e)
 	{
 		System.out.println("windowClosed: " + e);
@@ -64,18 +67,22 @@ public class AutoClosingApp extends JFrame implements WindowListener
 //		System.exit(0);
 	}
 
+	@Override
 	public void windowIconified(WindowEvent e)
 	{
 		System.out.println("windowIconified: " + e);
 	}
+	@Override
 	public void windowDeiconified(WindowEvent e)
 	{
 		System.out.println("windowDeiconified: " + e);
 	}
+	@Override
 	public void windowActivated(WindowEvent e)
 	{
 		System.out.println("windowActivated: " + e);
 	}
+	@Override
 	public void windowDeactivated(WindowEvent e)
 	{
 		System.out.println("windowDeactivated: " + e);
@@ -111,6 +118,7 @@ public class AutoClosingApp extends JFrame implements WindowListener
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				new AutoClosingApp();

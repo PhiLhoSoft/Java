@@ -41,6 +41,7 @@ public class AppletAndJS extends Applet implements ActionListener
 	String callbackFunction;
 	JLabel status;
 
+	@Override
 	public void init()
 	{
 		command = new TextField(20);
@@ -59,6 +60,7 @@ public class AppletAndJS extends Applet implements ActionListener
 		add(status);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent ae)
 	{
 		if (ae.getSource() == exec)
