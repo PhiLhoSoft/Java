@@ -2,6 +2,7 @@
  * Tests: A collection of little test programs to explore Java language.
  */
 /* File history:
+ *  1.01.000 -- 2012/01/04 (PL) -- Update aiming to address the issues mentioned in a StackOverflow comment
  *  1.00.000 -- 2008/09/20 (PL) -- Creation
  */
 /*
@@ -9,7 +10,7 @@ Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
 http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2008-2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
@@ -50,6 +51,7 @@ public class TwoPartsComboBoxDemo extends JFrame
 			}
 		});
 
+		// Reference, to check we have similar behavior to standard combo
 		JComboBox combo = new JComboBox(itemsRecent);
 		cont.add(combo);
 	}
