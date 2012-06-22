@@ -130,12 +130,12 @@ public class CompositeGraphics
 	private JLabel WrapImageInComponent(BufferedImage image)
 	{
 		ImageIcon icon = new ImageIcon(image);
-		return new JLabel(icon, JLabel.CENTER);
+		return new JLabel(icon, SwingConstants.CENTER);
 	}
 
 	public static void main(String[] args) throws IOException
 	{
-		final String IMAGE_PATH = "D:/Documents/images/";
+		final String IMAGE_PATH = "C:/Personnel/Images";
 		String[] imageNames =
 		{
 			"Color.png", // 48x48 flat green square
@@ -144,7 +144,7 @@ public class CompositeGraphics
 		final BufferedImage[] images = new BufferedImage[imageNames.length];
 		for (int i = 0; i < images.length; i++)
 		{
-			images[i] = ImageIO.read(new File(IMAGE_PATH + imageNames[i]));
+			images[i] = ImageIO.read(new File(IMAGE_PATH, imageNames[i]));
 		}
 		SwingUtilities.invokeLater(new Runnable()
 		{

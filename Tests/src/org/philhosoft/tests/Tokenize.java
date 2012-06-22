@@ -12,6 +12,7 @@ public class Tokenize
 		while (st.hasMoreTokens())
 		{
 			String s = st.nextToken();
+			System.out.println("Tokenizer, next token: " + s);
 			tokenNb++;
 		}
 		return tokenNb;
@@ -24,6 +25,7 @@ public class Tokenize
 		for (int i = 0; i < tokens.length; i++)
 		{
 			String s = tokens[i];
+			System.out.println("Split, next token: " + s);
 			tokenNb++;
 		}
 		return tokenNb;
@@ -60,7 +62,7 @@ public class Tokenize
 		String fileContent = null;
 		try
 		{
-			fileContent = ReadFile("E:/Documents/Perso/DA/Deviations.txt");
+			fileContent = ReadFile("C:/Personnel/PhiLhoSoft/Java/JavaTricks.txt");
 		}
 		catch (FileNotFoundException e)
 		{

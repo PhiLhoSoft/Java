@@ -34,7 +34,6 @@ public class FeedMarkov
 		}
 		BufferedReader br = new BufferedReader(fr, BUF_SIZE);
 
-		String bt = "";
 		if (HTML_OUTPUT)
 		{
 			System.out.print("<html><head><title>Feed Markov</title></head>\n");

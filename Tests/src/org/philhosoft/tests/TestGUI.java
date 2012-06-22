@@ -14,8 +14,11 @@ Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
 package org.philhosoft.tests;
 
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
+
 import javax.swing.*;
 
 

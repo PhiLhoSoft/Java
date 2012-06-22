@@ -38,7 +38,7 @@ public class TestFadeToGray
 		m_panel = new JPanel(new GridLayout(1, 0));
 		m_panel.add(Wrap(m_images[0]));
 		m_panel.add(Wrap(m_images[1]));
-		m_icon = new JLabel(m_ftg, JLabel.CENTER);
+		m_icon = new JLabel(m_ftg, SwingConstants.CENTER);
 		m_panel.add(m_icon);
 		return new JScrollPane(m_panel);
 	}
@@ -53,7 +53,7 @@ public class TestFadeToGray
 	private JLabel Wrap(BufferedImage image)
 	{
 		ImageIcon icon = new ImageIcon(image);
-		return new JLabel(icon, JLabel.CENTER);
+		return new JLabel(icon, SwingConstants.CENTER);
 	}
 
 	public static void main(String[] args) throws IOException

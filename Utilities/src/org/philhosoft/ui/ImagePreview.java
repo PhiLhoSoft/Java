@@ -16,6 +16,7 @@ package org.philhosoft.ui;
 //import java.io.File;
 import java.awt.*;
 import javax.swing.*;
+
 import java.beans.*;
 import java.io.*;
 
@@ -39,8 +40,8 @@ public class ImagePreview
 
 	public ImagePreview(JFileChooser chooser)
 	{
-		setVerticalAlignment(JLabel.CENTER);
-		setHorizontalAlignment(JLabel.CENTER);
+		setVerticalAlignment(SwingConstants.CENTER);
+		setHorizontalAlignment(SwingConstants.CENTER);
 		setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		chooser.addPropertyChangeListener(this);
 	}

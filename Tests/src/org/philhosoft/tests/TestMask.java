@@ -31,17 +31,17 @@ public class TestMask
 
 	TestMask() throws IOException
 	{
-		String imagePath = "E:/Documents/images/";
+		String imagePath = "C:/Personnel/Images";
 		m_images = new BufferedImage[9];
 		int i = 0;
 		// Image in color
-		m_images[i++] = ImageIO.read(new File(imagePath + "map.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "map.png"));
 		// Mask with transparency: opaque black, transparent white
-		m_images[i++] = ImageIO.read(new File(imagePath + "mapMask1.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "mapMask1.png"));
 		// B&W image
-		m_images[i++] = ImageIO.read(new File("E:/Documents/images/mapMask3.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath,  "mapMask3.png"));
 		// Color image with transparency around
-		m_images[i++] = ImageIO.read(new File(imagePath + "people.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "people.png"));
 
 		m_images[i++] = GetComposite(m_images[0], m_images[1],
 				AlphaComposite.DST_IN, 1.0F);
@@ -70,7 +70,7 @@ public class TestMask
 	private JLabel Wrap(BufferedImage image)
 	{
 		ImageIcon icon = new ImageIcon(image);
-		return new JLabel(icon, JLabel.CENTER);
+		return new JLabel(icon, SwingConstants.CENTER);
 	}
 
 	private BufferedImage GetComposite(

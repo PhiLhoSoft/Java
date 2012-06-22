@@ -14,14 +14,9 @@ Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
 package org.philhosoft.tests;
 
 
-import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import java.util.UUID;
-
-import javax.swing.*;
 
 
 /**
@@ -31,7 +26,6 @@ import javax.swing.*;
  * @version 1.01.000
  * @date 2008/10/31
  */
-@SuppressWarnings("serial")
 public class TestMain
 {
 	private TestMain()

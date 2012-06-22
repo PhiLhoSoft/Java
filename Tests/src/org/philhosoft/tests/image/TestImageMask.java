@@ -70,7 +70,7 @@ public class TestImageMask
 	private JLabel Wrap(BufferedImage image)
 	{
 		ImageIcon icon = new ImageIcon(image);
-		return new JLabel(icon, JLabel.CENTER);
+		return new JLabel(icon, SwingConstants.CENTER);
 	}
 
 	private BufferedImage GetComposite(

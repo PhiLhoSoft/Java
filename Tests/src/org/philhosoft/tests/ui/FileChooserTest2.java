@@ -13,24 +13,29 @@ Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
+
 import javax.swing.JFileChooser;
 
 import java.io.File;
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.plaf.*;
 import javax.swing.plaf.basic.*;
 import javax.swing.event.*;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Window;
 import java.beans.*;
 
-// For the WindowsAltFileSystemView class
-import java.lang.reflect.*;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 //import org.philhosoft.ui.ImagePreview;
 import org.philhosoft.ui.SimpleFileFilter;
+
 
 /**
  * Test of various capabilities of JFileChooser.
@@ -258,43 +263,41 @@ System.out.println("> ExtendedJFileChooser > propertyChange: " + s);
 
    // Need for fixing PR #702/900/1306
    // find the combo box manually
-   private JComboBox GetCombo( Component aCmp, int nRecurs )
-   {
-      if ( aCmp instanceof JComboBox )
-         return (JComboBox)aCmp;
-      else if  ( aCmp instanceof Container )
-      {
-         Container aCnt  = ( Container )aCmp;
-         Component[] arChild = aCnt.getComponents();
-         for (int i = 0; i < arChild.length; i++)
-         {
-            JComboBox aCmb = GetCombo( arChild[ i ], nRecurs + 1);
-            if ( aCmb != null )
-            {
-               return aCmb;
-            }
-         }
-      }
-      return null;
-   }
+	private JComboBox GetCombo(Component aCmp, int nRecurs)
+	{
+		if (aCmp instanceof JComboBox) return (JComboBox) aCmp;
+		else if (aCmp instanceof Container)
+		{
+			Container aCnt = (Container) aCmp;
+			Component[] arChild = aCnt.getComponents();
+			for (int i = 0; i < arChild.length; i++)
+			{
+				JComboBox aCmb = GetCombo(arChild[i], nRecurs + 1);
+				if (aCmb != null)
+				{
+					return aCmb;
+				}
+			}
+		}
+		return null;
+	}
 
    /**
     *   Bug workaround for Java Web Start 1.0
     *   Under Windows, use the special WindowsAltFileSystemView
     *   which does not display the box "no disk"
     */
-   static private FileSystemView CreateFileSystemView( )
-   {
-      FileSystemView fsv = null;
-      if( IsWindows( ) && IsJavaVersionBelow14() )
-         fsv = new WindowsAltFileSystemView( );
-      else
-      {
-         // If not Windows or recent Java, returns the default
-         fsv = FileSystemView.getFileSystemView( );
-      }
-      return fsv;
-   }
+	static private FileSystemView CreateFileSystemView()
+	{
+		FileSystemView fsv = null;
+		if (IsWindows() && IsJavaVersionBelow14()) fsv = new WindowsAltFileSystemView();
+		else
+		{
+			// If not Windows or recent Java, returns the default
+			fsv = FileSystemView.getFileSystemView();
+		}
+		return fsv;
+	}
 
    static private boolean IsWindows( )
    {
@@ -311,7 +314,7 @@ System.out.println("> ExtendedJFileChooser > propertyChange: " + s);
    // Need for fixing PR #702/900/1306/1490
    // find the combo box manually and select the correct item!
    @Override
-public void setCurrentDirectory( File aPathFile )
+   public void setCurrentDirectory( File aPathFile )
    {
       super.setCurrentDirectory( aPathFile );
 System.out.println("> ExtendedJFileChooser > setCurrentDirectory: " + aPathFile);
@@ -322,7 +325,7 @@ System.out.println("> ExtendedJFileChooser > setCurrentDirectory: " + aPathFile)
          // by Proptima.jnlp and corresponds to the server home dir.
          // It's used by Proptima to get the user's property files on the server.
          aPathFile = new File( System.getProperty("user.dir") );
-         if( aPathFile == null || !aPathFile.exists() )
+         if( !aPathFile.exists() )
          {
             // if none of these directories exist, we get the root dir
             aPathFile = getFileSystemView().getRoots()[0];
@@ -379,12 +382,6 @@ System.out.println("> ExtendedJFileChooser > GetCombo " + aFile);
 
 class WindowsAltFileSystemView extends FileSystemView
 {
-   private static final Object[] noArgs = {};
-   private static final Class[] noArgTypes = {};
-
-   private static Method listRootsMethod;
-   private static boolean listRootsMethodChecked;
-
    /**
     * Returns true if the given file is a root.
     */
@@ -458,11 +455,11 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
    @Override
    public File[] getRoots()
    {
-      Vector rootsVector = new Vector();
+      List<File> rootList = new ArrayList<File>();
 
       // Create the A: drive whether it is mounted or not
       FileSystemRoot floppy = new FileSystemRoot("A" + ":" + "\\");
-      rootsVector.addElement(floppy);
+      rootList.add(floppy);
 
       // Run through all possible mount points and check
       // for their existence.
@@ -471,13 +468,13 @@ System.out.println("> MycomJFileChooser > createNewFolder: " + containingDir);
          char device[] = { c, ':', '\\' };
          String deviceName = new String(device);
          File deviceFile = new FileSystemRoot(deviceName);
-         if (deviceFile != null && deviceFile.exists())
+         if (deviceFile.exists())
          {
-            rootsVector.addElement(deviceFile);
+            rootList.add(deviceFile);
          }
       }
-      File[] roots = new File[rootsVector.size()];
-      rootsVector.copyInto(roots);
+      File[] roots = new File[rootList.size()];
+      rootList.toArray(roots);
       return roots;
    }
 
