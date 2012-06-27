@@ -14,6 +14,7 @@ Copyright (c) 2005-2011 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.ui;
 
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -28,7 +29,7 @@ import org.philhosoft.ui.FrameState;
 
 
 /**
- * Test of method to store and retreive the bounds and state of a Swing application.
+ * Test of method to store and retrieve the bounds and state of a Swing application.
  * Can also be used as boilerplate code for Swing app.
  */
 public class MemorizeWindowState
@@ -84,7 +85,7 @@ class MainFrame extends JFrame implements ComponentListener
 		});
 		addComponentListener(this);
 
-		// Retreive the user preferences for window position/state, if any
+		// Retrieve the user preferences for window position/state, if any
 		m_frameState = new FrameState();
 		if (m_frameState.loadFromProperties())
 		{
@@ -239,7 +240,6 @@ class GUI extends JPanel implements ActionListener
 	}
 
 	/**
-
 	 * Manage the buttons.
 	 */
 	@Override

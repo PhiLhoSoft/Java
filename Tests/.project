@@ -19,12 +19,12 @@
 		<link>
 			<name>Utilities</name>
 			<type>2</type>
-			<location>D:/Dev/PhiLhoSoft/Java/Utilities</location>
+			<location>C:/Personnel/PhiLhoSoft/Java/Utilities</location>
 		</link>
 		<link>
 			<name>Utilities-src</name>
 			<type>2</type>
-			<location>D:/Dev/PhiLhoSoft/Java/Utilities/src</location>
+			<location>C:/Personnel/PhiLhoSoft/Java/Utilities/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

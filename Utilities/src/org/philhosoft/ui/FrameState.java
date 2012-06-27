@@ -32,14 +32,15 @@ import org.philhosoft.string.ParseString;
 public class FrameState
 {
 	private static String s_propertiesPath = System.getProperty("user.name") + ".properties";
-	/// Name of the frame
+	/** Name of the frame. */
 	private String m_frameName;
-	/// True if system can do a real maximize
+	/** True if system can do a real maximize. */
 	private boolean m_bCanMaximize;
-	/// Dimension & position of the window when not maximized
+	/** Dimension & position of the window when not maximized. */
 	private Rectangle m_bounds;
-	/// True if window was maximized or must be maximized
-	/// (real maximizing or approximated by getting near screen size).
+	/** True if window was maximized or must be maximized
+	 * (real maximizing or approximated by getting near screen size)...
+	 */
 	private boolean m_bMaximized;
 
 	private boolean m_bIgnoreChanges;
@@ -52,7 +53,7 @@ public class FrameState
 
 	/**
 	 * Reads the user properties file
-	 * and tries to get his prefered window size/position/state.
+	 * and tries to get his preferred window size/position/state.
 	 */
 	public FrameState(String frameName)
 	{
