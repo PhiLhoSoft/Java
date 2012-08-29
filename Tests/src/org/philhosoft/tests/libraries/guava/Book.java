@@ -12,7 +12,7 @@ http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
-package org.philhosoft.tests.guava;
+package org.philhosoft.tests.libraries.guava;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -22,6 +22,8 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
 
 import org.joda.time.DateTime;
 
@@ -37,11 +39,11 @@ import com.google.common.collect.Ordering;
  * @version 1.00.000
  * @date 2012-08-28
  */
-public final class Book implements Comparable<Book>
+public class Book implements Comparable<Book>
 {
 	private static Logger s_log = Logger.getLogger(Book.class.getName());
 
-	public static final class Builder
+	public static class Builder
 	{
 		private Book m_book;
 
@@ -124,7 +126,7 @@ public final class Book implements Comparable<Book>
 
 		public Builder date(DateTime value)
 		{
-			m_book.m_publishingDate = value;
+			m_book.m_publishingDate = Optional.fromNullable(value);
 			return this;
 		}
 
@@ -167,11 +169,13 @@ public final class Book implements Comparable<Book>
 		}
 	}
 
+	// These fields are not final so they can be reused in the builder,
+	// but since they have only getters, the class is actually immutable.
 	private String m_title;
 	private List<String> m_authors;
 	private String m_publisher;
 	private String m_isbn;
-	private DateTime m_publishingDate;
+	private Optional<DateTime> m_publishingDate = Optional.<DateTime>absent();
 	private int m_pageNumber = 1; // Minimum
 	private double m_price;
 
@@ -214,9 +218,9 @@ public final class Book implements Comparable<Book>
 	/**
 	 * @return publishing date
 	 */
-	public DateTime getPublishingDate()
+	@Nullable public DateTime getPublishingDate()
 	{
-		return m_publishingDate;
+		return m_publishingDate.orNull();
 	}
 
 	/**
@@ -263,7 +267,7 @@ public final class Book implements Comparable<Book>
 				.compare(m_title, that.m_title)
 				.compare(getAuthorList(), that.getAuthorList())
 				.compare(m_publisher, that.m_publisher)
-				.compare(m_publishingDate, that.m_publishingDate, Ordering.natural().nullsLast())
+				.compare(m_publishingDate.orNull(), that.m_publishingDate.orNull(), Ordering.natural().nullsLast())
 				.result();
 	}
 
@@ -273,7 +277,7 @@ public final class Book implements Comparable<Book>
 		return Objects.toStringHelper(this).omitNullValues()
 				.add("Title", m_title).add("Authors", getAuthorList()).add("Publisher", m_publisher)
 				.add("ISBN", m_isbn).add("Number of pages", m_pageNumber).add("Price", m_price)
-				.add("Published", m_publishingDate == null ? null : m_publishingDate.toString("yyyy-MM-dd"))
+				.add("Published", m_publishingDate.isPresent() ? m_publishingDate.get().toString("yyyy-MM-dd") : null)
 				.toString();
 	}
 

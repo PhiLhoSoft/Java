@@ -1,0 +1,2 @@
+book(bk) ::= "\"<bk.title>\" by <bk.authors><cond(bk.publishingDate)><\n><bk>"
+cond(d) ::= "<if(d)> published <d><endif>"
