@@ -46,8 +46,9 @@ public final class BaseTest
         System.out.println(hello.render());
 
         System.out.println("\nBook 1");
+        // See all .st files of the given dir (here, from classpath)
         STGroup groupRD = new STRawGroupDir("org/philhosoft/tests/libraries/stringtemplate/templates");
-        ST bookT1 = groupRD.getInstanceOf("BaseTestBook");
+        ST bookT1 = groupRD.getInstanceOf("BaseTestBook"); // Load BaseTestBook.st, the whole file is the template
         bookT1.add("title", "Alice in Wonderland");
         bookT1.add("authors", "Lewis Carroll");
         bookT1.add("authors", "John Tenniel");
@@ -56,18 +57,34 @@ public final class BaseTest
         System.out.println(bookT1.render());
 
         System.out.println("\nBook 2");
+        // See all .st files of the given classpath dir
         STGroup groupD = new STGroupDir("org/philhosoft/tests/libraries/stringtemplate/templates");
-        ST bookT2 = groupD.getInstanceOf("info");
+        ST bookT2 = groupD.getInstanceOf("info"); // Load info.st, defining an 'info' template
         bookT2.add("title", "Alice in Wonderland");
         bookT2.add("author", "Lewis Carroll");
         bookT2.add("date", 1865);
         System.out.println(bookT2.render());
 
         System.out.println("\nBook 3");
+        // Load the BaseTestBook.stg group file defining several templates
         STGroup groupF = new STGroupFile("org/philhosoft/tests/libraries/stringtemplate/templates/BaseTestBook.stg");
-        ST bookT3 = groupF.getInstanceOf("info");
+        ST bookT3 = groupF.getInstanceOf("info"); // Get the 'info' template
         bookT3.add("title", "Throught the Looking Glass");
         bookT3.add("author", "Lewis Carroll");
         System.out.println(bookT3.render());
+
+        System.out.println("\nBook 4");
+        ST bookT4 = groupF.getInstanceOf("book"); // Get the multiline 'book' template from the group
+        bookT4.add("title", "Throught the Looking Glass");
+        bookT4.add("author", "Lewis Carroll");
+        bookT4.add("date", 1865);
+        System.out.println(bookT4.render());
+
+        System.out.println("\nBook 5");
+        ST bookT5 = groupF.getInstanceOf("bookToo"); // Get the multiline 'bookToo' template from the group
+        bookT5.add("title", "Throught the Looking Glass");
+        bookT5.add("author", "Lewis Carroll");
+        bookT5.add("date", 1865);
+        System.out.println(bookT5.render());
 	}
 }

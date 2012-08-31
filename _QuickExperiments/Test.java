@@ -1,68 +1,51 @@
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-public class Test extends JPanel implements ActionListener {
-
-    private final int DELAY = 2000;
-
-    private Timer timer;
-    private boolean bShowOval;
-
-    /*
-     * constructor
-     */
-    public Test() {
-
-        setFocusable(true);
-        initGame();
-    }
-
-    /*
-     * initialize board
-     */
-    public void initGame() {
-
-        timer = new Timer(DELAY, this);
-        timer.start();
-
-    }
-
-    public void paintComponent(Graphics g) {
-
-        super.paintComponent(g);
-        if (!bShowOval) return;
-
-        g.setColor(Color.gray);
-        // draw an oval starting at 20,20 with a width and height of 100 and
-        // fill it
-        g.drawOval(20, 20, 100, 100);
-        g.fillOval(20, 20, 100, 100);
-
-//~         g.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        bShowOval = !bShowOval;
-        repaint();
-    }
-
+public class Test
+{
   public static void main(String[] args)
   {
-    SwingUtilities.invokeLater(new Runnable()
-    {
-     public void run()
-     {
-      JFrame demoFrame = new JFrame("Test");
-      demoFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      demoFrame.setSize(500, 500);
+    System.out.println("A");
+    A a = new A();
+    System.out.println("B");
+    B b1 = new B();
+    System.out.println("B1");
+    B b2 = new B("one");
+    System.out.println("B2");
+    B b3 = new B("ichi", "ni");
+    System.out.println("B3");
+    B b4 = new B("un", "deux", "trois");
+  }
+}
 
-      demoFrame.add(new Test());
+class A
+{
+  // Becomes default constructor for sub-classes
+  public A()
+  {
+    System.out.println("A empty constructor");
+  }
+  public A(String p)
+  {
+    System.out.println("A constructor with " + p);
+  }
+}
 
-//~       demoFrame.pack();
-      demoFrame.setVisible(true);
-     }
-    });
+class B extends A
+{
+  public B()
+  {
+    System.out.println("B empty constructor");
+  }
+  public B(String p)
+  {
+    System.out.println("B constructor with " + p);
+  }
+  public B(String p1, String p2)
+  {
+    this(p1 + p2);
+    System.out.println("B constructor with " + p1 + " and " + p2);
+  }
+  public B(String p1, String p2, String p3)
+  {
+    super(p1 + p2 + p3);
+    System.out.println("B constructor with " + p1 + " and " + p2 + " and " + p3);
   }
 }

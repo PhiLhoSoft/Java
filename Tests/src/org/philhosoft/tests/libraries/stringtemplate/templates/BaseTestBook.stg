@@ -1,2 +1,20 @@
+// Single line template
 info(title, author, date) ::= "\"<title>\" by <author><cond(date)>"
+
+// Conditional template
 cond(d) ::= "<if(d)> published <d><endif>"
+
+// Multine template
+book(title, author, date) ::= <<
+"<title>"
+By <author>
+Published <date>
+>>
+
+// Idem but ignore newlines and indentation
+bookToo(title, author, date) ::= <%
+	"<title>"<\n><\ >
+
+		by <author><\n>
+		<cond(date)>
+%>
