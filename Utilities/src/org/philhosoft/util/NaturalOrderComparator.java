@@ -1,3 +1,16 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ */
+/* File history:
+ *  1.00.000 -- 2012/10/03 (PL) -- Creation
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.util;
 
 import java.util.ArrayList;
@@ -7,7 +20,7 @@ import java.util.Comparator;
 
 /**
  * Compare two strings by respecting the natural order of numbers.
- * Ie. foo2 < foo10, a5b4 < a15b4 and so on.
+ * Ie. foo2 &lt; foo10, a5b4 &lt; a15b4 and so on.
  *
  * @author PhiLho
  */
@@ -39,9 +52,10 @@ public class NaturalOrderComparator implements Comparator<String>
         {
             if (bIsDigit)
             {
-                // Do digit comparison
+                // Do number comparison
                 long n1 = 0;
                 long n2 = 0;
+				// Convert the sequence of digits to a long number
                 do
                 {
                     c1 = s1.charAt(pos1);
@@ -52,6 +66,7 @@ public class NaturalOrderComparator implements Comparator<String>
                     }
                 // Stop if one non-digit is found or if we reached the end of one string
                 } while (b1 && ++pos1 < len1);
+				// Idem, in the second string
                 do
                 {
                     c2 = s2.charAt(pos2);
@@ -63,6 +78,7 @@ public class NaturalOrderComparator implements Comparator<String>
                 // Stop if one non-digit is found or if we reached the end of one string
                 } while (b2 && ++pos2 < len2);
 
+				// Compare the numbers
                 if (n1 < n2)
                     return -1;
                 if (n1 > n2)
@@ -74,7 +90,7 @@ public class NaturalOrderComparator implements Comparator<String>
             }
             else
             {
-                // Do string comparison
+                // Do string comparison, character by character
                 do
                 {
                     c1 = s1.charAt(pos1);
@@ -109,6 +125,7 @@ public class NaturalOrderComparator implements Comparator<String>
     			// Put back current chars into the comparison
 	            --pos1; --pos2;
     		}
+			// Switch the comparion mode
             bIsDigit = !bIsDigit;
         }
     }
