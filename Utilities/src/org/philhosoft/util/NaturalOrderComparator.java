@@ -40,7 +40,7 @@ public class NaturalOrderComparator implements Comparator<String>
         boolean b1 = Character.isDigit(c1);
         boolean b2 = Character.isDigit(c2);
         // Fast exit
-        if (b1 && !b2 || !b1 && b2)
+        if (b1 != b2)
             return s1.compareTo(s2); // One is a digit, the other isn't: do regular comparison
 
         int len1 = s1.length();
@@ -102,7 +102,7 @@ public class NaturalOrderComparator implements Comparator<String>
                     if (b1 && b2 && c1 != c2)
                         return c1 - c2;
 	                // One is digit, and the other isn't one
-	                if (b1 && !b2 || !b1 && b2)
+	                if (b1 != b2)
 	                    return c1 - c2; // Just compare these different chars
 
                     // Next chars
@@ -125,7 +125,7 @@ public class NaturalOrderComparator implements Comparator<String>
     			// Put back current chars into the comparison
 	            --pos1; --pos2;
     		}
-			// Switch the comparion mode
+			// Switch the comparison mode
             bIsDigit = !bIsDigit;
         }
     }
