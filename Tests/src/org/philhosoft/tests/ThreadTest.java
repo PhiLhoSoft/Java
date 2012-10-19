@@ -79,6 +79,7 @@ class RunnableClass implements Runnable
 		m_wordNb = m_aWords.length;
 	}
 
+	@Override
 	public void run()
 	{
 		for (int i = 0; i < m_wordNb; i++)

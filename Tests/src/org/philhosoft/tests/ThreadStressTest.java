@@ -67,6 +67,7 @@ class StressRun implements Runnable
 		m_output = ":" + String.valueOf(v);
 	}
 
+	@Override
 	public void run()
 	{
 		for (int i = 0; i < MAX_LOOPS; i++)
@@ -76,7 +77,7 @@ class StressRun implements Runnable
 				System.out.print(m_output);
 				if (Math.random() < 0.1)
 				{
-					System.out.println("");
+					System.out.print("\n");
 				}
 			}
 			randomWait(200);
@@ -88,7 +89,8 @@ class StressRun implements Runnable
 		try
 		{
 			Thread.sleep((long)(maxTime * Math.random()));
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			System.out.println("\nMy sleep was interrupted!");
 		}

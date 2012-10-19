@@ -1,5 +1,5 @@
 /*
- * Tests: A collection of little test programs to explore Java language.
+ * Tests: A collection of little test programs to explore the Java language.
  * Here, tests of the Guava library.
  */
 /* File history:
@@ -8,7 +8,7 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */

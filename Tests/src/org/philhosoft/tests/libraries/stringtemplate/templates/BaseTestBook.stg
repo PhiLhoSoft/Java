@@ -5,10 +5,11 @@ info(title, author, date) ::= "\"<title>\" by <author><cond(date)>"
 cond(d) ::= "<if(d)> published <d><endif>"
 
 // Multine template
-book(title, author, date) ::= <<
+book(title, author, date, price) ::= <<
 "<title>"
 By <author>
 Published <date>
+Sold <price; format="%1.2f"> €
 >>
 
 // Idem but ignore newlines and indentation

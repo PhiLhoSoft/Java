@@ -1,5 +1,5 @@
 /*
- * Tests: A collection of little test programs to explore Java language.
+ * Tests: A collection of little test programs to explore the Java language.
  * Here, tests of the StringTemplate library.
  */
 /* File history:
@@ -8,20 +8,17 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.stringtemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.stringtemplate.v4.*;
+import org.stringtemplate.v4.compiler.CompiledST;
 
 /**
- * Base test of StringTempalte.
+ * Base test of StringTemplate.
  *
  * @author Philippe Lhoste
  * @version 1.00.000
@@ -29,8 +26,6 @@ import org.stringtemplate.v4.*;
  */
 public final class BaseTest
 {
-	private static Logger s_log = Logger.getLogger(BaseTest.class.getName());
-
 	/**
 	 * @param args
 	 */
@@ -78,6 +73,8 @@ public final class BaseTest
         bookT4.add("title", "Throught the Looking Glass");
         bookT4.add("author", "Lewis Carroll");
         bookT4.add("date", 1865);
+        bookT4.add("price", 12.5);
+        groupF.registerRenderer(Number.class, new NumberRenderer());
         System.out.println(bookT4.render());
 
         System.out.println("\nBook 5");
@@ -86,5 +83,31 @@ public final class BaseTest
         bookT5.add("author", "Lewis Carroll");
         bookT5.add("date", 1865);
         System.out.println(bookT5.render());
+
+        System.out.println("\nBook 6");
+        ST bookT6 = groupF.getInstanceOf("bookToo"); // Get the multiline 'bookToo' template from the group
+        bookT6.add("title", "Throught the Looking Glass");
+        bookT6.add("author", "Lewis Carroll");
+        bookT6.add("date", 1865);
+        System.out.println(bookT6.render());
+
+        // Using a different set of attribute delimiters
+
+        System.out.println("\nOther 1");
+        STGroup groupS = new STGroupString("some group", "val(value) ::= \"<span>Value is <b>{value; format=\\\"%1.5f\\\"}</b></span>\"", '{', '}');
+        groupS.registerRenderer(Number.class, new NumberRenderer());
+        ST other1 = groupS.getInstanceOf("val");
+        other1.add("value", 3.14159265358979353);
+        System.out.println(other1.render());
+
+        // http://stackoverflow.com/questions/11146113/how-to-get-stringtemplate-v4-to-ignore-as-delimiter
+        System.out.println("\nOther 2");
+        STGroup groupR = new STGroup('@', '#');
+        groupR.registerRenderer(Number.class, new NumberRenderer());
+        CompiledST compiledTemplate = groupR.defineTemplate("val", "<span>Value is @value; format=\"%1.3f\"#</span>");
+        compiledTemplate.hasFormalArgs = false;
+        ST other2 = groupR.getInstanceOf("val");
+        other2.add("value", 3.1415926);
+        System.out.println(other2.render());
 	}
 }

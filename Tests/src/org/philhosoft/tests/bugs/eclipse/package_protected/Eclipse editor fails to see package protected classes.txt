@@ -1,0 +1,27 @@
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=38088
+duplicate of
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=36032
+
+Actually, I still see this bug in Eclipse Juno. Version after version of Eclipse, I hope to see it fixed, but it is still there.
+It seems difficult to make a small project reproducing the problem, as it might appear only in a large project: the behavior appears mostly after having started a fresh Eclipse on such project, and going for the first time to these classes.
+I will try and describe it (as it appears in our code base) as precisely as I can in the hope to give a hint about this issue.
+
+As I wrote, we have a rather large code base (around one million of lines of code).
+In the cases where we see the bug, we have a public abstract base class, and several package protected small classes extending the base class.
+We don't want to put each class in its own file, as it is convenient to have them grouped logically in the same file, and, well, Java allows it, the Eclipse compiler understands it, so why the editor cannot take it in account?
+
+What we see: we open a class using such small package protected class, the used type is highlighted as unknown ("XxxXxx cannot be resolved to a type").
+The quick fixes include: "Import 'XxxXxx' (package.where.we.are)"...
+When we hit F3 on the class, it doesn't move.
+I can open the class marked as missing with Ctrl+Shift+T (Open Type).
+Back to the other class, it is still seen as unknown. I have to check out the file and edit it (just a new line is enough) to get the editor to kick in and finally remove the error mark...
+
+I made a small project (trivial, as described above, I can join it if needed) trying to reproduce the conditions of the bug.
+I closed the tab of the classes and restarted Juno. No problems.
+I closed the project and restarted Juno. No problems.
+I cleaned, then closed the project, and restarted Juno after marking the classes as read-only (like Perforce does when a file is versioned and not checked out). No problems either.
+So trivial cases are correctly handled, the problem seems to appear only in complex projects, perhaps
+
+We have this problem in at least two cases: in one, the abstract class is package protected, in the other it is public. In one, the package protected classes are final, in the other they are not.
+
+Note that I would be happy with just an interactive solution, allowing to recognize the missing class without having to edit the file where it is used...

@@ -25,7 +25,6 @@ import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.text.BreakIterator;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
@@ -59,12 +58,12 @@ public class WrapTextPane
 class WrapTextPaneDemo extends JFrame
 {
 	Debug debug;
-	
+
 	WrapTextPaneDemo()
 	{
 		debug = new Debug(this);
 		addComponentListener(debug);
-		
+
 		Container cp = getContentPane();
 		JTextPane tp = new JTextPane();
 
@@ -77,7 +76,7 @@ class WrapTextPaneDemo extends JFrame
 		tp.setEditorKit(new CustomEditorKit());
 
 		cws.addAttribute(WrapTextPane.WRAP_MODE_ATTRIBUTE_NAME, WrapTextPane.ATTRIBUTE_CHAR);
-		
+
 		StyleConstants.setFontFamily(cw, "monospaced");
 		StyleConstants.setFontSize(cw, 18);
 		StyleConstants.setAlignment(cw, StyleConstants.ALIGN_LEFT);
@@ -105,16 +104,16 @@ class WrapTextPaneDemo extends JFrame
 
 		cp.add(tp);
 	}
-	
+
 	private static class Debug extends ComponentAdapter
 	{
 		JFrame watchee;
-		
+
 		Debug(JFrame w)
 		{
 			watchee = w;
 		}
-		
+
 		@Override
 		public void componentResized(ComponentEvent e)
 		{
@@ -207,14 +206,14 @@ System.out.println(p0 + " " + p1);
 
 				return super.breakView(axis, p0, pos, len);
 			}
-			
+
 			// It doesn't solves completely the issue: when the window size goes below the
 			// length of the longest word, it no longer wraps at char bounds.
 			// Apparently, there is a minimum len value, it won't query breakView below this value.
 			// I think we should rewrite getMinimumSpan to call a custom getBreakSpot to call a custom
 			// getBreaker to provide a custom BreakIterator. All this because these methods are private
 			// and there is no way to inject a custom BreakIterator.
-			
+
 			// Actually, for simple cases, there is a simple workaround: loop over each character of the
 			// string to set, inserting them in the document, setting alternate arbitrary styles.
 			// This creates segments of char size, breakable.

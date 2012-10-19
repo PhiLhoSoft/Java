@@ -61,6 +61,7 @@ public class TestGUI extends JFrame
 		// creating and showing this application's GUI.
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				JFrame testFrame = new TestGUI();

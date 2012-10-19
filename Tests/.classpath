@@ -12,7 +12,8 @@
 	<classpathentry kind="lib" path="C:/Java/libraries/joda-time-2.1.jar" sourcepath="C:/Java/libraries/joda-time-2.1-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/antlr-3.3-complete.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/StringTemplate-4.0.5.jar" sourcepath="C:/Java/libraries/StringTemplate-4.0.5-src.zip"/>
-	<classpathentry kind="lib" path="C:/Java/findbugs-2.0.1/lib/jsr305.jar"/>
+	<classpathentry kind="lib" path="C:/Java/libraries/jsr305.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Java/libraries/luaj-3.0-alpha1/lib/luaj-jse-3.0-alpha1.jar" sourcepath="C:/Java/libraries/luaj-3.0-alpha1/lib/luaj-sources-3.0-alpha1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

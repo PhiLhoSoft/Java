@@ -1,5 +1,5 @@
 /*
- * Tests: A collection of little test programs to explore Java language.
+ * Tests: A collection of little test programs to explore the Java language.
  * Here, tests of the StringTemplate library.
  */
 /* File history:
@@ -8,15 +8,11 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.stringtemplate;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.stringtemplate.v4.*;
@@ -24,7 +20,7 @@ import org.stringtemplate.v4.*;
 import org.philhosoft.tests.libraries.guava.Book;
 
 /**
- * Base test of StringTempalte.
+ * Base test of StringTemplate.
  *
  * @author Philippe Lhoste
  * @version 1.00.000
@@ -32,8 +28,6 @@ import org.philhosoft.tests.libraries.guava.Book;
  */
 public final class BookListing
 {
-	private static Logger s_log = Logger.getLogger(BookListing.class.getName());
-
 	/**
 	 * @param args
 	 */
@@ -41,6 +35,8 @@ public final class BookListing
 	{
         STGroup groupF = new STGroupFile("org/philhosoft/tests/libraries/stringtemplate/templates/Book.stg");
         ST bookT = groupF.getInstanceOf("book");
+        groupF.registerRenderer(Number.class, new NumberRenderer());
+        groupF.registerRenderer(DateTime.class, new JodaTimeRenderer());
 
 		Book goodBook = new Book.Builder("The Hitchhicker's Guide to the Galaxy")
 				.authors("Douglas Adams")
