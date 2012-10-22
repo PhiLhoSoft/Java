@@ -24,6 +24,8 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.philhosoft.util.ResourceUtil;
+
 public class TestImageMask
 {
 	private BufferedImage[] m_images;
@@ -31,49 +33,51 @@ public class TestImageMask
 
 	TestImageMask() throws IOException
 	{
-		String imagePath = "E:/Documents/images/";
+		String imagePath = "resources/" + ResourceUtil.getClassPath(this);
 		m_images = new BufferedImage[9];
 		int i = 0;
 		// Image in color
-		m_images[i++] = ImageIO.read(new File(imagePath + "map.png"));
+		File file = new File(imagePath, "map.png");
+		System.out.println(file);
+		m_images[i++] = ImageIO.read(file);
 		// Mask with transparency: opaque black, transparent white
-		m_images[i++] = ImageIO.read(new File(imagePath + "mapMask1.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "mapMask1.png"));
 		// B&W image
-		m_images[i++] = ImageIO.read(new File("E:/Documents/images/mapMask3.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "mapMask3.png"));
 		// Color image with transparency around
-		m_images[i++] = ImageIO.read(new File(imagePath + "people.png"));
+		m_images[i++] = ImageIO.read(new File(imagePath, "people.png"));
 
-		m_images[i++] = GetComposite(m_images[0], m_images[1],
+		m_images[i++] = getComposite(m_images[0], m_images[1],
 				AlphaComposite.DST_IN, 1.0F);
- 		m_images[i++] = GetComposite(m_images[0], m_images[1],
+ 		m_images[i++] = getComposite(m_images[0], m_images[1],
  				AlphaComposite.SRC_OVER, 0.5F);
 
- 		m_images[i++] = GetComposite(m_images[0], m_images[3],
+ 		m_images[i++] = getComposite(m_images[0], m_images[3],
  				AlphaComposite.SRC_OVER, 1.0F);
-		m_images[i++] = GetComposite(m_images[3], m_images[0],
+		m_images[i++] = getComposite(m_images[3], m_images[0],
 				AlphaComposite.SRC_IN, 1.0F);
 
-		Image transpImg = TransformGrayToTransparency(m_images[2]);
-		m_images[i++] = ApplyTransparency(m_images[0], transpImg);
+		Image transpImg = transformGrayToTransparency(m_images[2]);
+		m_images[i++] = applyTransparency(m_images[0], transpImg);
 	}
 
-	private JScrollPane GetContent()
+	private JScrollPane getContent()
 	{
 		m_panel = new JPanel(new GridLayout(1, 0));
 		for (int i = 0; i < m_images.length; i++)
 		{
-			m_panel.add(Wrap(m_images[i]));
+			m_panel.add(wrap(m_images[i]));
 		}
 		return new JScrollPane(m_panel);
 	}
 
-	private JLabel Wrap(BufferedImage image)
+	private JLabel wrap(BufferedImage image)
 	{
 		ImageIcon icon = new ImageIcon(image);
 		return new JLabel(icon, SwingConstants.CENTER);
 	}
 
-	private BufferedImage GetComposite(
+	private BufferedImage getComposite(
 			BufferedImage source, BufferedImage destination,
 			int mode, float alpha)
 	{
@@ -89,7 +93,7 @@ public class TestImageMask
 		return result;
 	}
 
-	private Image TransformGrayToTransparency(BufferedImage image)
+	private Image transformGrayToTransparency(BufferedImage image)
 	{
 		ImageFilter filter = new RGBImageFilter()
 		{
@@ -104,7 +108,7 @@ public class TestImageMask
 		return Toolkit.getDefaultToolkit().createImage(ip);
 	}
 
-	private BufferedImage ApplyTransparency(BufferedImage image, Image mask)
+	private BufferedImage applyTransparency(BufferedImage image, Image mask)
 	{
 		BufferedImage dest = new BufferedImage(
 				image.getWidth(), image.getHeight(),
@@ -124,7 +128,7 @@ public class TestImageMask
 		JFrame f = new JFrame();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setTitle(tm.getClass().getName());
-		f.setContentPane(tm.GetContent());
+		f.setContentPane(tm.getContent());
 		f.setSize(800, 400);
 		f.setLocation(200, 200);
 		f.setVisible(true);

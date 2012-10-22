@@ -41,8 +41,7 @@ public class PNGtoTIFF2
 			convertGrayscaleToBlackWhiteImage(RenderedImage ri)
 	{
 		// Generate a histogram.
-		Histogram histogram = (Histogram)JAI.create("histogram",
-				ri).getProperty("histogram");
+		Histogram histogram = (Histogram)JAI.create("histogram", ri).getProperty("histogram");
 
 		// Get a threshold equal to the median.
 		double[] threshold = histogram.getPTileThreshold(0.5);

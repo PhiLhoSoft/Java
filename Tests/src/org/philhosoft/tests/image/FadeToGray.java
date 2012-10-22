@@ -40,10 +40,10 @@ class FadeToGray extends Component implements Icon
 		m_srcImg = new BufferedImage(m_w, m_h, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = m_srcImg.getGraphics();
 		g.drawImage(img, 0, 0, null);
-		CloneToGray();
+		cloneToGray();
 	}
 
-	public void SetOpacity(float opacity)
+	public void setOpacity(float opacity)
 	{
 		m_scales[3] = opacity;
 		m_rop = new RescaleOp(m_scales, m_offsets, null);
@@ -64,7 +64,7 @@ class FadeToGray extends Component implements Icon
 		g2d.drawImage(m_srcImg, m_rop, x, y);
 	}
 
-	private void CloneToGray()
+	private void cloneToGray()
 	{
 		m_grayImg = new BufferedImage(m_w, m_h, BufferedImage.TYPE_BYTE_GRAY);
 		Graphics2D g2 = (Graphics2D) m_grayImg.getGraphics();

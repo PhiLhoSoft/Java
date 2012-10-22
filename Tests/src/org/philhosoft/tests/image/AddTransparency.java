@@ -13,15 +13,16 @@ Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.image;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.awt.image.RGBImageFilter;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import org.philhosoft.util.ResourceUtil;
 
 public class AddTransparency
 {
@@ -80,33 +81,42 @@ public class AddTransparency
 	{
 		AddTransparency at = new AddTransparency();
 
-		String imagePath = "G:/images/";
-		File inFile = new File(imagePath, "map.png");
-		BufferedImage image = ImageIO.read(inFile);
+		File file = null;
+		try
+		{
+			String imagePath = ResourceUtil.getClassPath(at);
+			System.out.println(imagePath);
 
-		Image transpImg1 = at.transformGrayToTransparency(image);
-		BufferedImage resultImage1 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
-				transpImg1, image.getWidth(), image.getHeight());
+			file = new File("resources/" + imagePath, "map.png");
+			BufferedImage image = ImageIO.read(file);
+			Image transpImg1 = at.transformGrayToTransparency(image);
+			BufferedImage resultImage1 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
+					transpImg1, image.getWidth(), image.getHeight());
 
-		File outFile1 = new File(imagePath, "map_with_transparency1.png");
-		ImageIO.write(resultImage1, "PNG", outFile1);
+			String outputPath = "output";
+			file = new File(outputPath, "map_with_transparency1.png");
+			ImageIO.write(resultImage1, "PNG", file);
+			Image transpImg2 = at.transformColorToTransparency(image, new Color(0, 50, 77), new Color(200, 200, 255));
+			BufferedImage resultImage2 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
+					transpImg2, image.getWidth(), image.getHeight());
 
-		Image transpImg2 = at.transformColorToTransparency(image, new Color(0, 50, 77), new Color(200, 200, 255));
-		BufferedImage resultImage2 = org.philhosoft.util.ImageUtil.imageToBufferedImage(
-				transpImg2, image.getWidth(), image.getHeight());
+			file = new File(outputPath, "map_with_transparency2.png");
+			ImageIO.write(resultImage2, "PNG", file);
+			// Save to Gif format
+			BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(resultImage2);
 
-		File outFile2 = new File(imagePath, "map_with_transparency2.png");
-		ImageIO.write(resultImage2, "PNG", outFile2);
+			file = new File(outputPath, "map_with_transparency2.gif");
+			ImageIO.write(resultImage3, "GIF", file);
 
-		// Save to Gif format
-		BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(resultImage2);
-
-		File outFile3 = new File(imagePath, "map_with_transparency2.gif");
-		ImageIO.write(resultImage3, "GIF", outFile3);
-
-		File globeFile = new File(imagePath + "TransparentPNG/globe-scene-fish-bowl-pngcrush.png");
-		BufferedImage globe = ImageIO.read(globeFile);
-		BufferedImage resultImage4 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(globe);
-		ImageIO.write(resultImage4, "GIF", new File(imagePath, "globe.gif"));
+			file = new File("resources/" + imagePath, "globe-scene-fish-bowl.png");
+			BufferedImage globe = ImageIO.read(file);
+			BufferedImage resultImage4 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(globe);
+			ImageIO.write(resultImage4, "GIF", new File(outputPath, "globe.gif"));
+		}
+		catch (Exception e)
+		{
+			System.out.println(e + ": " + file.getAbsolutePath());
+			e.printStackTrace();
+		}
 	}
 }

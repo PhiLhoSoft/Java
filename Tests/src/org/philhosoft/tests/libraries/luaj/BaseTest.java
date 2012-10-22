@@ -38,7 +38,7 @@ public final class BaseTest
 	{
 		// Run a script in a Java Application
 
-		String scriptPath = "examples/lua/hello.lua";
+		String scriptPath = "org/philhosoft/tests/libraries/luaj/hello.lua";
 		LuaValue script = LuaValue.valueOf(scriptPath);
 
 		// Create an environment to run in
