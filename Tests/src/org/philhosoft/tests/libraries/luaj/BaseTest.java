@@ -14,7 +14,10 @@ Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.luaj;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -80,6 +83,7 @@ public final class BaseTest
 	public static void main(String[] args)
 	{
 		BaseTest bt = new BaseTest();
+		System.out.println("# Generic information on the script engine");
 		showInformation();
 
 		// Examples from http://luaj.org/luaj/README.html
@@ -87,7 +91,10 @@ public final class BaseTest
 
 		// Run a script in a Java Application
 
-		String scriptPath = ResourceUtil.getClassPath(bt) + "hello.lua";
+		System.out.println("# Running a simple script");
+		String classPath = ResourceUtil.getClassPath(bt);
+		String scriptPath = classPath + "hello.lua";
+		System.out.println("-> " + scriptPath);
 
 		// Use the convenience function on the globals to load a chunk.
 		LuaValue chunk = _G.loadFile(scriptPath);
@@ -96,12 +103,31 @@ public final class BaseTest
 		chunk.call();
 
 		// Simpler alternative...
+		scriptPath = classPath + "info.lua";
+		System.out.println("-> " + scriptPath);
 		LuaValue script = LuaValue.valueOf(scriptPath);
-		_G.get("dofile").call(script);
+		Varargs va = _G.get("dofile").invoke(script);
+		for (int i = 1, n = va.narg(); i <= n; i++)
+		{
+			if (va.isstring(i))
+			{
+				String s = va.tojstring(i);
+				System.out.println(i + ": " + s);
+			}
+			else
+			{
+				System.out.println(i + "= " + va.arg(i) + " (" + va.type(i) + ")");
+			}
+		}
+		System.out.println(va.tojstring());
+
+//		_G.get("dofile").call(LuaValue.valueOf(classPath + "SwingTestToo.lua"));
+//		System.out.println("Done");
 
 
 		// Run a script using JSR-223 Dynamic Scripting
 
+		System.out.println("# Testing script snippet running and runtime error handing");
 		ScriptEngine se = getLuaScriptEngine();
 		se.put("x", 25);
 		try
@@ -113,16 +139,59 @@ public final class BaseTest
 		}
 		catch (ScriptException e)
 		{
-			e.printStackTrace();
+			System.err.println("Incorrect Lua script: " + e.getMessage());
+//			e.printStackTrace();
 		}
 		catch (LuaError e)
 		{
-			System.out.println("Error when running Lua script:");
-			e.printStackTrace();
+			System.err.println("Error when running Lua script: " + e.getMessage());
+//			e.printStackTrace();
 		}
 		System.out.println("y1 = " + se.get("y1"));
 		System.out.println("y2 = " + se.get("y2"));
 		System.out.println("y3 = " + se.get("y3"));
 		System.out.println("y4 = " + se.get("y4"));
+
+		System.out.println("# Testing script syntax error handing");
+		try
+		{
+			// Let's make an error in the script itself!
+			se.eval("y == math.sqrt(x)");
+		}
+		catch (ScriptException e)
+		{
+			System.err.println("Error in script run: " + e.getMessage());
+//			e.printStackTrace();
+		}
+
+
+		// Launch a Swing script with the script engine
+
+		System.out.println("# Running Swing script");
+		String scriptFilePath = ResourceUtil.getBinaryPath() + classPath;
+		String scriptFile = scriptFilePath + "SwingTest.lua";
+		System.out.println("-> " + scriptFile);
+		try
+		{
+			// Add the path to the script to the environment, so it is usable from the script to load resources
+			// Literal string to behave correctly with Windows paths...
+			se.eval("PATH = [[" + scriptFilePath + "]]");
+		    Reader reader = new FileReader(new File(scriptFile));
+		    Object result = se.eval(reader);
+		    System.out.println(result);
+		}
+		catch (FileNotFoundException e)
+		{
+			System.err.println("Cannot find script at " + scriptFilePath);
+		}
+		catch (ScriptException e)
+		{
+			e.printStackTrace();
+		}
+		catch (LuaError e)
+		{
+			System.err.println("Error when running Lua script: " + e.getMessage());
+//			e.printStackTrace();
+		}
 	}
 }

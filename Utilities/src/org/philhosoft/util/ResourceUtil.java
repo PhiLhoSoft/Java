@@ -13,6 +13,8 @@ Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.util;
 
+import java.io.File;
+
 public class ResourceUtil
 {
 	/**
@@ -43,5 +45,20 @@ public class ResourceUtil
 		if (pos == -1)
 			return ""; // No package
 		return pkg.substring(0, pos + 1); // Keep the ending dot
+	}
+
+	/**
+	 * Gives the path to the binary folder, ie. the root folder where the classes are,
+	 * or the folder where the jar is.
+	 * By adding getClassPath to it, we get the path to the class file.
+	 *
+	 * @param obj  the object providing the package part
+	 * @return the path, with a final slash
+	 */
+	public static String getBinaryPath()
+	{
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		File classpathRoot = new File(classLoader.getResource("").getPath());
+		return classpathRoot.getPath() + "/";
 	}
 }
