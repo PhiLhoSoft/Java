@@ -200,5 +200,3 @@ local app = newA ('java.lang.Runnable',
 	end
 })
 SwingUtilities:invokeLater(app)
-
-return "Launched"
