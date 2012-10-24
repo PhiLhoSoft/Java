@@ -20,7 +20,7 @@ local newC = luajava.new
 -- new anonymous class: create a new class instance out of a fully qualified interface name (or more)
 local newA = luajava.createProxy
 
--- Bind to classes we need
+-- Bind to classes we need several times
 local BorderLayout = import 'java.awt.BorderLayout'
 local JFrame = import 'javax.swing.JFrame'
 local BufferedImage = import 'java.awt.image.BufferedImage'
@@ -28,6 +28,21 @@ local SwingUtilities = import 'javax.swing.SwingUtilities'
 local Thread = import 'java.lang.Thread'
 local ImageIO = import 'javax.imageio.ImageIO'
 local File = import 'java.io.File'
+
+
+-- Find out the script path, to load resources at the same location
+
+-- If called from BaseTest, the PATH global variable is set
+local scriptPath = PATH or ""
+-- If called from the command line, like:
+-- java -cp C:\Java\libraries\luaj-3.0-alpha1\lib\luaj-jse-3.0-alpha1.jar lua resources\org\philhosoft\tests\libraries\luaj\SwingTest.lua
+-- the arg variable holds the path to the script
+if arg ~= nil then
+	-- Path to the script where we remove the chars after the last / or \
+	scriptPath = arg[0]:gsub("([\\/])[^\\/]+$", "%1")
+end
+print("Script path: " .. scriptPath)
+
 
 -- Set up frame, get content pane
 local width, height = 640, 480
@@ -41,45 +56,44 @@ local label = new ('javax.swing.JLabel', icon)
 
 -- Add the main pane to the main content
 content:add(label, BorderLayout.CENTER)
-frame:setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-frame:pack()
 
 
 -- Try loading the logo image
-local getCurrentPath = function ()
-	local ok, currentThread = pcall(Thread.currentThread, Thread)
-	if ok then
-		local classLoader = currentThread:getContextClassLoader()
-		local path = classLoader:getResource(""):getPath()
-		local classPath = newC (File, path)
-		local currentPath = classPath:getPath() .. "/"
-		print("Current path: " .. currentPath)
-		return currentPath
-	end
-end
 
 local loadImage = function (path)
-	local s, i = pcall(ImageIO.read, ImageIO, newC (File, path))
-	return s and i
+	print("Trying to load image at " .. path)
+	local ok, image = pcall(ImageIO.read, ImageIO, newC (File, path))
+	if ok then
+		return image
+	end
+	print(image) -- Error message in this case
 end
+
 local imageFile = "PhiLhoLogo.png"
-local imagePath = getCurrentPath() .. imageFile
-local classPath = PATH or ""
-print(classPath)
-local logo = loadImage(classPath .. imageFile) or loadImage(imagePath)
+local logo =
+		-- First try with the path given by the caller (BaseTest, if using that)
+		-- or found from the command line
+		loadImage(scriptPath .. imageFile) or
+		-- If run directly, try to find the path from the root of the classpath
+		loadImage(imageFile) or
+		-- Otherwise, just hard-code the path as last resource...
+		loadImage("resources/org/philhosoft/tests/libraries/luaj/" .. imageFile)
+
 local lw, lh = 0, 0
 if logo ~= nil then
 	lw, lh = logo:getWidth(), logo:getHeight()
 end
 
-
--- Simple animation framework
+-- Simple animation framework:
+-- tick runs in the EDT thread and 60 times per second,
+-- calls the function that update the state of the animation (animate)
+-- and the one doing a rendering of the animation (render).
 local tick, animate, render
 local nextTime = 0
 tick = newA ('java.lang.Runnable',
 {
 	run = function ()
-		-- Call itself again
+		-- Call itself again in the EDT
 		SwingUtilities:invokeLater(tick)
 		-- Sleep a bit until it is time to animate again
 		if os.time() < nextTime then return Thread:sleep(5) end
@@ -176,7 +190,15 @@ frame:addWindowListener(newA ('java.awt.event.WindowListener',
 	-- windowIconified = function (e) end,
 }))
 
--- Set window visible last to start application
-frame:setVisible(true)
+-- Set window visible last to start application, in the EDT
+local app = newA ('java.lang.Runnable',
+{
+	run = function ()
+		frame:setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+		frame:pack()
+		frame:setVisible(true)
+	end
+})
+SwingUtilities:invokeLater(app)
 
 return "Launched"

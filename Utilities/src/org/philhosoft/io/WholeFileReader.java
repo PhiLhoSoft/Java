@@ -22,41 +22,70 @@ public class WholeFileReader
 {
 	private static final int BUFFER_SIZE = 8192;
 
-	public static StringBuilder readFile(String fileName)
+	public static StringBuilder read(String fileName)
 			throws IOException
 	{
-		return readFile(fileName, null);
+		return read(fileName, null);
 	}
 
-	public static StringBuilder readFile(String fileName, String charsetName)
+	public static StringBuilder read(String fileName, String charsetName)
 			throws IOException
 	{
-		// No real need to close the BufferedReader/InputStreamReader
-		// as they're only wrapping the stream: they are closed automatically by closing the stream.
-		FileInputStream stream = new FileInputStream(fileName);
-		InputStreamReader isr = null;
-		if (charsetName == null)
-		{
-			isr = new InputStreamReader(stream);
-		}
-		else
-		{
-			isr = new InputStreamReader(stream, charsetName);
-		}
 		StringBuilder builder = new StringBuilder();
+
+		FileInputStream stream = null;
+		InputStreamReader reader = null;
+		BufferedReader buffering = null;
 		try
 		{
-			Reader reader = new BufferedReader(isr);
+			stream = new FileInputStream(fileName);
+			if (charsetName == null)
+			{
+				reader = new InputStreamReader(stream);
+			}
+			else
+			{
+				reader = new InputStreamReader(stream, charsetName);
+			}
+
+			buffering = new BufferedReader(reader);
 			char[] buffer = new char[BUFFER_SIZE];
 			int read;
-			while ((read = reader.read(buffer, 0, BUFFER_SIZE)) > 0)
+			while ((read = buffering.read(buffer, 0, BUFFER_SIZE)) > 0)
 			{
 				builder.append(buffer, 0, read);
 			}
 		}
 		finally
 		{
-			stream.close();
+			if (buffering != null)
+			{
+				try
+				{
+					buffering.close();
+					// These are closed by their wrapper
+					reader = null;
+					stream = null;
+				}
+				catch (IOException e) {} // Should log the problem...
+			}
+			if (reader != null) // buffering failed to close?
+			{
+				try
+				{
+					reader.close();
+					stream = null;
+				}
+				catch (IOException e) {} // Should log the problem...
+			}
+			if (stream != null) // buffering and reader failed to close?
+			{
+				try
+				{
+					stream.close();
+				}
+				catch (IOException e) {} // Should log the problem...
+			}
 		}
 		return builder;
 	}

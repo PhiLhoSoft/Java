@@ -168,6 +168,7 @@ public final class BaseTest
 		// Launch a Swing script with the script engine
 
 		System.out.println("# Running Swing script");
+		// We assume the script is in the same package than this class!
 		String scriptFilePath = ResourceUtil.getBinaryPath() + classPath;
 		String scriptFile = scriptFilePath + "SwingTest.lua";
 		System.out.println("-> " + scriptFile);
