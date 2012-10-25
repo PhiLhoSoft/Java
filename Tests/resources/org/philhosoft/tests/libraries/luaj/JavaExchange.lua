@@ -16,16 +16,16 @@ function callJavaFun()
 	print(javaFun(1, "Two", false, rep, { 5 }))
 end
 
-if rep ~= nil then
-	callRep()
-	callJavaFun()
-	return "Done!"
-end
-
 function calledByJava(param)
 	if type(param) == 'string' then
 		return param:gsub("Java", "Lua")
 	end
+end
+
+if rep ~= nil then
+	callRep()
+	callJavaFun()
+	return "Done!"
 end
 
 -- javaParam should be set by the Java environment
