@@ -1,6 +1,8 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
  * Tries to recreate a Swing paint bug.
+ * After all, it was really a bug in my code (no surprise...).
+ * http://stackoverflow.com/questions/13125732/java-swings-drawstring-shows-an-echo
  */
 /* File history:
  *  1.00.000 -- 2012/10/29 (PL) -- Creation
@@ -10,7 +12,7 @@ Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
 http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.bugs.swing.panel_paint;
 

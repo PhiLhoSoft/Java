@@ -6,9 +6,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.*;
-
-import org.philhosoft.ui.GraphUtil;
+import javax.swing.JComponent;
+import javax.swing.SwingConstants;
 
 
 /**
@@ -123,27 +122,27 @@ abstract class InfoPanel extends JComponent
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
+	protected void paintComponent(Graphics g)
 	{
-		Graphics2D g2D = (Graphics2D) g;
-		g2D.setFont(m_font);
+		final Graphics2D g2d = (Graphics2D) g.create();
+		g2d.setFont(m_font);
 
 		if (m_gradientBackground != null)
 		{
-			g2D.setPaint(m_gradientBackground);
+			g2d.setPaint(m_gradientBackground);
 		}
 		else
 		{
-			g2D.setColor(m_colorBackground1);
+			g2d.setColor(m_colorBackground1);
 		}
 		Dimension d = getSize();
-		g2D.fillRect(0, 0, d.width, d.height);
-		g2D.setColor(m_colorForeground);
+		g2d.fillRect(0, 0, d.width, d.height);
+		g2d.setColor(m_colorForeground);
 
 		// Get the text bounds
-		FontRenderContext fontContext = g2D.getFontRenderContext();
+		FontRenderContext fontContext = g2d.getFontRenderContext();
 		TextLayout layout = new TextLayout(m_information, m_font, fontContext);
-		layout.draw(g2D, 0, 0);
+//		layout.draw(g2d, 0, 0);
 		Rectangle2D bounds = layout.getBounds();
 
 		int posX = 10;
@@ -158,20 +157,29 @@ abstract class InfoPanel extends JComponent
 			posX = d.width - m_width - posX;
 		}
 		// Center vertically
-		FontMetrics fm = g2D.getFontMetrics();
+		FontMetrics fm = g2d.getFontMetrics();
 		int posY = d.height / 2 + m_height / 2 - fm.getDescent();
 
-		g2D.drawString(m_information, posX, posY);
+		g2d.drawString(m_information, posX, posY);
+		// Only drawString shows this problem!
+		g2d.drawLine( posX, posY + 5, posX + m_width, posY + 5 );
 
 		// finally we draw a border all around the panel
 		if (m_bDisplayBorder)
 		{
-			g2D.setColor(m_colorBorder);
+			g2d.setColor(m_colorBorder);
 			for (int i = 0; i < m_borderSize; i++)
 			{
-				g2D.drawRect(i, i, d.width - 1 - 2 * i, d.height - 1 - 2 * i);
+				g2d.drawRect(i, i, d.width - 1 - 2 * i, d.height - 1 - 2 * i);
 			}
 		}
+		g2d.dispose();
+	}
+
+	@Override
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(m_width, m_height);
 	}
 }
 

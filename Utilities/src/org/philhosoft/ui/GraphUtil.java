@@ -72,7 +72,6 @@ public class GraphUtil
 		FontRenderContext fontContext = g2D.getFontRenderContext();
 		Font font = g2D.getFont();
 		TextLayout layout = new TextLayout(textToDisplay, font, fontContext);
-		layout.draw(g2D, 0, 0);
 
 		Rectangle2D bounds = layout.getBounds();
 		return bounds;
