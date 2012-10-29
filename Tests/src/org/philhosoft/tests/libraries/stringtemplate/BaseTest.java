@@ -17,6 +17,8 @@ package org.philhosoft.tests.libraries.stringtemplate;
 import org.stringtemplate.v4.*;
 import org.stringtemplate.v4.compiler.CompiledST;
 
+import org.philhosoft.util.ResourceUtil;
+
 /**
  * Base test of StringTemplate.
  *
@@ -42,7 +44,9 @@ public final class BaseTest
 
         System.out.println("\nBook 1");
         // See all .st files of the given dir (here, from classpath)
-        STGroup groupRD = new STRawGroupDir("org/philhosoft/tests/libraries/stringtemplate/templates");
+        BaseTest bt = new BaseTest();
+        String strPath = ResourceUtil.getClassPath(bt);
+        STGroup groupRD = new STRawGroupDir(strPath + "templates");
         ST bookT1 = groupRD.getInstanceOf("BaseTestBook"); // Load BaseTestBook.st, the whole file is the template
         bookT1.add("title", "Alice in Wonderland");
         bookT1.add("authors", "Lewis Carroll");
@@ -53,7 +57,7 @@ public final class BaseTest
 
         System.out.println("\nBook 2");
         // See all .st files of the given classpath dir
-        STGroup groupD = new STGroupDir("org/philhosoft/tests/libraries/stringtemplate/templates");
+        STGroup groupD = new STGroupDir(strPath + "templates");
         ST bookT2 = groupD.getInstanceOf("info"); // Load info.st, defining an 'info' template
         bookT2.add("title", "Alice in Wonderland");
         bookT2.add("author", "Lewis Carroll");
@@ -62,7 +66,7 @@ public final class BaseTest
 
         System.out.println("\nBook 3");
         // Load the BaseTestBook.stg group file defining several templates
-        STGroup groupF = new STGroupFile("org/philhosoft/tests/libraries/stringtemplate/templates/BaseTestBook.stg");
+        STGroup groupF = new STGroupFile(strPath + "templates/BaseTestBook.stg");
         ST bookT3 = groupF.getInstanceOf("info"); // Get the 'info' template
         bookT3.add("title", "Throught the Looking Glass");
         bookT3.add("author", "Lewis Carroll");

@@ -7,7 +7,7 @@
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
-http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicence.txt
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
 Copyright (c) 2008 Philippe Lhoste / PhiLhoSoft
 */
@@ -124,13 +124,20 @@ public class TestImageMask
 
 	public static void main(String[] args) throws IOException
 	{
-		TestImageMask tm = new TestImageMask();
-		JFrame f = new JFrame();
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setTitle(tm.getClass().getName());
-		f.setContentPane(tm.getContent());
-		f.setSize(800, 400);
-		f.setLocation(200, 200);
-		f.setVisible(true);
+		final TestImageMask tm = new TestImageMask();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				JFrame f = new JFrame();
+				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				f.setTitle(tm.getClass().getName());
+				f.setContentPane(tm.getContent());
+				f.setSize(800, 400);
+				f.setLocation(200, 200);
+				f.setVisible(true);
+			}
+		});
 	}
 }

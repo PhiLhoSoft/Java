@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.stringtemplate.v4.*;
 
 import org.philhosoft.tests.libraries.guava.Book;
+import org.philhosoft.util.ResourceUtil;
 
 /**
  * Base test of StringTemplate.
@@ -33,7 +34,9 @@ public final class BookListing
 	 */
 	public static void main(String[] args)
 	{
-        STGroup groupF = new STGroupFile("org/philhosoft/tests/libraries/stringtemplate/templates/Book.stg");
+		BookListing bl = new BookListing();
+		String strPackage = ResourceUtil.getPackage(bl);
+        STGroup groupF = new STGroupFile(strPackage + "templates/Book.stg");
         ST bookT = groupF.getInstanceOf("book");
         groupF.registerRenderer(Number.class, new NumberRenderer());
         groupF.registerRenderer(DateTime.class, new JodaTimeRenderer());
