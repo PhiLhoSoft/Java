@@ -1,3 +1,16 @@
+/*
+ * org.philhosoft.*: A collection of utility classes for Java.
+ */
+/* File history:
+ *  1.00.000 -- 2012/10/29 (PL) -- Creation.
+ */
+/*
+Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
+Copyright notice: For details, see the following file:
+http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
+This program is distributed under the zlib/libpng license.
+Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
+*/
 package org.philhosoft.ui;
 
 import java.awt.*;
@@ -7,10 +20,14 @@ import java.awt.geom.Rectangle2D;
 
 
 /**
+ * Various utility classes to manipulate the Graphics2D context.
+ *
  * @author PhiLho
  */
 public class GraphUtil
 {
+	private GraphUtil() {} // Only static functions
+
 	/**
 	 * Reduces the font size of the given graphics context to ensure the given text can be displayed within the given width.
 	 *

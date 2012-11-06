@@ -1,5 +1,7 @@
 /*
  * Tests: A collection of little test programs to explore Java language.
+ * Here, breaks a string on multiple lines.
+ * http://stackoverflow.com/questions/239537/how-to-output-a-string-on-multiple-lines-using-graphics
  */
 /* File history:
  *  1.00.000 -- 2008/10/27 (PL) -- Creation
