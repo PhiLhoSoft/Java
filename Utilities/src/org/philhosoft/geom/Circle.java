@@ -118,6 +118,23 @@ public class Circle implements ClosedShape, java.io.Serializable
 	}
 
 	/**
+	 * Tells if this circle intersects the given line.
+	 */
+	public final boolean intersectsLine(float x1, float y1, float x2, float y2)
+	{
+		if (isEmpty())
+			return false;
+		return GeomUtil.isLineIntersectingCircle(x1, y1, x2, y2, center.getX(), center.getY(), radius);
+	}
+	/**
+	 * Tells if this circle intersects the given line.
+	 */
+	public final boolean intersectsLine(Line seg)
+	{
+		return intersects(seg.getPoint1().getX(), seg.getPoint1().getY(), seg.getPoint2().getX(), seg.getPoint2().getY());
+	}
+
+	/**
 	 * Tells if this circle intersects the given rectangle.
 	 */
 	@Override
