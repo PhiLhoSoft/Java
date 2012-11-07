@@ -4,7 +4,7 @@
  * Geometric entities.
  */
 /* File history:
- *  1.00.000 -- 2012/11/05 (PL) -- Creation.
+ *  0.01.000 -- 2012/11/05 (PL) -- Creation.
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
@@ -21,14 +21,14 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Line implements Cloneable, java.io.Serializable
+public class Line implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 
 	/** One end of the line. */
-	public PLSVector point1;
+	private PLSVector point1;
 	/** The other end of the line. */
-	public PLSVector point2;
+	private PLSVector point2;
 
 
 	/** Empty constructor. Coordinates and radius are set to 0, creating a simple point. */
@@ -43,6 +43,8 @@ public class Line implements Cloneable, java.io.Serializable
 	public Line(float x1, float y1, float z1, float x2, float y2, float z2) { setPoint1(x1, y1, z1); setPoint2(x2, y2, z2); };
 
 
+	// Getters and setters
+
 	public final PLSVector getPoint1() { return point1; }
 	public final void setPoint1(PLSVector p1) { point1 = p1; }
 	public final void setPoint1(float x, float y) { point1 = new PLSVector(x, y); }
@@ -53,16 +55,16 @@ public class Line implements Cloneable, java.io.Serializable
 	public final void setPoint2(float x, float y, float z) { point2 = new PLSVector(x, y, z); }
 
 
-	/** Creates a new normalized line (length = 1), from the origin toward the positive X axis. */
-	public static Line create()
-	{
-		return new Line(PLSVector.create(), PLSVector.X_AXIS.copy());
-	}
-
 	/** Returns a copy of this line. */
 	public final Line copy()
 	{
 		return new Line(this);
+	}
+
+	/** Creates a new normalized line (length = 1), from the origin toward the positive X axis. */
+	public static Line create()
+	{
+		return new Line(PLSVector.create(), PLSVector.X_AXIS.copy());
 	}
 
 
@@ -71,16 +73,19 @@ public class Line implements Cloneable, java.io.Serializable
 	@Override
 	public String toString()
 	{
-		if (point1.z == 0 && point2.z == 0)
-			return "Line[(" + point1.x + ", " + point1.y + "), (" + point2.x + ", " + point2.y + ")]";
-		return "Line[(" + point1.x + ", " + point1.y + ", " + point1.z + "), (" + point2.x + ", " + point2.y + ", " + point2.z + ")]";
+		if (point1.getZ() == 0 && point2.getZ() == 0)
+			return "Line((" + point1.getX() + ", " + point1.getY() + "), (" + point2.getX() + ", " + point2.getY() + "))";
+		return "Line((" + point1.getX() + ", " + point1.getY() + ", " + point1.getZ() + "), (" +
+			point2.getX() + ", " + point2.getY() + ", " + point2.getZ() + "))";
 	}
 	/** Compacter alternative, with only two decimal digits. */
 	public String toShortString()
 	{
-		if (point1.z == 0 && point2.z == 0)
-			return String.format("L[(%.2f, %.2f), (%.2f, %2f)]", point1.x, point1.y, point2.x, point2.y);
-		return String.format("L[(%.2f, %.2f, %.2f), (%.2f, %2f, %.2f)]", point1.x, point1.y, point1.z, point2.x, point2.y, point2.z);
+		if (point1.getZ() == 0 && point2.getZ() == 0)
+			return String.format("L[(%.2f, %.2f), (%.2f, %2f))", point1.getX(), point1.getY(), point2.getX(), point2.getY());
+		return String.format("L((%.2f, %.2f, %.2f), (%.2f, %2f, %.2f))",
+				point1.getX(), point1.getY(), point1.getZ(),
+				point2.getX(), point2.getY(), point2.getZ());
 	}
 
 	@Override

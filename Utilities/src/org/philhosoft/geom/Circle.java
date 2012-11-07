@@ -4,7 +4,7 @@
  * Geometric entities.
  */
 /* File history:
- *  1.00.000 -- 2012/11/05 (PL) -- Creation.
+ *  0.01.000 -- 2012/11/05 (PL) -- Creation.
  */
 /*
 Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
@@ -21,7 +21,7 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Circle implements Cloneable, java.io.Serializable
+public class Circle implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -44,34 +44,78 @@ public class Circle implements Cloneable, java.io.Serializable
 	public Circle(float px, float py, float r) { center = new PLSVector(px, py); radius = r; }
 
 
+	// Getters and setters
+
 	public PLSVector getCenter() { return center; }
 	public void setCenter(PLSVector c) { center = c; }
 	public void setCenter(float x, float y) { center = new PLSVector(x, y); }
 	public float getRadius() { return radius; }
 	public void setRadius(float r) { radius = r; squaredRadius = Double.NaN; }
 
+
+	// Creation of instances
+
+	/** Returns a copy of this circle. */
+	public final Circle copy()
+	{
+		return new Circle(this);
+	}
+
+	/** Creates a new normalized circle (radius = 1), centered on the origin. */
+	public static Circle create()
+	{
+		return new Circle(PLSVector.create(), 1);
+	}
+
+
+	/**
+	 * Tells if this circle is empty, ie. if it has a radius of zero (or negative!).
+	 */
+	public final boolean isEmpty()
+	{
+		return radius <= 0;
+	}
+
+	/**
+	 * Tells if this circle contains the given point defined by its coordinates.
+	 * An empty circle contains nothing.
+	 *
+	 * @param px  the X coordinate of the point to check
+	 * @param py  the Y coordinate of the point to check
+	 * @return true if the point is inside the circle
+	 */
+	public final boolean contains(float px, float py)
+	{
+		if (isEmpty())
+			return false;
+		check();
+		final double sqR = GeomUtil.squaredDistance(px, py, center.getX(), center.getY());
+		return sqR <= squaredRadius;
+	}
 	/**
 	 * Tells if this circle contains the given point.
+	 * An empty circle contains nothing.
 	 *
 	 * @param point  the point to check
 	 * @return true if the point is inside the circle
 	 */
 	public final boolean contains(PLSVector point)
 	{
-		check();
-		final double sqR = GeomUtil.squaredDistance(point.x, point.y, center.x, center.y);
-		return sqR <= squaredRadius;
+		return contains(point.getX(), point.getY());
 	}
 
 	/**
 	 * Tells if this circle intersects the given one.
+	 * An empty circle intersects nothing.
 	 *
 	 * @param circle  the circle to check
 	 * @return true if the circles intersects
 	 */
 	public final boolean intersects(Circle circle)
 	{
-		final double dist = Math.sqrt(GeomUtil.squaredDistance(center.x, center.y, circle.center.x, circle.center.y));
+		if (isEmpty() || circle.isEmpty())
+			return false;
+		final double dist = Math.sqrt(GeomUtil.squaredDistance(center.getX(), center.getY(), circle.center.getX(), circle.center.getY()));
 		return dist <= radius + circle.radius;
 	}
 
@@ -90,12 +134,12 @@ public class Circle implements Cloneable, java.io.Serializable
 	@Override
 	public String toString()
 	{
-		return "Circle((" + center.x + ", " + center.y + "), radius=" + radius + ")";
+		return "Circle((" + center.getX() + ", " + center.getY() + "), radius=" + radius + ")";
 	}
 	/** Compacter alternative, with only two decimal digits. */
 	public String toShortString()
 	{
-		return String.format("C(%.2f, %.2f, r=%.2f)", center.x, center.y, radius);
+		return String.format("C((%.2f, %.2f), r=%.2f)", center.getX(), center.getY(), radius);
 	}
 
 	@Override

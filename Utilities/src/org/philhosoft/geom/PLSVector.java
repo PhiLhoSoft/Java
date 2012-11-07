@@ -3,7 +3,7 @@
  *
  * A 2D or 3D vector, holding a pair or triplet of coordinates.
  *
- * I could make a 2D version, but even with million of vectors I am not sure the gain of memory
+ * I could make a 2D version, but even with millions of vectors I am not sure the gain of memory
  * is worth the trouble... (of maintaining two almost identical classes).
  * To compensate, I provide versions of the methods with two parameters (coordinates)
  * instead of three, allowing more natural 2D calls.
@@ -13,10 +13,11 @@
  * prefixes in code...
  *
  * Reference: http://en.wikipedia.org/wiki/Euclidean_vector
- * Took ideas from various vector implementations, including Processing's PVector and toxic's Vec3D.
+ * Took ideas from various vector implementations, including Processing's PVector and toxiclibs' Vec3D.
  */
 /* File history:
- *  1.00.000 -- 2012/11/05 (PL) -- Extending the set of methods.
+ *  0.03.000 -- 2012/11/06 (PL) -- Finally make the fields private...
+ *  0.02.000 -- 2012/11/05 (PL) -- Extending the set of methods.
  *  0.01.000 -- 2009/09/29 (PL) -- Creation.
  */
 /*
@@ -39,34 +40,35 @@ package org.philhosoft.geom;
  * This class can be seen as a vector with one point at the origin and the other end at
  * the given coordinates. Or just a convenient class to hold a set of coordinates (a point).
  * <p>
- * It provides methods with two coordinates instead of three to allow a more natural
- * usage in 2D, you can assume the z coordinate is 0 in these cases.
+ * It provides methods with two coordinates instead of three to allow a more natural usage in 2D,
+ * you can assume the z coordinate is 0 in these cases.
  * 2D methods, on the X-Y plane have no suffix (kind of default).
- * 3D methods have the 3D suffix (unless the z parameter makes it unambiguous) or a suffix indicating the implied plane (XZ or YZ).
+ * 3D methods have the 3D suffix (unless the Z parameter makes it unambiguous) or a suffix indicating the implied plane (XZ or YZ).
+ * <p>
+ * Note that unlike the traditional mathematical definition, the Y axis goes toward the bottom, for consistency with
+ * the traditional display system of coordinates.
  * <p>
  * Most operations return the vector itself, allowing to chain the calls.
  * <p>
  * It uses float instead of double: we probably don't need the extra precision of double in most graphics applications,
- * and it can save quite a bit of memory with lot of points!
+ * and it can save quite a bit of memory with lot of points! Most computations are done using doubles internally, though,
+ * to reduce the risk of rounding errors and overflows.
  * <p>
- * Nearly all methods are final, as there is little need to override the math methods, only some specific entry points,
+ * Nearly all methods are final, as there is little need to override the math methods, except for some specific entry points,
  * like the random number generator.
  *
  * @author PhiLho
  */
-public class PLSVector implements Cloneable, java.io.Serializable
+public class PLSVector implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	// Yes, public, it is faster (at least to type!) and I see little point in adding getters/setters for these.
-	// They are quite unlikely to be renamed or changed.
-	// After all, Java's Dimension and similar do the same...
 	/** The coordinate on the X axis. */
-	public float x;
+	private float x;
 	/** The coordinate on the Y axis. */
-	public float y;
+	private float y;
 	/** The coordinate on the Z axis, zero if we are in 2D. */
-	public float z;
+	private float z;
 
 	public static final PLSVector X_AXIS = new PLSVector(1, 0, 0);
 	public static final PLSVector Y_AXIS = new PLSVector(0, 1, 0);
@@ -86,7 +88,7 @@ public class PLSVector implements Cloneable, java.io.Serializable
 	/** Convenience constructor from an array of points (easier to define literally). */
 	public PLSVector(float[] coordinates) { set(coordinates); }
 
-	// Getters and setters allow to use this class as a bean, or are there for those preferring this kind of access.
+	// Getters and setters
 
 	public final float getX() { return x; }
 	public final void setX(float px) { x = px; }
@@ -94,6 +96,12 @@ public class PLSVector implements Cloneable, java.io.Serializable
 	public final void setY(float py) { y = py; }
 	public final float getZ() { return z; }
 	public final void setZ(float pz) { z = pz; }
+
+	/** Returns a copy of this vector. */
+	public final PLSVector copy()
+	{
+		return new PLSVector(this);
+	}
 
 	// Some static PLSVector generators
 
@@ -141,12 +149,6 @@ public class PLSVector implements Cloneable, java.io.Serializable
 	public static PLSVector createRandomPoint(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 	{
 		return create().setRandomPoint(minX, maxX, minY, maxY, minZ, maxZ);
-	}
-
-	/** Returns a copy of this vector. */
-	public final PLSVector copy()
-	{
-		return new PLSVector(this);
 	}
 
 	/** Sets the coordinates of the end point in 3 dimensions. */
@@ -244,12 +246,12 @@ public class PLSVector implements Cloneable, java.io.Serializable
 	{
 		return set(getRandom(minX, maxX), getRandom(minY, maxY));
 	}
-	/** Sets the vector to a random end point the given 3D area. */
+	/** Sets the vector to a random end point in the given 3D area. */
 	public final PLSVector setRandomPoint(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 	{
 		return set(getRandom(minX, maxX), getRandom(minY, maxY), getRandom(minZ, maxZ));
 	}
-	/** Sets the vector to a random end point the given 2D area. */
+	/** Sets the vector to a random end point in the given 2D area. */
 	public final PLSVector setRandomPoint(float maxX, float maxY)
 	{
 		return setRandomPoint(0, maxX, 0, maxY);
