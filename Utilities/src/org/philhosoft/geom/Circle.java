@@ -21,7 +21,7 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Circle implements java.io.Serializable
+public class Circle implements ClosedShape, java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -71,19 +71,19 @@ public class Circle implements java.io.Serializable
 	/**
 	 * Tells if this circle is empty, ie. if it has a radius of zero (or negative!).
 	 */
+	@Override
 	public final boolean isEmpty()
 	{
 		return radius <= 0;
 	}
 
-	/**
-	 * Tells if this circle contains the given point defined by its coordinates.
-	 * An empty circle contains nothing.
-	 *
-	 * @param px  the X coordinate of the point to check
-	 * @param py  the Y coordinate of the point to check
-	 * @return true if the point is inside the circle
-	 */
+	@Override
+	public Rectangle getBounds()
+	{
+		return new Rectangle(center.getX() - radius, center.getY() - radius, 2 * radius, 2 * radius);
+	}
+
+	@Override
 	public final boolean contains(float px, float py)
 	{
 		if (isEmpty())
@@ -92,16 +92,53 @@ public class Circle implements java.io.Serializable
 		final double sqR = GeomUtil.squaredDistance(px, py, center.getX(), center.getY());
 		return sqR <= squaredRadius;
 	}
-	/**
-	 * Tells if this circle contains the given point.
-	 * An empty circle contains nothing.
-	 *
-	 * @param point  the point to check
-	 * @return true if the point is inside the circle
-	 */
+	@Override
 	public final boolean contains(PLSVector point)
 	{
 		return contains(point.getX(), point.getY());
+	}
+
+	/**
+	 * Tells if this circle contains the given rectangle.
+	 */
+	@Override
+	public final boolean contains(float cx, float cy, float w, float h)
+	{
+		if (isEmpty() || w <= 0 || h <= 0)
+			return false;
+		return contains(cx, cy) && contains(cx + w, cy) && contains(cx, cy + h) && contains(cx + w, cy + h);
+	}
+	/**
+	 * Tells if this circle contains the given rectangle.
+	 */
+	@Override
+	public final boolean contains(Rectangle r)
+	{
+		return contains(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
+	}
+
+	/**
+	 * Tells if this circle intersects the given rectangle.
+	 */
+	@Override
+	public final boolean intersects(float cx, float cy, float w, float h)
+	{
+		if (isEmpty() || w <= 0 || h <= 0)
+			return false;
+		// It if contains one corner, it is true
+		if (contains(cx, cy) || contains(cx + w, cy) || contains(cx, cy + h) || contains(cx + w, cy + h))
+			return true;
+		// If it intersects one side, it is true
+		// TODO
+		return true;
+	}
+	/**
+	 * Tells if this circle intersects the given rectangle.
+	 */
+	@Override
+	public final boolean intersects(Rectangle r)
+	{
+		return intersects(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
 	}
 
 	/**

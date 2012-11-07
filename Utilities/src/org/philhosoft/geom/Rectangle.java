@@ -17,13 +17,14 @@ Copyright (c) 2012 Philippe Lhoste / PhiLhoSoft
 package org.philhosoft.geom;
 
 /**
- * A 2D rectangle, defined by its top-left corner and its dimensions: width and height.
+ * A 2D rectangle, defined by its top-left corner and its dimensions: width and height,
+ * where the sides are parallel to the axes.
  * <p>
  * Reminder: the height goes down, as the Y axis follows the display system of coordinates.
  *
  * @author PhiLho
  */
-public class Rectangle implements java.io.Serializable
+public class Rectangle implements ClosedShape, java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -63,11 +64,54 @@ public class Rectangle implements java.io.Serializable
 	public void setWidth(float w) { width = w; }
 	public float getHeight() { return height; }
 	public void setHeight(float h) { height = h; }
-	// TODO do it correctly! Setting one corner should change the dimensions, we must manage relative positions, etc.
-	public void setTopLeft(PLSVector corner) { x = corner.getX(); y = corner.getY(); }
-	public void setBottomRight(PLSVector corner) { width = corner.getX(); y = corner.getY(); }
-	public void setTopLeft(float px, float py) { x = px; y = py; }
-	public void setBottomRight(float px, float py) { x = px; y = py; }
+	/** Moves the top-left corner to the given position, keeping the dimensions unchanged. */
+	public void moveTo(float px, float py) { x = px; y = py; }
+	/** Moves the top-left corner to the given position, keeping the dimensions unchanged. */
+	public void moveTo(PLSVector p) { x = p.getX(); y = p.getY(); }
+	/**
+	 * Sets the top-left corner to the given position, keeping the bottom-right corner in place.
+	 * If the position is beyond the B-R corner, the dimension becomes zero.
+	 * @param corner
+	 */
+	public void setTopLeft(float px, float py)
+	{
+		// Bottom-right corner
+		final float brcX = x + width;
+		final float brcY = y + height;
+		if (px < brcX) // OK
+		{
+			x = px;
+			width = brcX - x;
+		}
+		else
+		{
+			x = brcX;
+			width = 0;
+		}
+		if (py < brcY) // OK
+		{
+			y = py;
+			height = brcY - y;
+		}
+		else
+		{
+			y = brcY;
+			height = 0;
+		}
+	}
+	public void setTopLeft(PLSVector corner)
+	{
+		setTopLeft(corner.getX(), corner.getY());
+	}
+	public void setBottomRight(PLSVector corner)
+	{
+		setBottomRight(corner.getX(), corner.getY());
+	}
+	public void setBottomRight(float px, float py)
+	{
+		width = px - x;
+		height = py - y;
+	}
 
 
 	// Creation of instances
@@ -97,6 +141,7 @@ public class Rectangle implements java.io.Serializable
 	/**
 	 * Tells if this rectangle is empty, ie. if it has a dimension of zero (or negative!).
 	 */
+	@Override
 	public final boolean isEmpty()
 	{
 		if (width <= 0) return true;
@@ -104,14 +149,16 @@ public class Rectangle implements java.io.Serializable
 		return false;
 	}
 
+	@Override
+	public Rectangle getBounds()
+	{
+		return copy();
+	}
+
 	/**
 	 * Tells if this rectangle contains the given point defined by its coordinates.
-	 * An empty rectangle contains nothing.
-	 *
-	 * @param px  the X coordinate of the point to check
-	 * @param py  the Y coordinate of the point to check
-	 * @return true if the point is inside the rectangle
 	 */
+	@Override
 	public final boolean contains(float px, float py)
 	{
 		if (isEmpty())
@@ -124,36 +171,77 @@ public class Rectangle implements java.io.Serializable
 	}
 	/**
 	 * Tells if this rectangle contains the given point.
-	 * An empty rectangle contains nothing.
-	 *
-	 * @param point  the point to check
-	 * @return true if the point is inside the rectangle
 	 */
+	@Override
 	public final boolean contains(PLSVector point)
 	{
 		return contains(point.getX(), point.getY());
 	}
 
 	/**
-	 * Tells if this rectangle intersects the given one.
-	 * An empty rectangle intersects nothing.
-	 *
-	 * @param rectangle  the rectangle to check
-	 * @return true if the rectangles intersects
+	 * Tells if this rectangle contains the given one.
 	 */
-	public final boolean intersects(Rectangle rectangle)
+	@Override
+	public final boolean contains(float cx, float cy, float w, float h)
 	{
-		if (isEmpty() || rectangle.isEmpty())
+		if (isEmpty() || w <= 0 || h <= 0)
 			return false;
-		// TODO
-		return true;
+		return x <= cx && x + width >= cx + w && y <= cy && y + height >= cy + h;
+	}
+	/**
+	 * Tells if this rectangle contains the given one.
+	 */
+	@Override
+	public final boolean contains(Rectangle r)
+	{
+		return contains(r.x, r.y, r.width, r.height);
+	}
+
+	/**
+	 * Tells if this rectangle intersects the given one.
+	 */
+	@Override
+	public final boolean intersects(float cx, float cy, float w, float h)
+	{
+		if (isEmpty() || w <= 0 || h <= 0)
+			return false;
+		// Defines variable for clarity sake
+		final float r1left = x;
+		final float r1right = x + width;
+		final float r1top = y;
+		final float r1bottom = y + height;
+		final float r2left = cx;
+		final float r2right = cx + w;
+		final float r2top = cy;
+		final float r2bottom = cy + h;
+		/* Not intersecting if:
+		r1right < r2left (on left of other rect) or
+		r1left > r2right (on right of other rect) or
+		r1bottom < r2top (over the other rect) or
+		r1top > r2bottom (below the other rect)
+		We just invert the above expression below, to avoid negating.
+		See http://jsfiddle.net/fhXFC/3/ (JS test!)
+		*/
+		return
+				r1right >= r2left &&
+				r1left <= r2right &&
+				r1bottom >= r2top &&
+				r1top <= r2bottom;
+	}
+	/**
+	 * Tells if this rectangle intersects the given one.
+	 */
+	@Override
+	public final boolean intersects(Rectangle r)
+	{
+		return intersects(r.x, r.y, r.width, r.height);
 	}
 
 	/**
 	 * Merges this rectangle with the given one, making a bigger (if this one isn't enclosing the other one)
 	 * rectangle corresponding to the bounding box of both rectangles.
 	 */
-	public final Rectangle merge(Rectangle r)
+	public final Rectangle mergeWith(Rectangle r)
 	{
 		float maxRight = Math.max(x + width, r.x + r.width);
 		x = Math.min(x, r.x);
@@ -168,7 +256,7 @@ public class Rectangle implements java.io.Serializable
 	 * Intersects this rectangle with the given one, making it smaller.
 	 * If these rectangles are not intersecting, the result is an empty rectangle.
 	 */
-	public final Rectangle intersect(Rectangle r)
+	public final Rectangle intersectWith(Rectangle r)
 	{
 		if (!intersects(r))
 		{

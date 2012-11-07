@@ -70,6 +70,7 @@ public class PLSVector implements java.io.Serializable
 	/** The coordinate on the Z axis, zero if we are in 2D. */
 	private float z;
 
+	// Beware! These vectors are NOT immutable... Avoid to alter them!
 	public static final PLSVector X_AXIS = new PLSVector(1, 0, 0);
 	public static final PLSVector Y_AXIS = new PLSVector(0, 1, 0);
 	public static final PLSVector Z_AXIS = new PLSVector(0, 0, 1);

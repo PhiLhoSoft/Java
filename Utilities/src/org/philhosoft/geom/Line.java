@@ -66,7 +66,65 @@ public class Line implements java.io.Serializable
 	{
 		return new Line(PLSVector.create(), PLSVector.X_AXIS.copy());
 	}
+	/**
+	 * Creates a line from an array of coordinates.
+	 *
+	 * @param coordinates  the array of coordinates
+	 * @return the created line
+	 * @see #set(float[])
+	 */
+	public static Line create(float[] coordinates)
+	{
+		return create().set(coordinates);
+	}
 
+	/**
+	 * Sets the coordinates of the points from the given array of coordinates.
+	 * <p>
+	 * If null or empty, or not the right number of values, changes nothing.<br>
+	 * If 2 coordinates, changes x and y of the first point.
+	 * If 3 coordinates, changes x, y and z of the first point.
+	 * If 4 coordinates, changes x and y of the two points.
+	 * If 6 coordinates, changes x, y and z of the two points.
+	 */
+	public Line set(float[] coordinates)
+	{
+		if (coordinates == null) // Accepts bad input with a default result, here changes nothing!
+			return this;
+		switch (coordinates.length)
+		{
+		case 2:
+			point1.set(coordinates[0], coordinates[1]);
+			break;
+		case 3:
+			point1.set(coordinates[0], coordinates[1], coordinates[2]);
+			break;
+		case 4:
+			point1.set(coordinates[0], coordinates[1]);
+			point2.set(coordinates[2], coordinates[3]);
+			break;
+		case 6:
+			point1.set(coordinates[0], coordinates[1], coordinates[2]);
+			point2.set(coordinates[3], coordinates[4], coordinates[5]);
+			break;
+		default:
+			// Ignore other values, if any
+			break;
+		}
+		return this;
+	}
+
+
+	/** Checks if this line intersects the given one in the 2D plane. */
+	public final boolean intersects(Line other)
+	{
+		return GeomUtil.areLinesIntersecting(
+				point1.getX(), point1.getY(),
+				point2.getX(), point2.getY(),
+				other.point1.getX(), other.point1.getY(),
+				other.point2.getX(), other.point2.getY()
+		);
+	}
 
 	// Base methods
 

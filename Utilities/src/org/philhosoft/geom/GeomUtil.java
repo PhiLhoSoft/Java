@@ -30,6 +30,10 @@ package org.philhosoft.geom;
  */
 class GeomUtil
 {
+	// To move to a MathUtil class...
+	public static final float FEPSILON = 1.192093e-07f;
+	public static final double DEPSILON = 2.220446e-16;
+
 	private GeomUtil() {} // Only functions, no instance
 
 	/** Computes the squared distance between the two 2D points defined by their coordinates. */
@@ -69,5 +73,29 @@ class GeomUtil
 	{
 		final double dsz = (double) z1 * z2;
 		return dot(x1, y1, x2, y2) + dsz;
+	}
+
+	public static boolean areLinesIntersecting(
+			// For readability sake, I use s1 / s2 (line segment!) instead of l1 / l2...
+			double s1x1, double s1y1, double s1x2, double s1y2,
+			double s2x1, double s2y1, double s2x2, double s2y2)
+	{
+		// Paul Bourke's formulae... I won't try to understand it for now...
+		final double denominator = (s2y2 - s2y1) * (s1x2 - s1x1) - (s2x2 - s2x1) * (s1y2 - s1y1);
+		final double numeratorA  = (s2x2 - s2x1) * (s1y1 - s2y1) - (s2y2 - s2y1) * (s1x1 - s2x1);
+		final double numeratorB  = (s1x2 - s1x1) * (s1y1 - s2y1) - (s1y2 - s1y1) * (s1x1 - s2x1);
+
+		// If the lines are coincident, ie. parallel and overlapping, they intersect
+		if (Math.abs(denominator) < DEPSILON && // Parallel
+				Math.abs(numeratorA) < DEPSILON &&
+				Math.abs(numeratorB) < DEPSILON)
+			return true;
+		// If they are just parallel (not overlapping), they cannot intersect
+		if (Math.abs(denominator) < DEPSILON)
+			return false;
+
+		final double muA = numeratorA / denominator;
+		final double muB = numeratorB / denominator;
+		return muA >= 0 && muA <= 1 && muB >= 0 && muB <= 1;
 	}
 }
