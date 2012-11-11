@@ -36,6 +36,26 @@ class GeomUtil
 
 	private GeomUtil() {} // Only functions, no instance
 
+	public static boolean areAlmostEqual(float f1, float f2)
+	{
+		return Math.abs(f1 - f2) < FEPSILON;
+	}
+	public static boolean isAlmostEqual(double d1, double d2)
+	{
+		return Math.abs(d1 - d2) < DEPSILON;
+	}
+
+
+	/** Rotates of the given angle, for coordinates a and b. Returns the rotated a and b in an array. */
+	public static double[] rotate(double angle, double a, double b)
+	{
+		final double cos = Math.cos(angle);
+		final double sin = Math.sin(angle);
+		final double newX = a * cos - b * sin;
+		final double y = a * sin + b * cos;
+		final double x = newX;
+		return new double[] { x, y };
+	}
 	/** Computes the squared distance between the two 2D points defined by their coordinates. */
 	public static double squaredDistance(double x1, double y1, double x2, double y2)
 	{

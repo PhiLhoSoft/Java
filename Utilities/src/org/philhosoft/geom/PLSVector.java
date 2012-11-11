@@ -3,8 +3,8 @@
  *
  * A 2D or 3D vector, holding a pair or triplet of coordinates.
  *
- * I could make a 2D version, but even with millions of vectors I am not sure the gain of memory
- * is worth the trouble... (of maintaining two almost identical classes).
+ * I could make a 2D version, but even with millions of vectors I am not sure the gain of memory is worth the trouble...
+ * (of maintaining two almost identical classes).
  * To compensate, I provide versions of the methods with two parameters (coordinates)
  * instead of three, allowing more natural 2D calls.
  *
@@ -39,23 +39,28 @@ package org.philhosoft.geom;
  * <p>
  * This class can be seen as a vector with one point at the origin and the other end at
  * the given coordinates. Or just a convenient class to hold a set of coordinates (a point).
+ * Or some vectorial quantity, like speed, acceleration, etc.
  * <p>
  * It provides methods with two coordinates instead of three to allow a more natural usage in 2D,
  * you can assume the z coordinate is 0 in these cases.
  * 2D methods, on the X-Y plane have no suffix (kind of default).
- * 3D methods have the 3D suffix (unless the Z parameter makes it unambiguous) or a suffix indicating the implied plane (XZ or YZ).
+ * 3D methods have the 3D suffix (unless the Z parameter makes it unambiguous)
+ * or a suffix indicating the implied plane (XZ or YZ).
  * <p>
- * Note that unlike the traditional mathematical definition, the Y axis goes toward the bottom, for consistency with
- * the traditional display system of coordinates.
+ * Note that unlike the traditional mathematical definition, the Y axis goes toward the bottom,
+ * for consistency with the traditional display system of coordinates.<br>
+ * Thus, the angles first go down (toward North at PI / 2), in clockwise manner.<br>
+ * The Z axis goes toward the viewer, ie. positive values are closer of the point-of-view.
+ * That's the left-handed coordinate system.
  * <p>
  * Most operations return the vector itself, allowing to chain the calls.
  * <p>
  * It uses float instead of double: we probably don't need the extra precision of double in most graphics applications,
- * and it can save quite a bit of memory with lot of points! Most computations are done using doubles internally, though,
- * to reduce the risk of rounding errors and overflows.
+ * and it can save quite a bit of memory with lot of points!
+ * Most computations are done using doubles internally, though, to reduce the risk of rounding errors and overflows.
  * <p>
- * Nearly all methods are final, as there is little need to override the math methods, except for some specific entry points,
- * like the random number generator.
+ * Nearly all methods are final, as there is little need to override the math methods,
+ * except for some specific entry points, like the random number generator.
  *
  * @author PhiLho
  */
@@ -70,9 +75,12 @@ public class PLSVector implements java.io.Serializable
 	/** The coordinate on the Z axis, zero if we are in 2D. */
 	private float z;
 
-	// Beware! These vectors are NOT immutable... Avoid to alter them!
+	// Beware! These vectors are NOT immutable... Avoid to alter them! Use them with copy(), for example.
+	/** The canonical X axis, from the origin to the right / East. */
 	public static final PLSVector X_AXIS = new PLSVector(1, 0, 0);
+	/** The canonical Y axis, from the origin to the bottom / South. */
 	public static final PLSVector Y_AXIS = new PLSVector(0, 1, 0);
+	/** The canonical Z axis, from the origin to the viewer / point-of-view. */
 	public static final PLSVector Z_AXIS = new PLSVector(0, 0, 1);
 	// Extreme vectors useful for bounding box computations
 	public static final PLSVector MINIMUM = new PLSVector(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
@@ -106,10 +114,10 @@ public class PLSVector implements java.io.Serializable
 
 	// Some static PLSVector generators
 
-	/** Creates zero length vector. */
+	/** Creates normalized vector (length = 1) toward the X axis. */
 	public static PLSVector create()
 	{
-		return new PLSVector();
+		return new PLSVector(1, 0, 0);
 	}
 	/** Creates a normalized 2D vector toward the given angle. */
 	public static PLSVector create(float angle)
@@ -217,12 +225,46 @@ public class PLSVector implements java.io.Serializable
 		x = newX;
 		return this;
 	}
-	/** Sets the vector toward the given angle (in radians), keeping the same length. */
+	/** Rotates the vector of the given angle in the Y-Z plane, in radians. */
+	public final PLSVector rotateYZ(float angle)
+	{
+		final double cos = Math.cos(angle);
+		final double sin = Math.sin(angle);
+		final float newY = (float) (y * cos - z * sin);
+		z = (float) (y * sin + z * cos);
+		y = newY;
+		return this;
+	}
+	/** Rotates the vector of the given angle in the X-Z plane, in radians. */
+	public final PLSVector rotateXZ(float angle)
+	{
+		final double cos = Math.cos(angle);
+		final double sin = Math.sin(angle);
+		final float newX = (float) (x * cos - z * sin);
+		z = (float) (x * sin + z * cos);
+		x = newX;
+		return this;
+	}
+
+	/** Sets the vector toward the given angle (in radians) in the X-Y plane, keeping the same length. */
 	public final PLSVector setAngle(float angle)
 	{
 		final float len = length();
 		return set((float) (len * Math.cos(angle)), (float) (len * Math.sin(angle)));
 	}
+	/** Sets the vector toward the given angle (in radians) in the Y-Z plane, keeping the same length. */
+	public final PLSVector setAngleYZ(float angle)
+	{
+		final float len = length();
+		return set(x, (float) (len * Math.cos(angle)), (float) (len * Math.sin(angle)));
+	}
+	/** Sets the vector toward the given angle (in radians) in the X-Z plane, keeping the same length. */
+	public final PLSVector setAngleXZ(float angle)
+	{
+		final float len = length();
+		return set((float) (len * Math.cos(angle)), y, (float) (len * Math.sin(angle)));
+	}
+
 	/** Sets the vector toward a random angle in the X-Y plane, keeping the same length. */
 	public final PLSVector setRandom()
 	{
@@ -461,12 +503,15 @@ public class PLSVector implements java.io.Serializable
 		return dx * dx + dy * dy + dz * dz;
 	}
 
-	/** Returns the angle between this vector and the given one. */
+	/**
+	 * Returns the angle between this vector and the given one.
+	 * Always between 0 and 180 degrees (PI radians).
+	 */
 	public final float angleWith(PLSVector v)
 	{
 		if (isNull() || v.isNull())
 			return 0;
-		// One usage of dot product... Perhaps the only one... :-)
+		// One usage of dot product...
 		final double dot = GeomUtil.dot(x, y, z, v.x, v.y, v.z);
 		final double val = dot / dblLen() / v.dblLen();
 		// Avoid NaN if we have some rounding error...
@@ -477,13 +522,26 @@ public class PLSVector implements java.io.Serializable
 		return (float) Math.acos(val);
 	}
 
+	private final float getAngle(float a, float b)
+	{
+		double angle = Math.atan2(a, b);
+		if (angle < 0)
+		{
+			angle += Math.PI * 2;
+		}
+		return (float) angle;
+	}
+
 	/**
 	 * Returns the vector's direction (angle in radians) in 2D, ie. in the X-Y plane.
-	 * The positive X axis equals 0 degrees / radians.
+	 * The positive X axis equals 0 degrees / radians,
+	 * the positive Y axis (toward the South) equals 90 degrees / half-pi radians,
+	 * the negative X axis (toward the West) equals 180 degrees, pi radians,
+	 * the negative Y axis (toward the North) equals 270 degrees, pi * 3/2 radians.
 	 */
 	public final float heading()
 	{
-		return (float) Math.atan2(y, x);
+		return getAngle(y, x);
 	}
 
 	/**
@@ -492,7 +550,7 @@ public class PLSVector implements java.io.Serializable
 	 */
 	public final float headingXZ()
 	{
-		return (float) Math.atan2(z, x);
+		return getAngle(z, x);
 	}
 
 	/**
@@ -501,7 +559,7 @@ public class PLSVector implements java.io.Serializable
 	 */
 	public final float headingYZ()
 	{
-		return (float) Math.atan2(y, z);
+		return getAngle(y, z);
 	}
 
 
@@ -586,6 +644,13 @@ public class PLSVector implements java.io.Serializable
 		if (!(obj instanceof PLSVector)) return false;
 		PLSVector other = (PLSVector) obj;
 		return x == other.x && y == other.y && z == other.z;
+	}
+	public boolean almostEquals(PLSVector other)
+	{
+		if (this == other) return true;
+		return GeomUtil.areAlmostEqual(x, other.x) &&
+				GeomUtil.areAlmostEqual(y, other.y) &&
+				GeomUtil.areAlmostEqual(z, other.z);
 	}
 
 
