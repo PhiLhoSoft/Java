@@ -133,6 +133,36 @@ public class Circle implements ClosedShape, java.io.Serializable
 	{
 		return intersects(seg.getPoint1().getX(), seg.getPoint1().getY(), seg.getPoint2().getX(), seg.getPoint2().getY());
 	}
+	/**
+	 * Tells if this circle intersects the given line.
+	 */
+	public final int getLineIntersection(Line seg, PLSVector pt1, PLSVector pt2)
+	{
+		if (isEmpty())
+			return 0;
+		double[] result = new double[4];
+		int ptNb = GeomUtil.getLineCircleIntersectionPoints(
+				seg.getPoint1().getX(), seg.getPoint1().getY(), seg.getPoint2().getX(), seg.getPoint2().getY(),
+				center.getX(), center.getY(), radius,
+				result);
+		if (ptNb > 1)
+		{
+			if (pt1 == null)
+			{
+				pt1 = new PLSVector();
+			}
+			pt1.set((float) result[0], (float) result[1]);
+		}
+		if (ptNb == 2)
+		{
+			if (pt2 == null)
+			{
+				pt2 = new PLSVector();
+			}
+			pt2.set((float) result[2], (float) result[3]);
+		}
+		return ptNb;
+	}
 
 	/**
 	 * Tells if this circle intersects the given rectangle.

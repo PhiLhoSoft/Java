@@ -28,7 +28,7 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-class GeomUtil
+public class GeomUtil
 {
 	// To move to a MathUtil class...
 	public static final float FEPSILON = 1.192093e-07f;
@@ -40,7 +40,7 @@ class GeomUtil
 	{
 		return Math.abs(f1 - f2) < FEPSILON;
 	}
-	public static boolean isAlmostEqual(double d1, double d2)
+	public static boolean areAlmostEqual(double d1, double d2)
 	{
 		return Math.abs(d1 - d2) < DEPSILON;
 	}
@@ -92,7 +92,20 @@ class GeomUtil
 		final double dsz = z1 * z2;
 		return dot(x1, y1, x2, y2) + dsz;
 	}
-	/** Checks if two lines defined by their end points intersect. */
+
+	/**
+	 * Checks if two lines defined by their end points intersect.
+	 *
+	 * @param s1x1  X coordinate of the first point of the first line segment
+	 * @param s1y1  Y coordinate of the first point of the first line segment
+	 * @param s1x2  X coordinate of the second point of the first line segment
+	 * @param s1y2  Y coordinate of the second point of the first line segment
+	 * @param s2x1  X coordinate of the first point of the second line segment
+	 * @param s2y1  Y coordinate of the first point of the second line segment
+	 * @param s2x2  X coordinate of the second point of the second line segment
+	 * @param s2y2  Y coordinate of the second point of the second line segment
+	 * @return true if they intersect
+	 */
 	public static boolean areLinesIntersecting(
 			// For readability sake, I use s1 / s2 (line segment!) instead of l1 / l2...
 			double s1x1, double s1y1, double s1x2, double s1y2,
@@ -116,15 +129,45 @@ class GeomUtil
 		final double muB = numeratorB / denominator;
 		return muA >= 0 && muA <= 1 && muB >= 0 && muB <= 1;
 	}
-	/** Checks if a line segment defined by its end points and a circle defined by its center and radius intersect. */
+
+	/**
+	 * Checks if a line segment defined by its end points and a circle defined by its center and radius intersect.
+	 *
+	 * @param sx1  X coordinate of the first point of the line
+	 * @param sy1  Y coordinate of the first point of the line
+	 * @param sx2  X coordinate of the second point of the line
+	 * @param sy2  Y coordinate of the second point of the line
+	 * @param cx  X coordinate of the center of the circle
+	 * @param cy  Y coordinate of the center of the circle
+	 * @param radius  radius of the circle
+	 * @return true if they intersect
+	 */
 	public static boolean isLineIntersectingCircle(
 			// See above for s vs. l
 			double sx1, double sy1, double sx2, double sy2,
 			double cx, double cy, double radius)
 	{
-		return isLineIntersectingCircle(sx1, sy1, sx2, sy2, cx, cy, radius, null);
+		return getLineCircleIntersectionPoints(sx1, sy1, sx2, sy2, cx, cy, radius, null) > 0;
 	}
-	public static boolean isLineIntersectingCircle(
+	/**
+	 * Checks if the given line (defined by its two end points) intersects the given circle
+	 * (defined by its center and its radius).
+	 * If so, the intersection points can be put in the {@code results} array which must have a size of 4.
+	 *
+	 * @param sx1  X coordinate of the first point of the line
+	 * @param sy1  Y coordinate of the first point of the line
+	 * @param sx2  X coordinate of the second point of the line
+	 * @param sy2  Y coordinate of the second point of the line
+	 * @param cx  X coordinate of the center of the circle
+	 * @param cy  Y coordinate of the center of the circle
+	 * @param radius  radius of the circle
+	 * @param results  an array of four floats, or null. If null, the parameter is ignored.
+	 *        Otherwise, if there is only one intersection point, its coordinates are in the first two entries,
+	 *        the two others are set to NaN. If there are two points, their coordinates (in X, Y order) are put
+	 *        in the array.
+	 * @return the number of intersection points: 0 if no intersection, 1 if tangent, 2 otherwise
+	 */
+	public static int getLineCircleIntersectionPoints(
 			// See above for s vs. l
 			double sx1, double sy1, double sx2, double sy2,
 			double cx, double cy, double radius,
@@ -152,7 +195,7 @@ class GeomUtil
 
 		final double discriminant = b * b - a * c;
 		if (discriminant < 0)
-			return false;
+			return 0; // No intersection
 
 		final double rootDisc = Math.sqrt(discriminant);
 		// These factors tells "how far on the segment" the intersection points are:
@@ -171,6 +214,6 @@ class GeomUtil
 				results[3] = sy1 - vDirSegY * factor2;
 			}
 		}
-		return true;
+		return discriminant > 0 ? 2 : 1;
 	}
 }
