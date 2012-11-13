@@ -64,7 +64,12 @@ public class Circle implements ClosedShape, java.io.Serializable
 	/** Creates a new normalized circle (radius = 1), centered on the origin. */
 	public static Circle create()
 	{
-		return new Circle(PLSVector.create(), 1);
+		return new Circle(0, 0, 1);
+	}
+	/** Creates a circle of random radius in the given range centered on the origin. */
+	public static Circle createRandomCircle(float min, float max)
+	{
+		return new Circle(0, 0, PLSVector.getRandom(min, max));
 	}
 
 

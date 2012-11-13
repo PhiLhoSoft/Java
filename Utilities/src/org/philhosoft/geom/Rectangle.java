@@ -136,6 +136,11 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 		final float bottom = Math.max(y1, y2);
 		return new Rectangle(new PLSVector(left, top), right - left, bottom - top);
 	}
+	/** Creates a rectangle of random dimensions in the given range, with the top-left corner on the origin. */
+	public static Rectangle createRandomRectangle(float minW, float maxW, float minH, float maxH)
+	{
+		return new Rectangle(0, 0, PLSVector.getRandom(minW, maxW), PLSVector.getRandom(minH, maxH));
+	}
 
 
 	/**

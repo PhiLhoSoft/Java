@@ -23,12 +23,12 @@ public class PLSVectorTest
 
 		v = new PLSVector(1, 2);
 		checkResult(v, 1, 2, 0);
-		assertTrue(GeomUtil.isAlmostEqual(v.length(), 2.236068f));
+		assertTrue(GeomUtil.areAlmostEqual(v.length(), 2.236068f));
 
 		v = new PLSVector(3, 4, 5);
 		checkResult(v, 3, 4, 5);
 		float len = v.length();
-		assertTrue(GeomUtil.isAlmostEqual(len, 7.071068f));
+		assertTrue(GeomUtil.areAlmostEqual(len, 7.071068f));
 		v.invert();
 		checkResult(v, -3, -4, -5);
 		assertEquals(v.length(), len);
@@ -72,9 +72,8 @@ public class PLSVectorTest
 	public void testBuilders()
 	{
 		PLSVector v = PLSVector.create();
-		checkResult(v, 1, 0, 0);
-		assertEquals(v, PLSVector.X_AXIS);
-		assertEquals(v.length(), 1.0f);
+		checkResult(v, 1, 1, 1);
+		assertEquals(v.length(), (float) Math.sqrt(3));
 
 		v = PLSVector.create((float) Math.PI / 2);
 		checkResult(v, 0, 1, 0);

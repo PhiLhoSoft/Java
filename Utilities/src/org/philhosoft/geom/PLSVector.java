@@ -114,50 +114,50 @@ public class PLSVector implements java.io.Serializable
 
 	// Some static PLSVector generators
 
-	/** Creates normalized vector (length = 1) toward the X axis. */
+	/** Creates a vector of one unit in all positive directions. */
 	public static PLSVector create()
 	{
-		return new PLSVector(1, 0, 0);
+		return new PLSVector(1, 1, 1);
 	}
-	/** Creates a normalized 2D vector toward the given angle. */
+	/** Creates a normalized (length = 1) 2D vector toward the given angle. */
 	public static PLSVector create(float angle)
 	{
-		return create().setAngle(angle);
+		return X_AXIS.copy().setAngle(angle);
 	}
 	/** Creates a normalized 2D vector toward a random angle. */
 	public static PLSVector createRandom()
 	{
-		return create().setRandom();
+		return X_AXIS.copy().setRandom();
 	}
 	/** Creates a normalized 3D vector toward a random angle. */
 	public static PLSVector createRandom3D()
 	{
-		return create().setRandom3D();
+		return X_AXIS.copy().setRandom3D();
 	}
 	/** Creates a normalized 2D vector toward a random angle in the given range. */
 	public static PLSVector createRandomAngle(float angle1, float angle2)
 	{
-		return create().setRandomAngle(angle1, angle2);
+		return X_AXIS.copy().setRandomAngle(angle1, angle2);
 	}
 	/** Creates a random 2D point in the given area. */
 	public static PLSVector createRandomPoint(float maxX, float maxY)
 	{
-		return create().setRandomPoint(maxX, maxY);
+		return new PLSVector().setRandomPoint(maxX, maxY);
 	}
 	/** Creates a random 3D point in the given area. */
 	public static PLSVector createRandomPoint(float maxX, float maxY, float maxZ)
 	{
-		return create().setRandomPoint(maxX, maxY, maxZ);
+		return new PLSVector().setRandomPoint(maxX, maxY, maxZ);
 	}
 	/** Creates a random 2D point in the given area. */
 	public static PLSVector createRandomPoint(float minX, float maxX, float minY, float maxY)
 	{
-		return create().setRandomPoint(maxX, maxY);
+		return new PLSVector().setRandomPoint(minX, maxX, minY, maxY);
 	}
 	/** Creates a random 3D point in the given area. */
 	public static PLSVector createRandomPoint(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 	{
-		return create().setRandomPoint(minX, maxX, minY, maxY, minZ, maxZ);
+		return new PLSVector().setRandomPoint(minX, maxX, minY, maxY, minZ, maxZ);
 	}
 
 	/** Sets the coordinates of the end point in 3 dimensions. */
