@@ -21,22 +21,22 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Line implements java.io.Serializable
+public class Line extends BasePath
 {
 	private static final long serialVersionUID = 1L;
 
-	/** One end of the line. */
-	private PLSVector point1;
+	// One end of the line is the origin of this path
+
 	/** The other end of the line. */
-	private PLSVector point2;
+	private PLSVector m_end;
 
 
 	/** Empty constructor. Coordinates and radius are set to 0, creating a simple point. */
 	public Line() {}
 	/** Copy constructor. */
-	public Line(Line line) { point1 = line.point1.copy(); point2 = line.point2.copy(); }
+	public Line(Line line) { m_origin = line.m_origin.copy(); m_end = line.m_end.copy(); }
 	/** Good old constructor. The given points are now owned by the created object. */
-	public Line(PLSVector p1, PLSVector p2) { point1 = p1; point2 = p2; }
+	public Line(PLSVector p1, PLSVector p2) { m_origin = p1; m_end = p2; }
 	/** 2D constructor. */
 	public Line(float x1, float y1, float x2, float y2) { setPoint1(x1, y1); setPoint2(x2, y2); };
 	/** 3D constructor. */
@@ -45,14 +45,14 @@ public class Line implements java.io.Serializable
 
 	// Getters and setters
 
-	public final PLSVector getPoint1() { return point1; }
-	public final void setPoint1(PLSVector p1) { point1 = p1; }
-	public final void setPoint1(float x, float y) { point1 = new PLSVector(x, y); }
-	public final void setPoint1(float x, float y, float z) { point1 = new PLSVector(x, y, z); }
-	public final PLSVector getPoint2() { return point2; }
-	public final void setPoint2(PLSVector p2) { point2 = p2; }
-	public final void setPoint2(float x, float y) { point2 = new PLSVector(x, y); }
-	public final void setPoint2(float x, float y, float z) { point2 = new PLSVector(x, y, z); }
+	public final PLSVector getPoint1() { return m_origin; }
+	public final void setPoint1(PLSVector p1) { m_origin = p1; }
+	public final void setPoint1(float x, float y) { m_origin = new PLSVector(x, y); }
+	public final void setPoint1(float x, float y, float z) { m_origin = new PLSVector(x, y, z); }
+	public final PLSVector getPoint2() { return m_end; }
+	public final void setPoint2(PLSVector p2) { m_end = p2; }
+	public final void setPoint2(float x, float y) { m_end = new PLSVector(x, y); }
+	public final void setPoint2(float x, float y, float z) { m_end = new PLSVector(x, y, z); }
 
 
 	/** Returns a copy of this line. */
@@ -94,18 +94,18 @@ public class Line implements java.io.Serializable
 		switch (coordinates.length)
 		{
 		case 2:
-			point1.set(coordinates[0], coordinates[1]);
+			m_origin.set(coordinates[0], coordinates[1]);
 			break;
 		case 3:
-			point1.set(coordinates[0], coordinates[1], coordinates[2]);
+			m_origin.set(coordinates[0], coordinates[1], coordinates[2]);
 			break;
 		case 4:
-			point1.set(coordinates[0], coordinates[1]);
-			point2.set(coordinates[2], coordinates[3]);
+			m_origin.set(coordinates[0], coordinates[1]);
+			m_end.set(coordinates[2], coordinates[3]);
 			break;
 		case 6:
-			point1.set(coordinates[0], coordinates[1], coordinates[2]);
-			point2.set(coordinates[3], coordinates[4], coordinates[5]);
+			m_origin.set(coordinates[0], coordinates[1], coordinates[2]);
+			m_end.set(coordinates[3], coordinates[4], coordinates[5]);
 			break;
 		default:
 			// Ignore other values, if any
@@ -114,36 +114,62 @@ public class Line implements java.io.Serializable
 		return this;
 	}
 
-
 	/** Checks if this line intersects the given one in the 2D plane. */
 	public final boolean intersects(Line other)
 	{
 		return GeomUtil.areLinesIntersecting(
-				point1.getX(), point1.getY(),
-				point2.getX(), point2.getY(),
-				other.point1.getX(), other.point1.getY(),
-				other.point2.getX(), other.point2.getY()
+				m_origin.getX(), m_origin.getY(),
+				m_end.getX(), m_end.getY(),
+				other.m_origin.getX(), other.m_origin.getY(),
+				other.m_end.getX(), other.m_end.getY()
 		);
 	}
+
+	// GeomPath interface
+
+	@Override
+	public boolean isEmpty()
+	{
+		return m_origin.equals(m_end);
+	}
+
+	@Override
+	public Rectangle getBounds()
+	{
+		return new Rectangle(m_origin, m_end);
+	}
+
+	@Override
+	public boolean intersects(float cx, float cy, float w, float h)
+	{
+		// TODO
+		return false;
+	}
+	@Override
+	public boolean intersects(Rectangle r)
+	{
+		return intersects(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
+	}
+
 
 	// Base methods
 
 	@Override
 	public String toString()
 	{
-		if (point1.getZ() == 0 && point2.getZ() == 0)
-			return "Line((" + point1.getX() + ", " + point1.getY() + "), (" + point2.getX() + ", " + point2.getY() + "))";
-		return "Line((" + point1.getX() + ", " + point1.getY() + ", " + point1.getZ() + "), (" +
-			point2.getX() + ", " + point2.getY() + ", " + point2.getZ() + "))";
+		if (m_origin.getZ() == 0 && m_end.getZ() == 0)
+			return "Line((" + m_origin.getX() + ", " + m_origin.getY() + "), (" + m_end.getX() + ", " + m_end.getY() + "))";
+		return "Line((" + m_origin.getX() + ", " + m_origin.getY() + ", " + m_origin.getZ() + "), (" +
+			m_end.getX() + ", " + m_end.getY() + ", " + m_end.getZ() + "))";
 	}
 	/** Compacter alternative, with only two decimal digits. */
 	public String toShortString()
 	{
-		if (point1.getZ() == 0 && point2.getZ() == 0)
-			return String.format("L[(%.2f, %.2f), (%.2f, %2f))", point1.getX(), point1.getY(), point2.getX(), point2.getY());
+		if (m_origin.getZ() == 0 && m_end.getZ() == 0)
+			return String.format("L[(%.2f, %.2f), (%.2f, %2f))", m_origin.getX(), m_origin.getY(), m_end.getX(), m_end.getY());
 		return String.format("L((%.2f, %.2f, %.2f), (%.2f, %2f, %.2f))",
-				point1.getX(), point1.getY(), point1.getZ(),
-				point2.getX(), point2.getY(), point2.getZ());
+				m_origin.getX(), m_origin.getY(), m_origin.getZ(),
+				m_end.getX(), m_end.getY(), m_end.getZ());
 	}
 
 	@Override
@@ -151,8 +177,8 @@ public class Line implements java.io.Serializable
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((point1 == null) ? 0 : point1.hashCode());
-		result = prime * result + ((point2 == null) ? 0 : point2.hashCode());
+		result = prime * result + ((m_origin == null) ? 0 : m_origin.hashCode());
+		result = prime * result + ((m_end == null) ? 0 : m_end.hashCode());
 		return result;
 	}
 	@Override
@@ -161,16 +187,16 @@ public class Line implements java.io.Serializable
 		if (this == obj) return true;
 		if (!(obj instanceof Line)) return false;
 		Line other = (Line) obj;
-		if (point1 == null)
+		if (m_origin == null)
 		{
-			if (other.point1 != null) return false;
+			if (other.m_origin != null) return false;
 		}
-		else if (!point1.equals(other.point1)) return false;
-		if (point2 == null)
+		else if (!m_origin.equals(other.m_origin)) return false;
+		if (m_end == null)
 		{
-			if (other.point2 != null) return false;
+			if (other.m_end != null) return false;
 		}
-		else if (!point2.equals(other.point2)) return false;
+		else if (!m_end.equals(other.m_end)) return false;
 		return true;
 	}
 }

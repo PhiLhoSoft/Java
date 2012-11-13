@@ -21,36 +21,36 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Circle implements ClosedShape, java.io.Serializable
+public class Circle extends BasePath implements ClosedShape
 {
 	private static final long serialVersionUID = 1L;
 
-	/** The center of the circle. */
-	private PLSVector center;
+	// The center of the circle is the origin of this path
+
 	/** The radius of the circle. */
-	private float radius;
+	private float m_radius;
 
 	/** The squared radius, useful for computations. */
-	private transient double squaredRadius = Double.NaN;
+	private transient double m_squaredRadius = Double.NaN;
 
 
 	/** Empty constructor. Coordinates and radius are set to 0, creating a simple point. */
 	public Circle() {}
 	/** Copy constructor. */
-	public Circle(Circle c) { center = c.center.copy(); radius = c.radius; }
+	public Circle(Circle c) { m_origin = c.m_origin.copy(); m_radius = c.m_radius; }
 	/** Good old constructor. The given center is now owned by the created object. */
-	public Circle(PLSVector c, float r) { center = c; radius = r; }
+	public Circle(PLSVector c, float r) { m_origin = c; m_radius = r; }
 	/** Other constructor. */
-	public Circle(float px, float py, float r) { center = new PLSVector(px, py); radius = r; }
+	public Circle(float px, float py, float r) { m_origin = new PLSVector(px, py); m_radius = r; }
 
 
 	// Getters and setters
 
-	public PLSVector getCenter() { return center; }
-	public void setCenter(PLSVector c) { center = c; }
-	public void setCenter(float x, float y) { center = new PLSVector(x, y); }
-	public float getRadius() { return radius; }
-	public void setRadius(float r) { radius = r; squaredRadius = Double.NaN; }
+	public PLSVector getCenter() { return m_origin; }
+	public void setCenter(PLSVector c) { m_origin = c; }
+	public void setCenter(float x, float y) { m_origin = new PLSVector(x, y); }
+	public float getRadius() { return m_radius; }
+	public void setRadius(float r) { m_radius = r; m_squaredRadius = Double.NaN; }
 
 
 	// Creation of instances
@@ -79,13 +79,13 @@ public class Circle implements ClosedShape, java.io.Serializable
 	@Override
 	public final boolean isEmpty()
 	{
-		return radius <= 0;
+		return m_radius <= 0;
 	}
 
 	@Override
 	public Rectangle getBounds()
 	{
-		return new Rectangle(center.getX() - radius, center.getY() - radius, 2 * radius, 2 * radius);
+		return new Rectangle(m_origin.getX() - m_radius, m_origin.getY() - m_radius, 2 * m_radius, 2 * m_radius);
 	}
 
 	@Override
@@ -94,8 +94,8 @@ public class Circle implements ClosedShape, java.io.Serializable
 		if (isEmpty())
 			return false;
 		check();
-		final double sqR = GeomUtil.squaredDistance(px, py, center.getX(), center.getY());
-		return sqR <= squaredRadius;
+		final double sqR = GeomUtil.squaredDistance(px, py, m_origin.getX(), m_origin.getY());
+		return sqR <= m_squaredRadius;
 	}
 	@Override
 	public final boolean contains(PLSVector point)
@@ -129,7 +129,7 @@ public class Circle implements ClosedShape, java.io.Serializable
 	{
 		if (isEmpty())
 			return false;
-		return GeomUtil.isLineIntersectingCircle(x1, y1, x2, y2, center.getX(), center.getY(), radius);
+		return GeomUtil.isLineIntersectingCircle(x1, y1, x2, y2, m_origin.getX(), m_origin.getY(), m_radius);
 	}
 	/**
 	 * Tells if this circle intersects the given line.
@@ -148,7 +148,7 @@ public class Circle implements ClosedShape, java.io.Serializable
 		double[] result = new double[4];
 		int ptNb = GeomUtil.getLineCircleIntersectionPoints(
 				seg.getPoint1().getX(), seg.getPoint1().getY(), seg.getPoint2().getX(), seg.getPoint2().getY(),
-				center.getX(), center.getY(), radius,
+				m_origin.getX(), m_origin.getY(), m_radius,
 				result);
 		if (ptNb > 1)
 		{
@@ -204,16 +204,16 @@ public class Circle implements ClosedShape, java.io.Serializable
 	{
 		if (isEmpty() || circle.isEmpty())
 			return false;
-		final double dist = Math.sqrt(GeomUtil.squaredDistance(center.getX(), center.getY(), circle.center.getX(), circle.center.getY()));
-		return dist <= radius + circle.radius;
+		final double dist = Math.sqrt(GeomUtil.squaredDistance(m_origin.getX(), m_origin.getY(), circle.m_origin.getX(), circle.m_origin.getY()));
+		return dist <= m_radius + circle.m_radius;
 	}
 
 	private void check()
 	{
-		if (Double.isNaN(squaredRadius))
+		if (Double.isNaN(m_squaredRadius))
 		{
 			// Compute it only once, and only if needed
-			squaredRadius = (double) radius * radius;
+			m_squaredRadius = (double) m_radius * m_radius;
 		}
 	}
 
@@ -223,12 +223,12 @@ public class Circle implements ClosedShape, java.io.Serializable
 	@Override
 	public String toString()
 	{
-		return "Circle((" + center.getX() + ", " + center.getY() + "), radius=" + radius + ")";
+		return "Circle((" + m_origin.getX() + ", " + m_origin.getY() + "), radius=" + m_radius + ")";
 	}
 	/** Compacter alternative, with only two decimal digits. */
 	public String toShortString()
 	{
-		return String.format("C((%.2f, %.2f), r=%.2f)", center.getX(), center.getY(), radius);
+		return String.format("C((%.2f, %.2f), r=%.2f)", m_origin.getX(), m_origin.getY(), m_radius);
 	}
 
 	@Override
@@ -236,8 +236,8 @@ public class Circle implements ClosedShape, java.io.Serializable
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((center == null) ? 0 : center.hashCode());
-		result = prime * result + Float.floatToIntBits(radius);
+		result = prime * result + ((m_origin == null) ? 0 : m_origin.hashCode());
+		result = prime * result + Float.floatToIntBits(m_radius);
 		return result;
 	}
 	@Override
@@ -246,12 +246,12 @@ public class Circle implements ClosedShape, java.io.Serializable
 		if (this == obj) return true;
 		if (!(obj instanceof Circle)) return false;
 		Circle other = (Circle) obj;
-		if (center == null)
+		if (m_origin == null)
 		{
-			if (other.center != null) return false;
+			if (other.m_origin != null) return false;
 		}
-		else if (!center.equals(other.center)) return false;
-		if (Float.floatToIntBits(radius) != Float.floatToIntBits(other.radius)) return false;
+		else if (!m_origin.equals(other.m_origin)) return false;
+		if (Float.floatToIntBits(m_radius) != Float.floatToIntBits(other.m_radius)) return false;
 		return true;
 	}
 }

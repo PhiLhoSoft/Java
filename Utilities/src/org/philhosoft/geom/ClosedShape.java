@@ -21,18 +21,21 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public interface ClosedShape
+public interface ClosedShape extends GeomPath
 {
 	/**
 	 * Tells if the shape is empty, ie. if its area is zero.
 	 * An empty shape contains nothing, cannot be contained by another shape, and intersects nothing.
 	 */
+	@Override
 	boolean isEmpty();
 	/**
 	 * Returns a rectangle enclosing entirely the shape.
 	 * There is no guarantee of being the smallest possible bounding box.
 	 */
+	@Override
 	Rectangle getBounds();
+
 	/**
 	 * Tells if the shape contains the given point defined by its coordinates.
 	 *
@@ -65,6 +68,7 @@ public interface ClosedShape
 	 * @return true if the rectangle is entirely contained in the shape
 	 */
 	boolean contains(Rectangle r);
+
 	/**
 	 * Tells if the shape intersects the given rectangle defined by its coordinates and dimensions.
 	 *
@@ -74,6 +78,7 @@ public interface ClosedShape
 	 * @param h  height of the rectangle
 	 * @return true if the rectangle intersects the shape
 	 */
+	@Override
 	boolean intersects(float cx, float cy, float w, float h);
 	/**
 	 * Tells if the shape intersects the given rectangle.
@@ -81,5 +86,6 @@ public interface ClosedShape
 	 * @param r  rectangle to check against this shape
 	 * @return true if the rectangle intersects the shape
 	 */
+	@Override
 	boolean intersects(Rectangle r);
 }

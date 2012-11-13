@@ -24,14 +24,12 @@ package org.philhosoft.geom;
  *
  * @author PhiLho
  */
-public class Rectangle implements ClosedShape, java.io.Serializable
+public class Rectangle extends BasePath implements ClosedShape
 {
 	private static final long serialVersionUID = 1L;
 
-	/** The top-left corner of the rectangle: X coordinate. */
-	private float x;
-	/** The top-left corner of the rectangle: Y coordinate. */
-	private float y;
+	// The top-left corner of the rectangle is the origin of this path
+
 	/** The width of the rectangle. */
 	private float width;
 	/** The height of the rectangle. */
@@ -41,11 +39,11 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	/** Empty constructor. Corner and dimensions are set to 0, creating a simple point. */
 	public Rectangle() {}
 	/** Copy constructor. */
-	public Rectangle(Rectangle r) { x = r.x; y = r.y; width = r.width; height = r.height; }
+	public Rectangle(Rectangle r) { m_origin.set(r.m_origin); width = r.width; height = r.height; }
 	/** Good old constructor. */
-	public Rectangle(float cx, float cy, float w, float h) { x = cx; y = cy; width = w; height = h; }
+	public Rectangle(float cx, float cy, float w, float h) { m_origin.set(cx, cy); width = w; height = h; }
 	/** Constructor from a point and two dimensions. */
-	public Rectangle(PLSVector topLeftCorner, float w, float h) { x = topLeftCorner.getX(); y = topLeftCorner.getY(); width = w; height = h; }
+	public Rectangle(PLSVector topLeftCorner, float w, float h) { m_origin.set(topLeftCorner); width = w; height = h; }
 	/** Constructor from two opposite corners. */
 	public Rectangle(PLSVector corner1, PLSVector corner2)
 	{
@@ -54,20 +52,16 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 
 	// Getters and setters
 
-	public PLSVector getTopLeft() { return new PLSVector(x, y); }
-	public PLSVector getBottomRight() { return new PLSVector(x + width, y + height); }
-	public float getLeft() { return x; }
-	public float getTop() { return y; }
-	public float getRight() { return x + width; }
-	public float getBottom() { return y + height; }
+	public PLSVector getTopLeft() { return m_origin.copy(); }
+	public PLSVector getBottomRight() { return m_origin.copy().add(width, height); }
+	public float getLeft() { return m_origin.getX(); }
+	public float getTop() { return m_origin.getY(); }
+	public float getRight() { return m_origin.getX() + width; }
+	public float getBottom() { return m_origin.getY() + height; }
 	public float getWidth() { return width; }
 	public void setWidth(float w) { width = w; }
 	public float getHeight() { return height; }
 	public void setHeight(float h) { height = h; }
-	/** Moves the top-left corner to the given position, keeping the dimensions unchanged. */
-	public void moveTo(float px, float py) { x = px; y = py; }
-	/** Moves the top-left corner to the given position, keeping the dimensions unchanged. */
-	public void moveTo(PLSVector p) { x = p.getX(); y = p.getY(); }
 	/**
 	 * Sets the top-left corner to the given position, keeping the bottom-right corner in place.
 	 * If the position is beyond the B-R corner, the dimension becomes zero.
@@ -75,6 +69,8 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	 */
 	public void setTopLeft(float px, float py)
 	{
+		float x = m_origin.getX();
+		float y = m_origin.getY();
 		// Bottom-right corner
 		final float brcX = x + width;
 		final float brcY = y + height;
@@ -98,6 +94,7 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 			y = brcY;
 			height = 0;
 		}
+		m_origin.set(x, y);
 	}
 	public void setTopLeft(PLSVector corner)
 	{
@@ -109,8 +106,8 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	}
 	public void setBottomRight(float px, float py)
 	{
-		width = px - x;
-		height = py - y;
+		width = px - m_origin.getX();
+		height = py - m_origin.getY();
 	}
 
 
@@ -168,9 +165,9 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	{
 		if (isEmpty())
 			return false;
-		if (px < x || py < y)
+		if (px < getLeft() || py < getTop())
 			return false;
-		if (px > x + width || py > y + width)
+		if (px > getRight() || py > getBottom())
 			return false;
 		return true;
 	}
@@ -191,7 +188,7 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	{
 		if (isEmpty() || w <= 0 || h <= 0)
 			return false;
-		return x <= cx && x + width >= cx + w && y <= cy && y + height >= cy + h;
+		return getLeft() <= cx && getRight() >= cx + w && getTop() <= cy && getBottom() >= cy + h;
 	}
 	/**
 	 * Tells if this rectangle contains the given one.
@@ -199,7 +196,7 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	@Override
 	public final boolean contains(Rectangle r)
 	{
-		return contains(r.x, r.y, r.width, r.height);
+		return contains(r.getLeft(), r.getTop(), r.width, r.height);
 	}
 
 	/**
@@ -211,10 +208,10 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 		if (isEmpty() || w <= 0 || h <= 0)
 			return false;
 		// Defines variable for clarity sake
-		final float r1left = x;
-		final float r1right = x + width;
-		final float r1top = y;
-		final float r1bottom = y + height;
+		final float r1left = getLeft();
+		final float r1right = getRight();
+		final float r1top = getTop();
+		final float r1bottom = getBottom();
 		final float r2left = cx;
 		final float r2right = cx + w;
 		final float r2top = cy;
@@ -239,7 +236,7 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	@Override
 	public final boolean intersects(Rectangle r)
 	{
-		return intersects(r.x, r.y, r.width, r.height);
+		return intersects(r.getLeft(), r.getRight(), r.width, r.height);
 	}
 
 	/**
@@ -248,11 +245,12 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	 */
 	public final Rectangle mergeWith(Rectangle r)
 	{
-		float maxRight = Math.max(x + width, r.x + r.width);
-		x = Math.min(x, r.x);
+		final float maxRight = Math.max(getRight(), r.getRight());
+		final float x = Math.min(getLeft(), r.getLeft());
+		final float maxBottom = Math.max(getBottom(), r.getBottom());
+		final float y = Math.min(getTop(), r.getTop());
+		m_origin.set(x, y);
 		width = maxRight - x;
-		float maxBottom = Math.max(y + height, r.y + r.height);
-		y = Math.min(y, r.y);
 		height = maxBottom - y;
 		return this;
 	}
@@ -268,14 +266,13 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 			width = height = 0;
 			return this;
 		}
-		float maxLeft = Math.max(x, r.x);
-		float minRight = Math.min(x + width, r.x + r.width);
-		float maxTop = Math.max(y, r.y);
-		float minBottom = Math.min(y + height, r.y + r.height);
-		x = maxLeft;
-		y = maxTop;
-		width = minRight - x;
-		height = minBottom - y;
+		final float maxLeft = Math.max(getLeft(), r.getLeft());
+		final float minRight = Math.min(getRight(), r.getRight());
+		final float maxTop = Math.max(getTop(), r.getTop());
+		final float minBottom = Math.min(getBottom(), r.getBottom());
+		m_origin.set(maxLeft, maxTop);
+		width = minRight - maxLeft;
+		height = minBottom - maxTop;
 		return this;
 	}
 
@@ -285,12 +282,12 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	@Override
 	public String toString()
 	{
-		return "Rectangle((" + x + ", " + y + "), width=" + width + ")";
+		return "Rectangle((" + getLeft() + ", " + getTop() + "), width=" + width + ")";
 	}
 	/** Compacter alternative, with only two decimal digits. */
 	public String toShortString()
 	{
-		return String.format("R((%.2f, %.2f), w=%.2f, h=%.2f)", x, y, width, height);
+		return String.format("R((%.2f, %.2f), w=%.2f, h=%.2f)", getLeft(), getTop(), width, height);
 	}
 
 	@Override
@@ -298,8 +295,7 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Float.floatToIntBits(x);
-		result = prime * result + Float.floatToIntBits(y);
+		result = prime * result + ((m_origin == null) ? 0 : m_origin.hashCode());
 		result = prime * result + Float.floatToIntBits(width);
 		result = prime * result + Float.floatToIntBits(height);
 		return result;
@@ -310,8 +306,11 @@ public class Rectangle implements ClosedShape, java.io.Serializable
 		if (this == obj) return true;
 		if (!(obj instanceof Rectangle)) return false;
 		Rectangle other = (Rectangle) obj;
-		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) return false;
-		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) return false;
+		if (m_origin == null)
+		{
+			if (other.m_origin != null) return false;
+		}
+		else if (!m_origin.equals(other.m_origin)) return false;
 		if (Float.floatToIntBits(width) != Float.floatToIntBits(other.width)) return false;
 		if (Float.floatToIntBits(height) != Float.floatToIntBits(other.height)) return false;
 		return true;

@@ -97,7 +97,7 @@ public class PLSVector implements java.io.Serializable
 	/** Convenience constructor from an array of points (easier to define literally). */
 	public PLSVector(float[] coordinates) { set(coordinates); }
 
-	// Getters and setters
+	// Getters and setters, bean style
 
 	public final float getX() { return x; }
 	public final void setX(float px) { x = px; }
@@ -105,6 +105,7 @@ public class PLSVector implements java.io.Serializable
 	public final void setY(float py) { y = py; }
 	public final float getZ() { return z; }
 	public final void setZ(float pz) { z = pz; }
+
 
 	/** Returns a copy of this vector. */
 	public final PLSVector copy()
