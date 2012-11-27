@@ -13,6 +13,7 @@ Copyright (c) 2009 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.image;
 
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.philhosoft.util.ResourceUtil;
+
 
 public class AddTransparency
 {
@@ -102,11 +104,13 @@ public class AddTransparency
 
 			file = new File(outputPath, "map_with_transparency2.png");
 			ImageIO.write(resultImage2, "PNG", file);
+
 			// Save to Gif format
 			BufferedImage resultImage3 = org.philhosoft.util.ImageUtil.convertRGBAToIndexed(resultImage2);
-
 			file = new File(outputPath, "map_with_transparency2.gif");
 			ImageIO.write(resultImage3, "GIF", file);
+			file = new File(outputPath, "map_with_transparency_indexed.png");
+			ImageIO.write(resultImage3, "PNG", file);
 
 			file = new File("resources/" + imagePath, "globe-scene-fish-bowl.png");
 			BufferedImage globe = ImageIO.read(file);

@@ -12,6 +12,8 @@ import org.testng.annotations.*;
 // http://www.mkyong.com/unittest/testng-tutorial-6-parameterized-test/
 public class IntArrayListTest
 {
+	private Random rnd = new Random();
+
 	@DataProvider(name="Data-Generator")
 	public static Object[][] generateData()
 	{
@@ -33,29 +35,29 @@ public class IntArrayListTest
 			{ 36000 },
 			// Long tests, can be used to see performance
 			{ 500000 },
-			{ 6000000 },
+//			{ 6000000 }, // Need a big chunk of memory to run testSort2 with that
 		};
 	}
 
 	@Test(dataProvider="Data-Generator")
 	public void testSort(int size)
 	{
-		int[] naTest = MakeIntArray(size, false);
-		int[] naReverse = MakeIntArray(size, true);
-		int[] naRandomized = ArrayShuffle(Arrays.copyOf(naTest, size));
+		int[] naTest = makeIntArray(size, false);
+		int[] naReverse = makeIntArray(size, true);
+		int[] naRandomized = arrayShuffle(Arrays.copyOf(naTest, size));
 
-		IntArrayList dia = new IntArrayList(Arrays.copyOf(naRandomized, size));
-		dia.sort(true);
-		assertTrue(Arrays.equals(dia.getArray(), naTest));
+		IntArrayList ial = new IntArrayList(Arrays.copyOf(naRandomized, size));
+		ial.sort(true);
+		assertTrue(Arrays.equals(ial.getArray(), naTest));
 
-		dia.sort(false);
-		assertTrue(Arrays.equals(dia.getArray(), naReverse));
+		ial.sort(false);
+		assertTrue(Arrays.equals(ial.getArray(), naReverse));
 
-		dia.reverse();
-		assertTrue(Arrays.equals(dia.getArray(), naTest));
+		ial.reverse();
+		assertTrue(Arrays.equals(ial.getArray(), naTest));
 
-		dia.clear();
-		dia.addAll(Arrays.copyOf(naRandomized, size));
+		ial.clear();
+		ial.addAll(Arrays.copyOf(naRandomized, size));
 		IntComparator icComparator = new IntComparator()
 		{
 			@Override
@@ -66,33 +68,72 @@ public class IntArrayListTest
 				return 0;
 			}
 		};
-		dia.sort(icComparator);
-		assertTrue(Arrays.equals(dia.getArray(), naTest));
+		ial.sort(icComparator);
+		assertTrue(Arrays.equals(ial.getArray(), naTest));
+	}
+
+	@Test(dataProvider="Data-Generator")
+	public void testSort2(int size)
+	{
+		final String[] straData = new String[size];
+		for (int i = 0; i < size; i++)
+		{
+			straData[i] = makeRandomString();
+		}
+		int[] naTest = makeIntArray(size, false);
+
+		IntArrayList ial = new IntArrayList(Arrays.copyOf(naTest, size));
+		IntComparator icComparator = new IntComparator()
+		{
+			@Override
+			public int compare(int i1, int i2)
+			{
+				String s1 = straData[i1];
+				String s2 = straData[i2];
+				if (s1 == null)
+				{
+					if (s2 == null)
+					return 0;
+					return -1;
+				}
+				if (s2 == null)
+				return 1;
+				return s1.compareTo(s2);
+			}
+		};
+		ial.sort(icComparator);
+
+		for (int i = 1; i < size; i++)
+		{
+			String strPrev = straData[ial.get(i - 1)];
+			String strCurr = straData[ial.get(i)];
+			assertTrue(strPrev.compareTo(strCurr) <= 0, strPrev + " > " + strCurr);
+		}
 	}
 
 	@Test(dataProvider="Data-Generator")
 	public void testAddRemove(int size)
 	{
-		IntArrayList dia = new IntArrayList();
+		IntArrayList ial = new IntArrayList();
 		for (int i = 0; i < size; i++)
 		{
-			dia.add(i);
+			ial.add(i);
 		}
-		assertEquals(dia.getSize(), size);
+		assertEquals(ial.getSize(), size);
 		if (size < 4) return;
 
 		int nSample = size / 2;
-		assertEquals(dia.get(nSample), nSample);
-		dia.insertAt(0, 42);
-		dia.insertAt(nSample, 4242);
-		dia.add(424242);
-		dia.removeAt(nSample - 1);
-		dia.removeAt(dia.getSize() - 2);
-		assertEquals(dia.get(0), 42);
-		assertEquals(dia.get(nSample - 1), 4242);
-		dia.removeAt(0);
-		assertEquals(dia.get(nSample - 2), 4242);
-		assertEquals(dia.get(dia.getSize() - 1), 424242);
+		assertEquals(ial.get(nSample), nSample);
+		ial.insertAt(0, 42);
+		ial.insertAt(nSample, 4242);
+		ial.add(424242);
+		ial.removeAt(nSample - 1);
+		ial.removeAt(ial.getSize() - 2);
+		assertEquals(ial.get(0), 42);
+		assertEquals(ial.get(nSample - 1), 4242);
+		ial.removeAt(0);
+		assertEquals(ial.get(nSample - 2), 4242);
+		assertEquals(ial.get(ial.getSize() - 1), 424242);
 	}
 
 	@Test(dataProvider="Data-Generator")
@@ -120,24 +161,24 @@ public class IntArrayListTest
 	{
 		if (size > 100000) return;
 
-		IntArrayList dia = new IntArrayList();
+		IntArrayList ial = new IntArrayList();
 		for (int i = 0; i < size; i++)
 		{
-			dia.add(i);
-			dia.addAt(0, i);
-			int s = dia.getSize();
+			ial.add(i);
+			ial.addAt(0, i);
+			int s = ial.getSize();
 			assertEquals(s, 2 * (i + 1));
-			assertEquals(dia.get(0), i);
-			assertEquals(dia.get(s - 1), i);
+			assertEquals(ial.get(0), i);
+			assertEquals(ial.get(s - 1), i);
 		}
-		while (dia.getSize() >= 3)
+		while (ial.getSize() >= 3)
 		{
-			int s = dia.getSize();
+			int s = ial.getSize();
 			int m = s / 2;
-			dia.removeAt(s - 1);
-			dia.removeAt(m);
-			dia.removeAt(0);
-			int ns = dia.getSize();
+			ial.removeAt(s - 1);
+			ial.removeAt(m);
+			ial.removeAt(0);
+			int ns = ial.getSize();
 			assertEquals(s, ns + 3);
 		}
 	}
@@ -147,12 +188,12 @@ public class IntArrayListTest
 	{
 		if (size > 20) return; // No need to test all the values
 
-		int[] naTest = MakeIntArray(size, false);
-		IntArrayList dia = new IntArrayList(naTest);
-		naTest = MakeIntArray(size / 2, true);
-		dia.addAll(naTest);
+		int[] naTest = makeIntArray(size, false);
+		IntArrayList ial = new IntArrayList(naTest);
+		naTest = makeIntArray(size / 2, true);
+		ial.addAll(naTest);
 
-		IntArrayList.Iterator it = dia.getIterator();
+		IntArrayList.Iterator it = ial.getIterator();
 		while (it.hasNext())
 		{
 			int val = it.getNext();
@@ -169,7 +210,7 @@ public class IntArrayListTest
 				it.set(4242);
 			}
 		}
-		int[] naResult = dia.getArray();
+		int[] naResult = ial.getArray();
 		int[] naExpected = null;
 		switch (size)
 		{
@@ -200,16 +241,16 @@ public class IntArrayListTest
 		}
 		if (naExpected != null)
 		{
-			assertTrue(Arrays.equals(naExpected, naResult), ShowArgs(size, naExpected, naResult));
+			assertTrue(Arrays.equals(naExpected, naResult), showArgs(size, naExpected, naResult));
 		}
 	}
 
-	private String ShowArgs(int s, int[] a1, int[] a2)
+	private String showArgs(int s, int[] a1, int[] a2)
 	{
 		return "For " + s + ", " + Arrays.toString(a1) + " vs. " + Arrays.toString(a2);
 	}
 
-	private int[] MakeIntArray(int nSize, boolean bReverse)
+	private int[] makeIntArray(int nSize, boolean bReverse)
 	{
 		int[] na = new int[nSize];
 		for (int i = 0; i < nSize; i++)
@@ -219,9 +260,8 @@ public class IntArrayListTest
 		return na;
 	}
 
-	private int[] ArrayShuffle(int[] na)
+	private int[] arrayShuffle(int[] na)
 	{
-		Random rnd = new Random();
 		// http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 		for (int i = na.length - 1; i > 0; i--)
 		{
@@ -231,5 +271,15 @@ public class IntArrayListTest
 			na[pos] = v;
 		}
 		return na;
+	}
+
+	private String makeRandomString()
+	{
+		char[] text = new char[7];
+		for (int i = 0; i < text.length; i++)
+		{
+			text[i] = (char) (97 + rnd.nextInt(26));
+		}
+		return new String(text);
 	}
 }

@@ -15,6 +15,7 @@
 // http://en.wikipedia.org/wiki/Introsort
  */
 /* File history:
+ *  1.01.000 -- 2012/11/27 (PL) -- Add a simplified sort entry function and some other minor improvements.
  *  1.00.000 -- 2012/11/05 (PL) -- Creation.
  */
 /*
@@ -46,12 +47,32 @@ public class IntroSort
 
 	private IntroSort() {} // Class with only static methods
 
-	public static void sort(int[] naData, int begin, int end, IntComparator comparator)
+	/**
+	 * Sorts the given array of integer {@code data} with the provided {@code comparator}.
+	 *
+	 * @param data  the array of integers to sort
+	 * @param comparator  the comparator of integers, which might use them as indices in another data structure
+	 */
+	public static void sort(int[] data, IntComparator comparator)
 	{
-		// System.out.println("## Introsort ##");
+		sort(data, 0, data.length, comparator);
+	}
+
+	/**
+	 * Sorts the given array of integer {@code data} with the provided {@code comparator},
+	 * between the bounds [{@code begin}, {@code end}[
+	 * (ie. {@code begin} is inclusive while {@code end} is exclusive).
+	 *
+	 * @param data  the array of integers to sort
+	 * @param begin  the starting position to sort in the array
+	 * @param end  the ending position to sort in the array
+	 * @param comparator  the comparator of integers, which might use them as indices in another data structure
+	 */
+	public static void sort(int[] data, int begin, int end, IntComparator comparator)
+	{
 		if (begin < end)
 		{
-			introsort(naData, begin, end, 2 * floorLog(end - begin), comparator);
+			introsort(data, begin, end, 2 * floorLog(end - begin), comparator);
 		}
 	}
 
@@ -79,17 +100,27 @@ public class IntroSort
 
 	private static int partition(int[] a, int lo, int hi, int x, IntComparator comparator)
 	{
-		int i = lo, j = hi;
+		int i = lo, j = hi - 1;
 		while (true)
 		{
+			// Find the first element above or equal to the median, before it
+			// Note that this can fail wit an ArrayIndexOutOfBoundsException if the comparator is badly written:
+			// seen with a comparator always returning -1 with a given set of data (ie. values where not even equal to themselves).
 			while (comparator.compare(a[i], x) < 0)
+			{
 				i++;
-			j = j - 1;
+			}
+			// Find the last element below or equal to the median, after it
 			while (comparator.compare(x, a[j]) < 0)
-				j = j - 1;
-			if (!(i < j)) return i;
+			{
+				j--;
+			}
+			if (i >= j)
+				return i;
+
 			swap(a, i, j);
 			i++;
+			j--;
 		}
 	}
 
