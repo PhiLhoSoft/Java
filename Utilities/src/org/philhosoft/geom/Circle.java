@@ -94,7 +94,7 @@ public class Circle extends BasePath implements ClosedShape
 		if (isEmpty())
 			return false;
 		check();
-		final double sqR = GeomUtil.squaredDistance(px, py, m_origin.getX(), m_origin.getY());
+		double sqR = GeomUtil.squaredDistance(px, py, m_origin.getX(), m_origin.getY());
 		return sqR <= m_squaredRadius;
 	}
 	@Override
@@ -204,7 +204,7 @@ public class Circle extends BasePath implements ClosedShape
 	{
 		if (isEmpty() || circle.isEmpty())
 			return false;
-		final double dist = Math.sqrt(GeomUtil.squaredDistance(m_origin.getX(), m_origin.getY(), circle.m_origin.getX(), circle.m_origin.getY()));
+		double dist = Math.sqrt(GeomUtil.squaredDistance(m_origin.getX(), m_origin.getY(), circle.m_origin.getX(), circle.m_origin.getY()));
 		return dist <= m_radius + circle.m_radius;
 	}
 

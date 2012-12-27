@@ -219,9 +219,9 @@ public class PLSVector implements java.io.Serializable
 	/** Rotates the vector of the given angle in 2D (X-Y plane), in radians. */
 	public final PLSVector rotate(float angle)
 	{
-		final double cos = Math.cos(angle);
-		final double sin = Math.sin(angle);
-		final float newX = (float) (x * cos - y * sin);
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		float newX = (float) (x * cos - y * sin);
 		y = (float) (x * sin + y * cos);
 		x = newX;
 		return this;
@@ -229,9 +229,9 @@ public class PLSVector implements java.io.Serializable
 	/** Rotates the vector of the given angle in the Y-Z plane, in radians. */
 	public final PLSVector rotateYZ(float angle)
 	{
-		final double cos = Math.cos(angle);
-		final double sin = Math.sin(angle);
-		final float newY = (float) (y * cos - z * sin);
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		float newY = (float) (y * cos - z * sin);
 		z = (float) (y * sin + z * cos);
 		y = newY;
 		return this;
@@ -239,9 +239,9 @@ public class PLSVector implements java.io.Serializable
 	/** Rotates the vector of the given angle in the X-Z plane, in radians. */
 	public final PLSVector rotateXZ(float angle)
 	{
-		final double cos = Math.cos(angle);
-		final double sin = Math.sin(angle);
-		final float newX = (float) (x * cos - z * sin);
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		float newX = (float) (x * cos - z * sin);
 		z = (float) (x * sin + z * cos);
 		x = newX;
 		return this;
@@ -250,19 +250,19 @@ public class PLSVector implements java.io.Serializable
 	/** Sets the vector toward the given angle (in radians) in the X-Y plane, keeping the same length. */
 	public final PLSVector setAngle(float angle)
 	{
-		final float len = length();
+		float len = length();
 		return set((float) (len * Math.cos(angle)), (float) (len * Math.sin(angle)));
 	}
 	/** Sets the vector toward the given angle (in radians) in the Y-Z plane, keeping the same length. */
 	public final PLSVector setAngleYZ(float angle)
 	{
-		final float len = length();
+		float len = length();
 		return set(x, (float) (len * Math.cos(angle)), (float) (len * Math.sin(angle)));
 	}
 	/** Sets the vector toward the given angle (in radians) in the X-Z plane, keeping the same length. */
 	public final PLSVector setAngleXZ(float angle)
 	{
-		final float len = length();
+		float len = length();
 		return set((float) (len * Math.cos(angle)), y, (float) (len * Math.sin(angle)));
 	}
 
@@ -274,9 +274,9 @@ public class PLSVector implements java.io.Serializable
 	/** Sets the vector toward a random angle in the 3D space, keeping the same length. */
 	public final PLSVector setRandom3D()
 	{
-		final float len = length();
-		final float xyAngle = getRandom(0, (float) (2 * Math.PI));
-		final float yzAngle = getRandom(0, (float) (2 * Math.PI));
+		float len = length();
+		float xyAngle = getRandom(0, (float) (2 * Math.PI));
+		float yzAngle = getRandom(0, (float) (2 * Math.PI));
 		// TODO check the math!
 		return set((float) (len * Math.cos(xyAngle)), (float) (len * Math.sin(xyAngle) * Math.cos(yzAngle)), (float) (len * Math.sin(xyAngle)));
 	}
@@ -420,7 +420,7 @@ public class PLSVector implements java.io.Serializable
 	/** Normalizes the vector to length 1 (unit vector). */
 	public final PLSVector normalize()
 	{
-		final double len = dblLen();
+		double len = dblLen();
 		if (len > 0)
 		{
 			multiply(1.0 / len);
@@ -430,7 +430,7 @@ public class PLSVector implements java.io.Serializable
 	/** Limits the length of the vector to the given maximum length. */
 	public final PLSVector limit(float maxLen)
 	{
-		final double len = dblLen();
+		double len = dblLen();
 		if (len > maxLen)
 		{
 			multiply(maxLen / len);
@@ -440,7 +440,7 @@ public class PLSVector implements java.io.Serializable
 	/** Sets the length of the vector to the given length. */
 	public final PLSVector setLength(float newLen)
 	{
-		final double len = dblLen();
+		double len = dblLen();
 		return multiply(newLen / len);
 	}
 
@@ -498,9 +498,9 @@ public class PLSVector implements java.io.Serializable
 	public final float sqDistance(PLSVector v)
 	{
 		// Since we aim at speed, we don't use dblSqDist
-		final float dx = x - v.x;
-		final float dy = y - v.y;
-		final float dz = z - v.z;
+		float dx = x - v.x;
+		float dy = y - v.y;
+		float dz = z - v.z;
 		return dx * dx + dy * dy + dz * dz;
 	}
 
@@ -513,8 +513,8 @@ public class PLSVector implements java.io.Serializable
 		if (isNull() || v.isNull())
 			return 0;
 		// One usage of dot product...
-		final double dot = GeomUtil.dot(x, y, z, v.x, v.y, v.z);
-		final double val = dot / dblLen() / v.dblLen();
+		double dot = GeomUtil.dot(x, y, z, v.x, v.y, v.z);
+		double val = dot / dblLen() / v.dblLen();
 		// Avoid NaN if we have some rounding error...
 		if (val <= -1)
 			return (float) Math.PI;
@@ -575,12 +575,12 @@ public class PLSVector implements java.io.Serializable
 	 */
 	public final boolean isInCircle(PLSVector center, float radius)
 	{
-		final double sqR = GeomUtil.squaredDistance(x, y, center.x, center.y);
+		double sqR = GeomUtil.squaredDistance(x, y, center.x, center.y);
 		return sqR <= radius * radius;
 	}
 	public final boolean isInSphere(PLSVector center, float radius)
 	{
-		final double sqR = GeomUtil.squaredDistance(x, y, z, center.x, center.y, center.z);
+		double sqR = GeomUtil.squaredDistance(x, y, z, center.x, center.y, center.z);
 		return sqR <= radius * radius;
 	}
 
@@ -605,9 +605,9 @@ public class PLSVector implements java.io.Serializable
 	 */
 	public final PLSVector lerp(PLSVector v, float amount, PLSVector target)
 	{
-		final float lx = lerp(x, v.x, amount);
-		final float ly = lerp(y, v.y, amount);
-		final float lz = lerp(z, v.z, amount);
+		float lx = lerp(x, v.x, amount);
+		float ly = lerp(y, v.y, amount);
+		float lz = lerp(z, v.z, amount);
 		return target.set(lx, ly, lz);
 	}
 

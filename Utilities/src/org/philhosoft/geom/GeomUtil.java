@@ -49,24 +49,24 @@ public class GeomUtil
 	/** Rotates of the given angle, for coordinates a and b. Returns the rotated a and b in an array. */
 	public static double[] rotate(double angle, double a, double b)
 	{
-		final double cos = Math.cos(angle);
-		final double sin = Math.sin(angle);
-		final double newX = a * cos - b * sin;
-		final double y = a * sin + b * cos;
-		final double x = newX;
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		double newX = a * cos - b * sin;
+		double y = a * sin + b * cos;
+		double x = newX;
 		return new double[] { x, y };
 	}
 	/** Computes the squared distance between the two 2D points defined by their coordinates. */
 	public static double squaredDistance(double x1, double y1, double x2, double y2)
 	{
-		final double dx = x1 - x2;
-		final double dy = y1 - y2;
+		double dx = x1 - x2;
+		double dy = y1 - y2;
 		return dx * dx + dy * dy;
 	}
 	/** Computes the squared distance between the two 3D points defined by their coordinates. */
 	public static double squaredDistance(double x1, double y1, double z1, double x2, double y2, double z2)
 	{
-		final double dz = z1 - z2;
+		double dz = z1 - z2;
 		return squaredDistance(x1, y1, x2, y2) + dz * dz;
 	}
 	/** Computes the squared length of the given 2D vector defined by its coordinates. */
@@ -82,14 +82,14 @@ public class GeomUtil
 	/** Computes the dot product of the given 2D vector defined by its coordinates. */
 	public static double dot(double x1, double y1, double x2, double y2)
 	{
-		final double dsx = x1 * x2;
-		final double dsy = y1 * y2;
+		double dsx = x1 * x2;
+		double dsy = y1 * y2;
 		return dsx + dsy;
 	}
 	/** Computes the dot product of the given 3D vector defined by its coordinates. */
 	public static double dot(double x1, double y1, double z1, double x2, double y2, double z2)
 	{
-		final double dsz = z1 * z2;
+		double dsz = z1 * z2;
 		return dot(x1, y1, x2, y2) + dsz;
 	}
 
@@ -112,9 +112,9 @@ public class GeomUtil
 			double s2x1, double s2y1, double s2x2, double s2y2)
 	{
 		// Paul Bourke's formulae... I won't try to understand it for now...
-		final double denominator = (s2y2 - s2y1) * (s1x2 - s1x1) - (s2x2 - s2x1) * (s1y2 - s1y1);
-		final double numeratorA  = (s2x2 - s2x1) * (s1y1 - s2y1) - (s2y2 - s2y1) * (s1x1 - s2x1);
-		final double numeratorB  = (s1x2 - s1x1) * (s1y1 - s2y1) - (s1y2 - s1y1) * (s1x1 - s2x1);
+		double denominator = (s2y2 - s2y1) * (s1x2 - s1x1) - (s2x2 - s2x1) * (s1y2 - s1y1);
+		double numeratorA  = (s2x2 - s2x1) * (s1y1 - s2y1) - (s2y2 - s2y1) * (s1x1 - s2x1);
+		double numeratorB  = (s1x2 - s1x1) * (s1y1 - s2y1) - (s1y2 - s1y1) * (s1x1 - s2x1);
 
 		// If the lines are coincident, ie. parallel and overlapping, they intersect
 		if (Math.abs(denominator) < DEPSILON && // Parallel
@@ -125,8 +125,8 @@ public class GeomUtil
 		if (Math.abs(denominator) < DEPSILON)
 			return false;
 
-		final double muA = numeratorA / denominator;
-		final double muB = numeratorB / denominator;
+		double muA = numeratorA / denominator;
+		double muB = numeratorB / denominator;
 		return muA >= 0 && muA <= 1 && muB >= 0 && muB <= 1;
 	}
 
@@ -182,27 +182,27 @@ public class GeomUtil
 		// http://stackoverflow.com/questions/1073336/circle-line-collision-detection
 		// http://stackoverflow.com/questions/13053061/circle-line-intersection-points
 		// Direction vector of the segment, ie. segment taken to the origin
-		final double vDirSegX = sx2 - sx1;
-		final double vDirSegY = sy2 - sy1;
+		double vDirSegX = sx2 - sx1;
+		double vDirSegY = sy2 - sy1;
 		// Vector from center of circle to the first end of the segment
-		final double vCirSegX = cx - sx1;
-		final double vCirSegY = cy - sy1;
+		double vCirSegX = cx - sx1;
+		double vCirSegY = cy - sy1;
 
 		// Dot products
-		final double a = dot(vDirSegX, vDirSegY, vDirSegX, vDirSegY); // dir.dot(dir)
-		final double b = dot(vDirSegX, vDirSegY, vCirSegX, vCirSegY); // dir.dot(circ)
-		final double c = dot(vCirSegX, vCirSegY, vCirSegX, vCirSegY) - radius * radius; // circ.dot(circ)
+		double a = dot(vDirSegX, vDirSegY, vDirSegX, vDirSegY); // dir.dot(dir)
+		double b = dot(vDirSegX, vDirSegY, vCirSegX, vCirSegY); // dir.dot(circ)
+		double c = dot(vCirSegX, vCirSegY, vCirSegX, vCirSegY) - radius * radius; // circ.dot(circ)
 
-		final double discriminant = b * b - a * c;
+		double discriminant = b * b - a * c;
 		if (discriminant < 0)
 			return 0; // No intersection
 
-		final double rootDisc = Math.sqrt(discriminant);
+		double rootDisc = Math.sqrt(discriminant);
 		// These factors tells "how far on the segment" the intersection points are:
 		// must be between 0 and 1 to be on the segment.
 		// If discriminant is zero, both factors are the same (only one point of intersection)
-		final double factor1 = (-b + rootDisc) / a;
-		final double factor2 = (-b - rootDisc) / a;
+		double factor1 = (-b + rootDisc) / a;
+		double factor2 = (-b - rootDisc) / a;
 
 		if (results != null)
 		{

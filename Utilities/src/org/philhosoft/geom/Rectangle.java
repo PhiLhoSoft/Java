@@ -72,8 +72,8 @@ public class Rectangle extends BasePath implements ClosedShape
 		float x = m_origin.getX();
 		float y = m_origin.getY();
 		// Bottom-right corner
-		final float brcX = x + width;
-		final float brcY = y + height;
+		float brcX = x + width;
+		float brcY = y + height;
 		if (px < brcX) // OK
 		{
 			x = px;
@@ -127,10 +127,10 @@ public class Rectangle extends BasePath implements ClosedShape
 	/** Creates a new rectangle from two points. */
 	public static Rectangle createFromPoints(float x1, float y1, float x2, float y2)
 	{
-		final float left = Math.min(x1, x2);
-		final float right = Math.max(x1, x2);
-		final float top = Math.min(y1, y2);
-		final float bottom = Math.max(y1, y2);
+		float left = Math.min(x1, x2);
+		float right = Math.max(x1, x2);
+		float top = Math.min(y1, y2);
+		float bottom = Math.max(y1, y2);
 		return new Rectangle(new PLSVector(left, top), right - left, bottom - top);
 	}
 	/** Creates a rectangle of random dimensions in the given range, with the top-left corner on the origin. */
@@ -208,14 +208,14 @@ public class Rectangle extends BasePath implements ClosedShape
 		if (isEmpty() || w <= 0 || h <= 0)
 			return false;
 		// Defines variable for clarity sake
-		final float r1left = getLeft();
-		final float r1right = getRight();
-		final float r1top = getTop();
-		final float r1bottom = getBottom();
-		final float r2left = cx;
-		final float r2right = cx + w;
-		final float r2top = cy;
-		final float r2bottom = cy + h;
+		float r1left = getLeft();
+		float r1right = getRight();
+		float r1top = getTop();
+		float r1bottom = getBottom();
+		float r2left = cx;
+		float r2right = cx + w;
+		float r2top = cy;
+		float r2bottom = cy + h;
 		/* Not intersecting if:
 		r1right < r2left (on left of other rect) or
 		r1left > r2right (on right of other rect) or
@@ -245,10 +245,10 @@ public class Rectangle extends BasePath implements ClosedShape
 	 */
 	public final Rectangle mergeWith(Rectangle r)
 	{
-		final float maxRight = Math.max(getRight(), r.getRight());
-		final float x = Math.min(getLeft(), r.getLeft());
-		final float maxBottom = Math.max(getBottom(), r.getBottom());
-		final float y = Math.min(getTop(), r.getTop());
+		float maxRight = Math.max(getRight(), r.getRight());
+		float x = Math.min(getLeft(), r.getLeft());
+		float maxBottom = Math.max(getBottom(), r.getBottom());
+		float y = Math.min(getTop(), r.getTop());
 		m_origin.set(x, y);
 		width = maxRight - x;
 		height = maxBottom - y;
@@ -266,10 +266,10 @@ public class Rectangle extends BasePath implements ClosedShape
 			width = height = 0;
 			return this;
 		}
-		final float maxLeft = Math.max(getLeft(), r.getLeft());
-		final float minRight = Math.min(getRight(), r.getRight());
-		final float maxTop = Math.max(getTop(), r.getTop());
-		final float minBottom = Math.min(getBottom(), r.getBottom());
+		float maxLeft = Math.max(getLeft(), r.getLeft());
+		float minRight = Math.min(getRight(), r.getRight());
+		float maxTop = Math.max(getTop(), r.getTop());
+		float minBottom = Math.min(getBottom(), r.getBottom());
 		m_origin.set(maxLeft, maxTop);
 		width = minRight - maxLeft;
 		height = minBottom - maxTop;
