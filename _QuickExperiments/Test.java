@@ -1,15 +1,16 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.*;
-
 public class Test
 {
-  public static void main(String[] args)
+  int x = 42;
+
+  public Test()
   {
-    Matcher m = Pattern.compile("(a1.*?)(?=a1|$)").matcher("a1wwa1xxa1yya1zz");
-    while (m.find()) {
-      String myGroup = m.group(1);
-      System.out.println("> " + myGroup);
-    }
+  }
+
+  public static void main(String args[])
+  {
+    Test t1 = new Test();
+    System.out.println(t1.hashCode());
+    Test t2 = new Test();
+    System.out.println(t2.hashCode());
   }
 }

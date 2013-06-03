@@ -80,10 +80,20 @@ public class NaturalOrderComparator implements Comparator<String>
                     return -1;
                 if (n1 > n2)
                     return 1;
-                // Here, the numbers are equal. If we reached the end of the strings,
-                // we say they are equal, otherwise we continue on comparing strings
+                // Here, the numbers are equal.
+
+                // If we reached the end of both strings, we say they are equal.
                 if (pos1 == len1 && pos2 == len2)
                 	return 0;
+
+                // End of first string, smaller than the second one
+                if (pos1 == len1)
+                	return -1;
+                // End of second string, smaller than the first one
+                if (pos2 == len2)
+                	return 1;
+
+                // We continue on comparing strings.
             }
             else
             {
@@ -105,16 +115,18 @@ public class NaturalOrderComparator implements Comparator<String>
                     // Next chars
                     ++pos1; ++pos2;
                 // Stop if one digit is found or if we reached the end of one string
-                } while (b1 && b2 && pos1 < len1 && pos2 < len2);
+                } while (b1 && pos1 < len1 && pos2 < len2);
 
-                if (b1 && pos1 == len1 && pos2 == len2)
-                	return 0; // At the end with non-digits without finding differences
+                if (b1) // b1 == b2, no digit and no difference found
+                {
+	                if (pos1 == len1 && pos2 == len2)
+	                	return 0; // At the end without finding differences
+	                if (pos1 == len1)
+	                	return -1; // First string smaller
+	                if (pos2 == len2)
+	                	return 1; // Second string smaller
+                }
             }
-            // Have we reached one end?
-            if (pos1 == len1 && len1 < len2)
-                return -1; // s1 is shorter, so smaller (all chars were equal so far)
-            if (pos2 == len2 && len2 < len1)
-                return 1; // s2 is shorter, so smaller
 
             // Not at the end, we stopped on different kind of char (digit vs. non-digits), let's process them
     		if (!bIsDigit) // Compared chars, we went one char too far, into digits

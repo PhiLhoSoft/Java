@@ -21,7 +21,7 @@ public class NaturalOrderComparatorTest
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, s1, s2));
+			assertTrue(testPair(i, s1, s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
 		}
 
 		// Same test, starting with number(s)
@@ -30,14 +30,14 @@ public class NaturalOrderComparatorTest
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, "5:" + s1, "5:" + s2));
+			assertTrue(testPair(i, "5:" + s1, "5:" + s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
 		}
 		show("\n\n## Shifted pair test 2\n");
 		for (int i = 0; i < TEST_DATA.length; i++)
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, "75:" + s1, "75:" + s2));
+			assertTrue(testPair(i, "75:" + s1, "75:" + s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
 		}
 
 		show("\n\n## Global sort test\n");
@@ -62,6 +62,14 @@ public class NaturalOrderComparatorTest
 			}
 		}
 	}
+
+	@Test
+	public void testInIsolation()
+	{
+		// Got array index out of bounds or infinite loop for non-significant zeroes
+		System.out.println(noc.compare("a01b", "a1bc"));
+	}
+
 
 	private boolean testPair(int i, String s1, String s2)
 	{
@@ -129,6 +137,20 @@ public class NaturalOrderComparatorTest
 		{ "xyz32-157//H", "xyz32-158//H" },
 		{ "xyz32-157//H", "xyz32-1571//H" },
 		{ "xyz32-257//H", "xyz32-1570//H" },
+		// Found a bug! Bad handling of non-significant zeroes...
+		{ "010", "10T" },
+		{ "0011", "11ab" },
+		{ "a01", "a1", EQU },
+		{ "a011", "a11", EQU },
+		{ "a001", "a01", EQU },
+		{ "a0011", "a011", EQU },
+		{ "a01t", "a1t", EQU },
+		{ "a011t", "a11t", EQU },
+		{ "a001t", "a01t", EQU },
+		{ "a0011t", "a011t", EQU },
+		{ "a01b", "a1bc" },
+		{ "a011b", "a11bx" },
+		{ "aa01", "aa2" },
 	};
 	private static final String[] BULK_DATA =
 	{

@@ -19,8 +19,9 @@ public class OuterClass
     // Static class can be instanciated from static context
     StaticNestedClass sic2 = new StaticNestedClass(oc);
 
-    int someValue = 121;
-    Serializable sz = new Serializable() // Just take some marker interface...
+    final int someValue = 121;
+    abstract class Anony { abstract void display(); }
+    Anony sz = new Anony()
     {
       void display()
       {
@@ -32,15 +33,15 @@ public class OuterClass
 
     System.out.println("\n\n## Constructor Hierarchy\n");
 
-    System.out.println("A");
+    System.out.println("# A");
     A a = new A();
-    System.out.println("B");
+    System.out.println("# B");
     B b1 = new B();
-    System.out.println("B1");
+    System.out.println("# B 1");
     B b2 = new B("one");
-    System.out.println("B2");
+    System.out.println("# B 2");
     B b3 = new B("ichi", "ni");
-    System.out.println("B3");
+    System.out.println("# B 3");
     B b4 = new B("un", "deux", "trois");
   }
 
