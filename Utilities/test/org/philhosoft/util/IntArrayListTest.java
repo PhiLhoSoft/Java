@@ -42,22 +42,22 @@ public class IntArrayListTest
 	@Test(dataProvider="Data-Generator")
 	public void testSort(int size)
 	{
-		int[] naTest = makeIntArray(size, false);
-		int[] naReverse = makeIntArray(size, true);
-		int[] naRandomized = arrayShuffle(Arrays.copyOf(naTest, size));
+		int[] testArray = makeIntArray(size, false);
+		int[] reverseArray = makeIntArray(size, true);
+		int[] randomizedArray = arrayShuffle(Arrays.copyOf(testArray, size));
 
-		IntArrayList ial = new IntArrayList(Arrays.copyOf(naRandomized, size));
+		IntArrayList ial = new IntArrayList(Arrays.copyOf(randomizedArray, size));
 		ial.sort(true);
-		assertTrue(Arrays.equals(ial.getArray(), naTest));
+		assertTrue(Arrays.equals(ial.getArray(), testArray));
 
 		ial.sort(false);
-		assertTrue(Arrays.equals(ial.getArray(), naReverse));
+		assertTrue(Arrays.equals(ial.getArray(), reverseArray));
 
 		ial.reverse();
-		assertTrue(Arrays.equals(ial.getArray(), naTest));
+		assertTrue(Arrays.equals(ial.getArray(), testArray));
 
 		ial.clear();
-		ial.addAll(Arrays.copyOf(naRandomized, size));
+		ial.addAll(Arrays.copyOf(randomizedArray, size));
 		IntComparator icComparator = new IntComparator()
 		{
 			@Override
@@ -69,27 +69,27 @@ public class IntArrayListTest
 			}
 		};
 		ial.sort(icComparator);
-		assertTrue(Arrays.equals(ial.getArray(), naTest));
+		assertTrue(Arrays.equals(ial.getArray(), testArray));
 	}
 
 	@Test(dataProvider="Data-Generator")
 	public void testSort2(int size)
 	{
-		final String[] straData = new String[size];
+		final String[] stringArray = new String[size];
 		for (int i = 0; i < size; i++)
 		{
-			straData[i] = makeRandomString();
+			stringArray[i] = makeRandomString();
 		}
-		int[] naTest = makeIntArray(size, false);
+		int[] testArray = makeIntArray(size, false);
 
-		IntArrayList ial = new IntArrayList(Arrays.copyOf(naTest, size));
-		IntComparator icComparator = new IntComparator()
+		IntArrayList ial = new IntArrayList(Arrays.copyOf(testArray, size));
+		IntComparator comparator = new IntComparator()
 		{
 			@Override
 			public int compare(int i1, int i2)
 			{
-				String s1 = straData[i1];
-				String s2 = straData[i2];
+				String s1 = stringArray[i1];
+				String s2 = stringArray[i2];
 				if (s1 == null)
 				{
 					if (s2 == null)
@@ -101,13 +101,13 @@ public class IntArrayListTest
 				return s1.compareTo(s2);
 			}
 		};
-		ial.sort(icComparator);
+		ial.sort(comparator);
 
 		for (int i = 1; i < size; i++)
 		{
-			String strPrev = straData[ial.get(i - 1)];
-			String strCurr = straData[ial.get(i)];
-			assertTrue(strPrev.compareTo(strCurr) <= 0, strPrev + " > " + strCurr);
+			String prev = stringArray[ial.get(i - 1)];
+			String curr = stringArray[ial.get(i)];
+			assertTrue(prev.compareTo(curr) <= 0, prev + " > " + curr);
 		}
 	}
 
@@ -122,17 +122,17 @@ public class IntArrayListTest
 		assertEquals(ial.getSize(), size);
 		if (size < 4) return;
 
-		int nSample = size / 2;
-		assertEquals(ial.get(nSample), nSample);
+		int sample = size / 2;
+		assertEquals(ial.get(sample), sample);
 		ial.insertAt(0, 42);
-		ial.insertAt(nSample, 4242);
+		ial.insertAt(sample, 4242);
 		ial.add(424242);
-		ial.removeAt(nSample - 1);
+		ial.removeAt(sample - 1);
 		ial.removeAt(ial.getSize() - 2);
 		assertEquals(ial.get(0), 42);
-		assertEquals(ial.get(nSample - 1), 4242);
+		assertEquals(ial.get(sample - 1), 4242);
 		ial.removeAt(0);
-		assertEquals(ial.get(nSample - 2), 4242);
+		assertEquals(ial.get(sample - 2), 4242);
 		assertEquals(ial.get(ial.getSize() - 1), 424242);
 	}
 
@@ -141,19 +141,19 @@ public class IntArrayListTest
 	{
 		if (size > 100000) return;
 
-		IntArrayList dia1 = new IntArrayList();
+		IntArrayList ia11 = new IntArrayList();
 		for (int i = 0; i < size; i++)
 		{
-			dia1.addAt(0, i);
+			ia11.addAt(0, i);
 		}
-		assertEquals(dia1.getSize(), size);
+		assertEquals(ia11.getSize(), size);
 
-		IntArrayList dia2 = new IntArrayList(0);
+		IntArrayList ia2 = new IntArrayList(0);
 		for (int i = 0; i < size; i++)
 		{
-			dia2.addAt(0, i);
+			ia2.addAt(0, i);
 		}
-		assertEquals(dia2.getSize(), size);
+		assertEquals(ia2.getSize(), size);
 	}
 
 	@Test(dataProvider="Data-Generator")
@@ -188,10 +188,10 @@ public class IntArrayListTest
 	{
 		if (size > 20) return; // No need to test all the values
 
-		int[] naTest = makeIntArray(size, false);
-		IntArrayList ial = new IntArrayList(naTest);
-		naTest = makeIntArray(size / 2, true);
-		ial.addAll(naTest);
+		int[] testArray = makeIntArray(size, false);
+		IntArrayList ial = new IntArrayList(testArray);
+		testArray = makeIntArray(size / 2, true);
+		ial.addAll(testArray);
 
 		IntArrayList.Iterator it = ial.getIterator();
 		while (it.hasNext())
@@ -210,38 +210,38 @@ public class IntArrayListTest
 				it.set(4242);
 			}
 		}
-		int[] naResult = ial.getArray();
-		int[] naExpected = null;
+		int[] results = ial.getArray();
+		int[] expected = null;
 		switch (size)
 		{
 		case 0:
-			naExpected = new int[0];
+			expected = new int[0];
 			break;
 		case 1:
-			naExpected = new int[] { 0 };
+			expected = new int[] { 0 };
 			break;
 		case 2:
-			naExpected = new int[] { 0, 0 };
+			expected = new int[] { 0, 0 };
 			break;
 		case 3:
-			naExpected = new int[] { 0, 2, 0 };
+			expected = new int[] { 0, 2, 0 };
 			break;
 		case 4:
-			naExpected = new int[] { 0, 2, 3, 42, 0 };
+			expected = new int[] { 0, 2, 3, 42, 0 };
 			break;
 		case 7:
-			naExpected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 2, 0 };
+			expected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 2, 0 };
 			break;
 		case 11:
-			naExpected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 7, 8, 9, 10, 4, 3, 42, 2, 0 };
+			expected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 7, 8, 9, 10, 4, 3, 42, 2, 0 };
 			break;
 		case 12:
-			naExpected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 7, 8, 9, 10, 11, 4242, 4, 3, 42, 2, 0 };
+			expected = new int[] { 0, 2, 3, 42, 4, 4242, 6, 7, 8, 9, 10, 11, 4242, 4, 3, 42, 2, 0 };
 			break;
 		}
-		if (naExpected != null)
+		if (expected != null)
 		{
-			assertTrue(Arrays.equals(naExpected, naResult), showArgs(size, naExpected, naResult));
+			assertTrue(Arrays.equals(expected, results), showArgs(size, expected, results));
 		}
 	}
 

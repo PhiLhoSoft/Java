@@ -79,19 +79,19 @@ public class IntroSort
 	/**
 	 * Quicksort algorithm modified for Introsort.
 	 */
-	private static void introsort(int[] a, int lo, int hi, int nDepthLimit, IntComparator comparator)
+	private static void introsort(int[] a, int lo, int hi, int depthLimit, IntComparator comparator)
 	{
 		while (hi - lo > SIZE_THRESHOLD)
 		{
 			// System.out.println("Introsort (" + nDepthLimit + ") " + lo + " to " + hi);
-			if (nDepthLimit == 0) // Too much recursion, abandon QuickSort
+			if (depthLimit == 0) // Too much recursion, abandon QuickSort
 			{
 				heapSort(a, lo, hi, comparator);
 				return;
 			}
-			nDepthLimit = nDepthLimit - 1;
+			depthLimit--;
 			int p = partition(a, lo, hi, medianOfThree(a, lo, lo + ((hi - lo) / 2) + 1, hi - 1, comparator), comparator);
-			introsort(a, p, hi, nDepthLimit, comparator);
+			introsort(a, p, hi, depthLimit, comparator);
 			hi = p;
 		}
 		// Finishing touch
@@ -185,18 +185,18 @@ public class IntroSort
 		for (int i = lo + 1; i <= hi; i++)
 		{
 			// Create a hole at i
-			int nHole = i;
+			int hole = i;
 			// Save the value at the hole place
-			int nHoleVal = a[i];
+			int holeVal = a[i];
 			// While the value is smaller than the previous (lower index) item
-			while (nHole != lo && comparator.compare(nHoleVal, a[nHole - 1]) < 0)
+			while (hole != lo && comparator.compare(holeVal, a[hole - 1]) < 0)
 			{
 				// Move hole to next smaller index
-				a[nHole] = a[nHole - 1];
-				nHole--;
+				a[hole] = a[hole - 1];
+				hole--;
 			}
 			// Put the value in the moved hole
-			a[nHole] = nHoleVal;
+			a[hole] = holeVal;
 		}
 	}
 
