@@ -14,6 +14,8 @@ Copyright (c) 2013 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.jukito;
 
+import javax.annotation.Nullable;
+
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -23,17 +25,12 @@ import com.google.inject.assistedinject.Assisted;
 public class Author extends RealPerson
 {
 	@Inject
-	public Author(@Assisted("first") String first, @Assisted("last") String last, @Assisted Person agent)
+	public Author(@Assisted("first") String first, @Assisted("last") String last, @Nullable @Assisted Person agent)
 	{
-		super();
-		setFirstName(first);
-		setLastName(last);
+		super(first, last);
 
 		this.agent = agent;
 	}
-
-	@Override public Author setFirstName(String name) { super.setFirstName(name); return this; }
-	@Override public Author setLastName(String name) { super.setLastName(name); return this; }
 
 	public Person getAgent()
 	{

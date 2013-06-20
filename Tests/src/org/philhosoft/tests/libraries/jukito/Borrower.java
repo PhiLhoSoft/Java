@@ -14,11 +14,22 @@ Copyright (c) 2013 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.jukito;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
- * A person description.
+ * A book borrower.
  */
-public interface Person
+public class Borrower extends RealPerson
 {
-	String getFirstName();
-	String getLastName();
+	public interface Factory
+	{
+	    Borrower create(@Assisted("first") String firstName, @Assisted("last") String lastName);
+	}
+
+	@Inject
+	public Borrower(@Assisted("first") String first, @Assisted("last") String last)
+	{
+		super(first, last);
+	}
 }

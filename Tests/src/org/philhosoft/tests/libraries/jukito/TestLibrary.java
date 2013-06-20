@@ -34,10 +34,10 @@ public class TestLibrary
 	}
 
 	@Test
-	public void testStuff(Library library)
+	public void testStuff(Library library, Agent.Factory agentFactory)
 	{
 		library.addBook(bookProvider.get().setTitle("War of the Words").setAuthor(authorFactory.create("Jules", "Berne", null)));
-		Book book = bookProvider.get().setTitle("LMGTFY").setAuthor(authorFactory.create("Gilles", "Google", new RealPerson().setFirstName("Avida").setLastName("Dollar")));
+		Book book = bookProvider.get().setTitle("LMGTFY").setAuthor(authorFactory.create("Gilles", "Google", agentFactory.create("Avida", "Dollar")));
 		library.addBook(book);
 
 		assertNotNull(library.getBooks());

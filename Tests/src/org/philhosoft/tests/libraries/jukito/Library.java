@@ -28,13 +28,15 @@ public class Library implements BookRepository
 {
 	private Provider<Book> bookProvider;
 	private AuthorFactory authorFactory;
+	private Agent.Factory agentFactory;
 	private List<Book> books;
 
 	@Inject
-	public Library(Provider<Book> bookProvider, AuthorFactory authorFactory)
+	public Library(Provider<Book> bookProvider, AuthorFactory authorFactory, Agent.Factory agentFactory)
 	{
 		this.bookProvider = bookProvider;
 		this.authorFactory = authorFactory;
+		this.agentFactory = agentFactory;
 		books = new ArrayList<Book>();
 	}
 
@@ -58,7 +60,7 @@ public class Library implements BookRepository
 
 	public void addBook(String title, String authorFN, String authorLN)
 	{
-		Person agent = new RealPerson().setFirstName("Avida").setLastName("Dollar");
+		Person agent = agentFactory.create("Avida", "Dollar");
 		books.add(bookProvider.get().setTitle(title).setAuthor(authorFactory.create(authorFN, authorLN, agent)));
 	}
 }

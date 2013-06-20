@@ -27,9 +27,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 public class Main
 {
 	@Inject
-	public Main(BookRepository library, Provider<Book> bookProvider, AuthorFactory authorFactory)
+	public Main(BookRepository library, Provider<Book> bookProvider, AuthorFactory authorFactory, Borrower.Factory borrowerFactory)
 	{
-		Person borrower = new RealPerson();
+		Person borrower = borrowerFactory.create("Jack", "Bookworm");
 		library.addBook(bookProvider.get().setTitle("Best Jokes Ever").setBorrower(borrower));
 		library.addBook(bookProvider.get().setTitle("War of the Words").setAuthor(authorFactory.create("Jules", "Berne", null)));
 		System.out.println(library.getBooks());
@@ -51,9 +51,10 @@ public class Main
 		protected void configure()
 		{
 			bind(BookRepository.class).to(Library.class);
-			bind(Person.class).to(RealPerson.class);
 
 			install(new FactoryModuleBuilder().build(AuthorFactory.class));
+			install(new FactoryModuleBuilder().build(Agent.Factory.class));
+			install(new FactoryModuleBuilder().build(Borrower.Factory.class));
 		}
 	}
 }

@@ -14,29 +14,32 @@ Copyright (c) 2013 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.tests.libraries.jukito;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * A real person.
+ * An agent managing several authors.
  */
-public abstract class RealPerson implements Person
+public class Agent extends RealPerson
 {
-	private String firstName;
-	private String lastName;
-	// Other information...
-
-	public RealPerson(@Assisted("first") String first, @Assisted("last") String last)
+	public interface Factory
 	{
-		firstName = first;
-		lastName = last;
+	    Agent create(@Assisted("first") String firstName, @Assisted("last") String lastName);
 	}
 
-	@Override public String getFirstName() { return firstName; }
-	@Override public String getLastName() { return lastName; }
-
-	@Override
-	public String toString()
+	@Inject
+	public Agent(@Assisted("first") String first, @Assisted("last") String last)
 	{
-		return firstName + " " + lastName;
+		super(first, last);
+
+		authors = new ArrayList<>();
 	}
+
+	public Agent addAuthor(Author author) { authors.add(author); return this; }
+	public List<Author> getAuthors() { return authors; }
+
+	private List<Author> authors;
 }
