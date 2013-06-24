@@ -23,11 +23,14 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
+import java.awt.image.MultiPixelPackedSampleModel;
+import java.awt.image.SampleModel;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Random;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -59,7 +62,8 @@ public class PNG32toPNG8
 	// Drop alpha channel
 	public static BufferedImage imageToRGB(BufferedImage image)
 	{
-		return changeImageType(image, image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+//		return changeImageType(image, image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		return changeImageType(image, image.getWidth(), image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 	}
 
 	/** Simple conversion: results in a quite ugly patterned image. */
@@ -75,8 +79,6 @@ public class PNG32toPNG8
 	{
 		try
 		{
-			System.out.println("Oct-Tree: " + image);
-			System.out.println("Oct-Tree: " + imageToRGB(image));
 			RenderedOp op = ColorQuantizerDescriptor.create(imageToRGB(image), // Image
 					ColorQuantizerDescriptor.OCTTREE, // Algorithm
 					256,	// Max color num
@@ -87,11 +89,8 @@ public class PNG32toPNG8
 					null	// hints
 					);
 
-			System.out.println("ColorModel: " + op.getColorModel());
-			System.out.println("SampleModel: " + op.getSampleModel());
-			System.out.println("Create ColorModel: " + PlanarImage.createColorModel(op.getSampleModel()));
-//			return op.getAsBufferedImage();
-			return op.getAsBufferedImage(null, PlanarImage.createColorModel(op.getSampleModel()));
+			return op.getAsBufferedImage();
+//			return op.getAsBufferedImage(null, PlanarImage.createColorModel(op.getSampleModel()));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -115,7 +114,8 @@ public class PNG32toPNG8
 					null	// hints
 					);
 
-			return op.getAsBufferedImage(null, op.getColorModel());
+//			return op.getAsBufferedImage(null, op.getColorModel());
+			return op.getAsBufferedImage();
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -139,7 +139,7 @@ public class PNG32toPNG8
 					null	// hints
 					);
 
-			return op.getAsBufferedImage(null, getColorModel());
+			return op.getAsBufferedImage();
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -157,6 +157,7 @@ public class PNG32toPNG8
 			ImageLayout layout = new ImageLayout();
 			layout.setColorModel(image.getColorModel());
 
+// Copy the LUT from an indexed image
 //			  IndexColorModel icm = ((IndexColorModel) imageT.getColorModel());
 //            final byte[] r = new byte[icm.getMapSize()];
 //            icm.getReds(r);
@@ -164,22 +165,61 @@ public class PNG32toPNG8
 //            icm.getGreens(g);
 //            final byte[] b = new byte[icm.getMapSize()];
 //            icm.getBlues(b);
-            final int size = 256;
+			final int size = 256;
 			byte[] r = new byte[size];
 			byte[] g = new byte[size];
 			byte[] b = new byte[size];
+			// Gray levels
+//			for (int i = 0; i < size; i++)
+//			{
+//				r[i] = g[i] = b[i] = (byte) i;
+//			}
+			// Random LUT! Surprisingly, works not so bad... :-)
+			Random rnd = new Random();
+			rnd.nextBytes(r);
+			rnd.nextBytes(g);
+			rnd.nextBytes(b);
 			IndexColorModel icm = new IndexColorModel(8, size, r, g, b);
+
 			// error diffusion
 			KernelJAI ditherMask = new KernelJAI(1, 1, new float[] { 1.0f });
 			LookupTableJAI colorMap = new LookupTableJAI(new byte[][] { r, g, b });
 			RenderedOp op = ErrorDiffusionDescriptor.create(image, colorMap, ditherMask,
 					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 
-			return op.getAsBufferedImage(null, icm);
+//			return op.getAsBufferedImage(null, icm);
+			return op.getAsBufferedImage();
 		}
 		catch (IllegalArgumentException e)
 		{
 			System.out.println("Error in custom quantization: " + e.getMessage());
+			return null;
+		}
+	}
+
+	// http://stackoverflow.com/questions/15322637/how-to-control-the-pixel-size-of-the-color-model-of-an-errordiffusiondescriptor
+	public static BufferedImage toBitonalImage(BufferedImage image)
+	{
+		try
+		{
+		    byte[] map = new byte[] { (byte) 0x00, (byte) 0xff };
+			LookupTableJAI lut = new LookupTableJAI(new byte[][] { map, map, map });
+		    ImageLayout layout = new ImageLayout();
+		    ColorModel cm = new IndexColorModel(1, 2, map, map, map);
+		    layout.setColorModel(cm);
+		    SampleModel sm = new MultiPixelPackedSampleModel(DataBuffer.TYPE_BYTE,
+		            image.getWidth(),
+		            image.getHeight(),
+		            1);
+		    layout.setSampleModel(sm);
+		    RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+		    PlanarImage op = ErrorDiffusionDescriptor.create(image, lut, KernelJAI.ERROR_FILTER_FLOYD_STEINBERG, hints);
+
+			return op.getAsBufferedImage();
+		}
+		catch (IllegalArgumentException e)
+		{
+			System.out.println("Error in bitonal quantization: " + e.getMessage());
 			return null;
 		}
 	}
@@ -251,10 +291,41 @@ public class PNG32toPNG8
 
 	public static void main(String[] args) throws IOException
 	{
-		File test = new File("H:/Temp/Test.jpg");
-		BufferedImage testi = readImage(test);
-		if (testi != null) writePNGImage(toQuantizedIndexedImageWithOctTree(testi), new File(test, "oct-tree_" + test.getName()));
+		test1();
+//		test2();
 
+		System.out.println("Done");
+	}
+
+	private static void test1()
+	{
+//		File testFile = new File("H:/Temp/Test.jpg");
+		File testFile = new File("C:/PersonnelPhilippeLhoste/Images/Zoe+Marine aout 2000.jpg");
+		BufferedImage image = readImage(testFile);
+		if (image == null)
+			return;
+
+		System.out.println("Simple quantization (dithering)");
+		writePNGImage(toSimpleIndexedImage(image), new File(testFile.getParentFile(), rename(testFile, "simple")));
+		System.out.println("Oct-tree quantization");
+		writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(testFile.getParentFile(), rename(testFile, "oct-tree")));
+		System.out.println("Median-cut quantization");
+		writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(testFile.getParentFile(), rename(testFile, "median-cut")));
+		System.out.println("NeuQuant quantization");
+		writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(testFile.getParentFile(), rename(testFile, "neu-quant")));
+		System.out.println("Other quantization");
+		writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(testFile.getParentFile(), rename(testFile, "other")));
+		System.out.println("Bitonal quantization");
+		writePNGImage(toBitonalImage(image), new File(testFile.getParentFile(), rename(testFile, "bitonal")));
+	}
+
+	private static String rename(File file, String type)
+	{
+		return file.getName().replaceAll("^(.*)\\.\\w+$", "$1_" + type + ".png");
+	}
+
+	private static void test2()
+	{
 		final String path = "H:/Temp/Quantization/";
 
 		File sourcePathFile = new File(path);
@@ -265,13 +336,13 @@ public class PNG32toPNG8
 			if (image == null)
 				continue;
 
-//			writePNGImage(toSimpleIndexedImage(image), new File(sourcePathFile, "simple_" + file.getName()));
-			writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(sourcePathFile, "oct-tree_" + file.getName()));
-			writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(sourcePathFile, "median-cut_" + file.getName()));
-			writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(sourcePathFile, "neu-quant" + file.getName()));
-			writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(sourcePathFile, "other" + file.getName()));
+			writePNGImage(toSimpleIndexedImage(image), new File(sourcePathFile, rename(file, "simple")));
+			writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(sourcePathFile, rename(file, "oct-tree")));
+			writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(sourcePathFile, rename(file, "median-cut")));
+			writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(sourcePathFile, rename(file, "neu-quant")));
+			writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(sourcePathFile, rename(file, "other")));
+			writePNGImage(toBitonalImage(image), new File(sourcePathFile, rename(file, "bitonal")));
 			return;
 		}
-		System.out.println("Done");
 	}
 }
