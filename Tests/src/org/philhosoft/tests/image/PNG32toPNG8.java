@@ -15,7 +15,14 @@ package org.philhosoft.tests.image;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,8 +34,14 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.KernelJAI;
+import javax.media.jai.LookupTableJAI;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.ColorQuantizerDescriptor;
+import javax.media.jai.operator.ErrorDiffusionDescriptor;
 
 import com.sun.imageio.plugins.png.PNGImageWriter;
 import com.sun.imageio.plugins.png.PNGImageWriterSpi;
@@ -43,6 +56,7 @@ public class PNG32toPNG8
 		g2.dispose();
 		return dest;
 	}
+	// Drop alpha channel
 	public static BufferedImage imageToRGB(BufferedImage image)
 	{
 		return changeImageType(image, image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -61,6 +75,8 @@ public class PNG32toPNG8
 	{
 		try
 		{
+			System.out.println("Oct-Tree: " + image);
+			System.out.println("Oct-Tree: " + imageToRGB(image));
 			RenderedOp op = ColorQuantizerDescriptor.create(imageToRGB(image), // Image
 					ColorQuantizerDescriptor.OCTTREE, // Algorithm
 					256,	// Max color num
@@ -71,7 +87,11 @@ public class PNG32toPNG8
 					null	// hints
 					);
 
-			return op.getAsBufferedImage();
+			System.out.println("ColorModel: " + op.getColorModel());
+			System.out.println("SampleModel: " + op.getSampleModel());
+			System.out.println("Create ColorModel: " + PlanarImage.createColorModel(op.getSampleModel()));
+//			return op.getAsBufferedImage();
+			return op.getAsBufferedImage(null, PlanarImage.createColorModel(op.getSampleModel()));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -88,7 +108,7 @@ public class PNG32toPNG8
 			RenderedOp op = ColorQuantizerDescriptor.create(imageToRGB(image), // Image
 					ColorQuantizerDescriptor.MEDIANCUT, // Algorithm
 					256,	// Max color num
-					null,	// upper bound (algorithm-dependent parameter)(here maximum size of the three-dimensional histogram)(default: 32768)
+					500,	// upper bound (algorithm-dependent parameter)(here maximum size of the three-dimensional histogram)(default: 32768)
 					null,	// ROI (region of interest, allows a sampling region smaller than the image itself)
 					2,		// xPeriod (X subsample rate)
 					2,		// yPeriod (Y subsample rate)
@@ -112,14 +132,14 @@ public class PNG32toPNG8
 			RenderedOp op = ColorQuantizerDescriptor.create(imageToRGB(image), // Image
 					ColorQuantizerDescriptor.NEUQUANT, // Algorithm
 					256,	// Max color num
-					500,	// upper bound (algorithm-dependent parameter)(here number of cycles)(default: 300)
+					200,	// upper bound (algorithm-dependent parameter)(here number of cycles)(default: 300)
 					null,	// ROI (region of interest, allows a sampling region smaller than the image itself)
-					2,		// xPeriod (X subsample rate)
-					2,		// yPeriod (Y subsample rate)
+					4,		// xPeriod (X subsample rate)
+					4,		// yPeriod (Y subsample rate)
 					null	// hints
 					);
 
-			return op.getAsBufferedImage(null, op.getColorModel());
+			return op.getAsBufferedImage(null, getColorModel());
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -128,11 +148,58 @@ public class PNG32toPNG8
 		}
 	}
 
+	/** Another method. */
+	// http://code.google.com/p/color-reduction-experiments/source/browse/trunk/it/geosolutions/mapproducers/MapProducersTest.java?r=2
+	public static BufferedImage toQuantizedIndexedImageWithSomeAlgorithm(BufferedImage image)
+	{
+		try
+		{
+			ImageLayout layout = new ImageLayout();
+			layout.setColorModel(image.getColorModel());
+
+//			  IndexColorModel icm = ((IndexColorModel) imageT.getColorModel());
+//            final byte[] r = new byte[icm.getMapSize()];
+//            icm.getReds(r);
+//            final byte[] g = new byte[icm.getMapSize()];
+//            icm.getGreens(g);
+//            final byte[] b = new byte[icm.getMapSize()];
+//            icm.getBlues(b);
+            final int size = 256;
+			byte[] r = new byte[size];
+			byte[] g = new byte[size];
+			byte[] b = new byte[size];
+			IndexColorModel icm = new IndexColorModel(8, size, r, g, b);
+			// error diffusion
+			KernelJAI ditherMask = new KernelJAI(1, 1, new float[] { 1.0f });
+			LookupTableJAI colorMap = new LookupTableJAI(new byte[][] { r, g, b });
+			RenderedOp op = ErrorDiffusionDescriptor.create(image, colorMap, ditherMask,
+					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+
+			return op.getAsBufferedImage(null, icm);
+		}
+		catch (IllegalArgumentException e)
+		{
+			System.out.println("Error in custom quantization: " + e.getMessage());
+			return null;
+		}
+	}
+
+	public static ColorModel getColorModel()
+	{
+		return new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8 }, false,
+				false, Transparency.OPAQUE, DataBuffer.TYPE_INT);
+
+//		java.awt.color.ColorSpace foo;
+//		return new ComponentColorModel(IHSColorSpace.getInstance(), new int[] { 8, 8, 8 }, false, false, Transparency.OPAQUE,
+//				DataBuffer.TYPE_INT);
+	}
+
 
 	public static BufferedImage readImage(File sourceFile)
 	{
 		try
 		{
+			System.out.println("Reading file " + sourceFile.getAbsolutePath());
 			return ImageIO.read(sourceFile);
 		}
 		catch (IOException e)
@@ -184,6 +251,10 @@ public class PNG32toPNG8
 
 	public static void main(String[] args) throws IOException
 	{
+		File test = new File("H:/Temp/Test.jpg");
+		BufferedImage testi = readImage(test);
+		if (testi != null) writePNGImage(toQuantizedIndexedImageWithOctTree(testi), new File(test, "oct-tree_" + test.getName()));
+
 		final String path = "H:/Temp/Quantization/";
 
 		File sourcePathFile = new File(path);
@@ -194,10 +265,11 @@ public class PNG32toPNG8
 			if (image == null)
 				continue;
 
-			writePNGImage(toSimpleIndexedImage(image), new File(sourcePathFile, "simple_" + file.getName()));
+//			writePNGImage(toSimpleIndexedImage(image), new File(sourcePathFile, "simple_" + file.getName()));
 			writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(sourcePathFile, "oct-tree_" + file.getName()));
 			writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(sourcePathFile, "median-cut_" + file.getName()));
 			writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(sourcePathFile, "neu-quant" + file.getName()));
+			writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(sourcePathFile, "other" + file.getName()));
 			return;
 		}
 		System.out.println("Done");
