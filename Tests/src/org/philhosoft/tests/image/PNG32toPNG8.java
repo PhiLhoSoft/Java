@@ -187,8 +187,8 @@ public class PNG32toPNG8
 			RenderedOp op = ErrorDiffusionDescriptor.create(image, colorMap, ditherMask,
 					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 
-//			return op.getAsBufferedImage(null, icm);
-			return op.getAsBufferedImage();
+			return op.getAsBufferedImage(null, icm);
+//			return op.getAsBufferedImage();
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -291,8 +291,8 @@ public class PNG32toPNG8
 
 	public static void main(String[] args) throws IOException
 	{
-		test1();
-//		test2();
+//		test1();
+		test2();
 
 		System.out.println("Done");
 	}
@@ -340,9 +340,9 @@ public class PNG32toPNG8
 			writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(sourcePathFile, rename(file, "oct-tree")));
 			writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(sourcePathFile, rename(file, "median-cut")));
 			writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(sourcePathFile, rename(file, "neu-quant")));
-			writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(sourcePathFile, rename(file, "other")));
-			writePNGImage(toBitonalImage(image), new File(sourcePathFile, rename(file, "bitonal")));
-			return;
+//			writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(sourcePathFile, rename(file, "other")));
+//			writePNGImage(toBitonalImage(image), new File(sourcePathFile, rename(file, "bitonal")));
+//			return;
 		}
 	}
 }
