@@ -1,8 +1,18 @@
 package org.philhosoft.tests;
 
+import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
-import java.io.*;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class TestID3
 {
@@ -126,11 +136,12 @@ public class TestID3
 					if (mimeLength > 1)
 					{
 						mimeType = new String(frameBuffer, indexPoint, mimeLength - 1);
+						if (DEBUG) System.out.println("Mime type: " + mimeType);
 					}
 
 					// Third we get the picture type
-					int pictureType = (frameBuffer[refPoint++] & 0xFF);
-					if (DEBUG) System.out.println("Picture type: " + pictureType + " " + PICTURE_TYPES[pictureType]);
+					int pictureType = frameBuffer[refPoint++] & 0xFF;
+					if (DEBUG) System.out.println("Picture type: " + pictureType + " - " + PICTURE_TYPES[pictureType]);
 
 					// Fourth we load the picture description
 					// Check length
@@ -156,7 +167,7 @@ public class TestID3
 							break;
 					}
 					// And read the string
-					int descriptionLength = scanPoint - refPoint - 1;
+					int descriptionLength = scanPoint - refPoint;
 					byte[] descriptionBuffer = new byte[descriptionLength];
 					int pos = 0;
 					switch (encodingType)
@@ -184,7 +195,6 @@ public class TestID3
 							} while (pos < descriptionLength);
 							break;
 					}
-
 
 					String encoding = null;
 					switch (encodingType)
@@ -229,6 +239,10 @@ public class TestID3
 				return net.rim.device.api.system.EncodedImage.createEncodedImage(imageData, 0, imageData.length);
 			}
 			*/
+			InputStream imageStream = new ByteArrayInputStream(imageData);
+			BufferedImage image = ImageIO.read(imageStream);
+			imageStream.close();
+			return image;
 		}
 		// No image found
 		return null;
@@ -262,12 +276,24 @@ public class TestID3
 
 	public static void main(String[] args) throws IOException
 	{
+		// VLC can show an image when playing, but not in the Explorer. Non standard storage?
 //		final String path = "G:/Musique/_Anime/Higurashi no Naku Koro ni - Dear you -Thanks-.mp3";
+		// More classical with APIC
 		final String path = "G:/Musique/_Anime/Iggy Pop - Monster Men (Les Zinzins de l'espace).mp3";
 		File file = new File(path);
 		InputStream is = new FileInputStream(file);
-		getID3Image(is);
+		BufferedImage image = getID3Image(is);
 		is.close();
+		if (image != null)
+		{
+			System.out.println("Image is " + image.getWidth() + "x" + image.getHeight());
+			// Quick ugly Swing code, does the job...
+			JFrame frame = new JFrame();
+		    JLabel label = new JLabel(new ImageIcon(image));
+		    frame.getContentPane().add(label, BorderLayout.CENTER);
+		    frame.pack();
+		    frame.setVisible(true);
+		}
 	}
 
 	public static final String[] PICTURE_TYPES =
