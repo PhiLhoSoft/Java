@@ -154,9 +154,6 @@ public class PNG32toPNG8
 	{
 		try
 		{
-			ImageLayout layout = new ImageLayout();
-			layout.setColorModel(image.getColorModel());
-
 // Copy the LUT from an indexed image
 //			  IndexColorModel icm = ((IndexColorModel) imageT.getColorModel());
 //            final byte[] r = new byte[icm.getMapSize()];
@@ -175,11 +172,20 @@ public class PNG32toPNG8
 //				r[i] = g[i] = b[i] = (byte) i;
 //			}
 			// Random LUT! Surprisingly, works not so bad... :-)
-			Random rnd = new Random();
-			rnd.nextBytes(r);
-			rnd.nextBytes(g);
-			rnd.nextBytes(b);
-			IndexColorModel icm = new IndexColorModel(8, size, r, g, b);
+//			Random rnd = new Random();
+//			rnd.nextBytes(r);
+//			rnd.nextBytes(g);
+//			rnd.nextBytes(b);
+//			IndexColorModel icm = new IndexColorModel(8, size, r, g, b);
+
+			// Use oct-tree for computing a LUT
+			PlanarImage opForLut = ColorQuantizerDescriptor.create(image, ColorQuantizerDescriptor.OCTTREE, 256, null, null, null, null, null);
+			LookupTableJAI lut = (LookupTableJAI) opForLut.getProperty("LUT");
+			IndexColorModel icm = new IndexColorModel(8, lut.getByteData()[0].length, lut.getByteData()[0], lut.getByteData()[1], lut.getByteData()[2]);
+
+			ImageLayout layout = new ImageLayout();
+//			layout.setColorModel(image.getColorModel());
+			layout.setColorModel(icm);
 
 			// error diffusion
 			KernelJAI ditherMask = new KernelJAI(1, 1, new float[] { 1.0f });
@@ -305,18 +311,18 @@ public class PNG32toPNG8
 		if (image == null)
 			return;
 
-		System.out.println("Simple quantization (dithering)");
-		writePNGImage(toSimpleIndexedImage(image), new File(testFile.getParentFile(), rename(testFile, "simple")));
-		System.out.println("Oct-tree quantization");
-		writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(testFile.getParentFile(), rename(testFile, "oct-tree")));
-		System.out.println("Median-cut quantization");
-		writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(testFile.getParentFile(), rename(testFile, "median-cut")));
-		System.out.println("NeuQuant quantization");
-		writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(testFile.getParentFile(), rename(testFile, "neu-quant")));
+//		System.out.println("Simple quantization (dithering)");
+//		writePNGImage(toSimpleIndexedImage(image), new File(testFile.getParentFile(), rename(testFile, "simple")));
+//		System.out.println("Oct-tree quantization");
+//		writePNGImage(toQuantizedIndexedImageWithOctTree(image), new File(testFile.getParentFile(), rename(testFile, "oct-tree")));
+//		System.out.println("Median-cut quantization");
+//		writePNGImage(toQuantizedIndexedImageWithMedianCut(image), new File(testFile.getParentFile(), rename(testFile, "median-cut")));
+//		System.out.println("NeuQuant quantization");
+//		writePNGImage(toQuantizedIndexedImageWithNeuQuant(image), new File(testFile.getParentFile(), rename(testFile, "neu-quant")));
 		System.out.println("Other quantization");
 		writePNGImage(toQuantizedIndexedImageWithSomeAlgorithm(image), new File(testFile.getParentFile(), rename(testFile, "other")));
-		System.out.println("Bitonal quantization");
-		writePNGImage(toBitonalImage(image), new File(testFile.getParentFile(), rename(testFile, "bitonal")));
+//		System.out.println("Bitonal quantization");
+//		writePNGImage(toBitonalImage(image), new File(testFile.getParentFile(), rename(testFile, "bitonal")));
 	}
 
 	private static String rename(File file, String type)

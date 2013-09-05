@@ -21,6 +21,7 @@ import java.awt.Color;
  */
 public class ColorUtil
 {
+	// Constants can be overridden
 	protected static float MIN_BRIGHT_DIFF = 125.0F;
 	protected static int MIN_COLOR_DIFF = 400;
 	protected static int MIN_COLOR_DIFF_STRICT = 500;
@@ -29,6 +30,37 @@ public class ColorUtil
 	protected static float MIN_LUM_RATIO_NORMAL_AA = 4.5F;
 	protected static float MIN_LUM_RATIO_LARGE_AAA = 4.5F;
 	protected static float MIN_LUM_RATIO_NORMAL_AAA = 7.0F;
+
+	// http://en.wikipedia.org/wiki/HSL_and_HSV
+	public static final int RED = 0;
+	public static final int GREEN = 1;
+	public static final int BLUE = 2;
+	public static final int ALPHA = 3;
+	public static final int HUE = 0;
+	public static final int SATURATION = 1;
+	public static final int BRIGHTNESS = 2;
+	public static final int VALUE = 2;
+	public static final int LUMINANCE = 2;
+
+	public static float[] convertHSVtoHSL(float[] hsv, float[] hsl)
+	{
+		hsl[HUE] = hsv[HUE];
+		hsl[LUMINANCE] = (2 - hsv[SATURATION]) * hsv[VALUE];
+		hsl[SATURATION] = hsv[SATURATION] * hsv[VALUE];
+		hsl[SATURATION] /= hsl[LUMINANCE] <= 1 ? hsl[LUMINANCE] : 2 - hsl[LUMINANCE];
+		hsl[LUMINANCE] /= 2;
+		return hsl;
+	}
+	public static float[] convertHSLtoHSV(float[] hsl, float[] hsv)
+	{
+		hsv[HUE] = hsl[HUE];
+		hsl[LUMINANCE] *= 2;
+		hsl[SATURATION] *= hsl[LUMINANCE] <= 1 ? hsl[LUMINANCE] : 2 - hsl[LUMINANCE];
+		hsv[VALUE] = (hsl[LUMINANCE] + hsl[SATURATION]) / 2;
+		hsv[SATURATION] = 2 * hsl[SATURATION] / (hsl[LUMINANCE] + hsl[SATURATION]);
+		return hsv;
+	}
+
 
 	/**
 	 * Checks if two given colors have enough contrast in a slightly lenient way.
