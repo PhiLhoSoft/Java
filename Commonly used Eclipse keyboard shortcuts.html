@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Commonly used Eclipse (keyboard) shortcuts</title>
+	<style type="text/css">
+	dt { margin-top: 1em; }
+	</style>
+</head>
+<body>
+
+<h1>Commonly used Eclipse (keyboard) shortcuts</h1>
+
+
+<h2>Edition</h2>
+
+<dl>
+<dt>Ctrl+Shift+O</dt>	<dd>Organize imports
+	<p>Imports unknown classes, automatically if unique, showing a choice dialog if it is ambiguous (eg. java.util.List vs. java.awt.List)</p>
+	<p>See Window > Preferences > Java > Code Style > Organize Imports if you want to define the import orders (eg. put your own classes at the end of the list).</p>
+	<p>See Window > Preferences > Java > Appearance > Type Filters to define what imports you will never use, like java.awt.*... This way, List will be imported automatically from java.util (unless it is found in another library). Note: for GWT dev, we also add com.google.gwt.dev.* and com.google.gwt.thirdparty.*</p>
+	<p>See Window > Preferences > Java > Editor > Content Assist > Favorites to define what static imports are proposed . I added org.mockito.Matchers.* and org.mockito.Mockito.* to support easy test writing. We can add org.fest.assertions.Assertions.* too. Note that JUnit assertions are part of this list by default (not displayed but given). Note that Ctrl+Shift+O doesn't add static imports, so you have to hover over the reported error (eg. mock underlined in red), and choose (in this case) Add static import for 'Mockito.mock'.</p>
+</dd>
+<dt>Ctrl+Shift+F</dt>	<dd>Reformat the current buffer (by default) or the selected lines.
+	<p>I personally prefer to limit the scope of the formatting to avoid messing up manual formatting (line breaks and such).</p>
+</dd>
+<dt>Ctrl+I</dt>	<dd>Reindent the selected lines. Context sensitive, so select whole blocks!
+</dd>
+<dt>Ctrl+Alt+A</dt>	<dd>Toggle the rectangular selection mode.
+	<p>In this mode, selection (with mouse or shifted arrow keys) acts on rectangular areas. Delete will remove all chars inside the rectangle, typing will replace the selection with the typed characters on all lines, pasting acts on all lines, etc.</p>
+</dd>
+<dt>Alt+Up / Alt+Down</dt>	<dd>Move line where the cursor is, or selected lines, up or down.
+</dd>
+<dt>Alt+Left / Alt+Right</dt>	<dd>Back / Forward to previously visited locations.
+</dd>
+</dl>
+
+
+<h2>Navigation</h2>
+
+<dl>
+<dt>Click on the return type of a method</dt> <dd>to highlight the exit points of the method, including exceptions. Need Mark Occurrences to be active (Alt+Shift+O to toggle.)
+</dd>
+
+<dt>Ctrl+hover</dt>	<dd>Over a class (eg. in a variable definition): shows class definition.
+	<p>Over a method call: offers to open the declaration, the implementation, the return type (if any).</p>
+	<p>Over a field, a parameter or a variable: offers to open the declaration or the declared type.</p>
+</dd>
+
+<dt>F3</dt>	<dd>Go to class / field definition.
+
+<dt>Ctrl+T</dt>	<dd>Quick Type Hierarchy. View and navigate to super- or sub-types. On a method call, allows to go to the interface definition or the implementations.
+	<p>Note: hitting Ctrl+T again when the hierarchy is displayed allows to view the implemented interfaces.</p>
+</dd>
+
+<dt>Ctrl+Alt+H</dt>	<dd>On a method. Shows where this method is called. You can navigate to the callers of the callers, etc.
+</dd>
+
+<dt>Ctrl+Shift+G</dt>	<dd>Find References. Shows all the places where the type is used.
+</dd>
+</dl>
+
+
+<h2>Refactoring</h2>
+
+<dl>
+<dt>Ctrl+Alt+R</dt>	<dd>Rename.
+</dd>
+
+<dt>Alt+Shift+C</dt>	<dd>Change Method Signature. Shows a dialog allowing to change, on definition and call sites, the signature of a method.
+</dd>
+
+<dt>Ctrl+Shift+1</dt>	<dd>Quick Fix. Proposes solutions about the selected item, varying depending on context. For example:<ul>
+	<li>On a parameter of a method definition, allows to assign the parameter to an existing field (same type) or to a new field (it will create it).</li>
+	<li>On a field, proposes to create the getters and setters.</li>
+	<li>On a variable, allows to inline it.</li>
+	<li>On a selection in the parameter list of a method call, allows to assign to a new variable (reverse of inline).</li>
+	<li>Etc.</li>
+</ul></dd>
+
+<dt>Ctrl+Alt+M</dt>	<dd>Extract (selected lines) to method
+</dd>
+</dl>
+
+<h2>Debugging</h2>
+
+<dl>
+<dt>Double-click on the margin</dt>	<dd>Toggle a breakpoint on this line.
+</dd>
+
+<dt>F5</dt>	<dd>Step into the next method call.
+</dd>
+<dt>F6</dt>	<dd>Step over, go to the next line in the same method.
+</dd>
+<dt>F7</dt>	<dd>Step out, run to the end of the method and stop after the call site.
+</dd>
+<dt>F8</dt>	<dd>Continue, run until the next breakpoint is meet or until the program ends.
+</dd>
+<dt>Ctrl+R</dt>	<dd>Run until the selected line. Equivalent to setting a temporary breakpoint on the current line, continue the run up to this point, stop there and remove the breakpoint.
+</dd>
+<dt>Ctrl+Alt+Click</dt>	<dd>on a method name: step into the method, stepping over the method calls in the parameter list. If we have add(getX(), getY()) for example, Ctrl+Alt+Click will step into add(), stepping over the getX() and getY() calls.
+</dd>
+<dt>Ctrl+Shift+I</dt>	<dd>Inspect variable.
+</dd>
+
+<dt>Drop to frame (icon on toolbar)</dt>	<dd>By default, no shortcut for this one. Move the instruction pointer to the start of the current method, to be able to run it again, starting over.
+</dd>
+</dl>
+
+</body>
+</html>
