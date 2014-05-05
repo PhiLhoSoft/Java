@@ -26,6 +26,15 @@ public class Test
     long ts2 = 1112853600000L;
     printDate(ts1);
     printDate(ts2);
+
+    try
+    {
+      System.out.println(java.net.URLEncoder.encode("/ D\u00F8 + w\u00E5p %\r\n", "UTF-8"));
+    }
+    catch (Exception e)
+    {
+      System.out.println(e);
+    }
   }
 
   static void printDate(long ts)
