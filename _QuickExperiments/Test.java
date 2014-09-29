@@ -35,6 +35,16 @@ public class Test
     {
       System.out.println(e);
     }
+
+    System.out.println("Compare strings");
+    final String F = "Foo";
+    String a = F;
+    String b = F;
+    assert a == b; // Works!
+    String c = "F" + F.substring(1); // Still "Foo"
+    System.out.println(c);
+    assert c.equals(a); // Works
+    assert c == a; // Fails
   }
 
   static void printDate(long ts)
