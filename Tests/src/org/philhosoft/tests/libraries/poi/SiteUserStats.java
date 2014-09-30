@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,10 +39,11 @@ public class SiteUserStats
 	private static final String DATE_CELL_STYLE_NAME = "date cell";
 	private static final String INTEGER_FORMULA_STYLE_NAME = "integer formula";
 	private static final String FLOAT_FORMULA_STYLE_NAME = "float formula";
+	private static final String PERCENTAGE_FORMULA_STYLE_NAME = "percentage formula";
 
 	private static final String[] HEADERS =
 	{
-		"First\nName", "Last\nName", "E-mail", "Birthday", "Account\nCreation Date", "Topics\nCreated", "Answers",
+		"First\nName", "Last\nName", "E-mail", "Birthday", "Account\nCreation Date", "Topics\nCreated", "Answers", "Success\nratio",
 		// Computed columns
 		"Age", "Seniority", "Number\nof messages"
 	};
@@ -50,16 +52,24 @@ public class SiteUserStats
 	private static final Object[][] DATA =
 	{
 		{
-			"Victor", "Frankenstein", "Victor@Monster.org", new Date(14, 9, 31, 12, 42, 00), new Date(101, 1, 31, 12, 42, 00), 101, 2001
+			"Victor", "Frankenstein", "Victor@Monster.org",
+			new Date(14, 9, 31, 12, 42, 00), new Date(101, 1, 31, 12, 42, 00),
+			101, 2001, 0.95f
 		},
 		{
-			"Vlad", "Dracula", "TheOne@Vampire.net", new Date(01, 10, 6, 10, 22, 00), new Date(114, 2, 14, 00, 00, 00), 1, 11
+			"Vlad", "Dracula", "TheOne@Vampire.net",
+			new Date(01, 10, 6, 10, 22, 00), new Date(114, 2, 14, 00, 00, 00),
+			1, 11, 0.78f
 		},
 		{
-			"Were", "Wolf", "FullMoonWooh@Canine.me", new Date(51, 2, 14, 14, 14, 00), new Date(107, 3, 17, 23, 52, 00), 6, 666
+			"Were", "Wolf", "FullMoonWooh@Canine.me",
+			new Date(51, 2, 14, 14, 14, 00), new Date(107, 3, 17, 23, 52, 00),
+			6, 666, 0.47f
 		},
 		{
-			"Judah", "Golem", "emet@Prague.cz", new Date(55, 5, 5, 55, 55, 55), new Date(113, 4, 31, 16, 32, 00), 5, 55
+			"Judah", "Golem", "emet@Prague.cz",
+			new Date(55, 5, 5, 55, 55, 55), new Date(113, 4, 31, 16, 32, 00),
+			5, 55, 0.55f
 		},
 	};
 
@@ -73,6 +83,7 @@ public class SiteUserStats
 
 	public static void main(String[] args) throws Exception
 	{
+		Locale.setDefault(Locale.US);
 		Workbook wb = new HSSFWorkbook();
 
 		Map<String, CellStyle> styles = createStyles(wb);
@@ -167,10 +178,11 @@ public class SiteUserStats
 		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
 
 		// Fill in with formula color for continuity
-		cell = sumRow.createCell(ANSWER_NUMBER_COLUMN + 1);
-		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
-		cell = sumRow.createCell(POST_NUMBER_COLUMN - 1);
-		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
+		for (int i = ANSWER_NUMBER_COLUMN + 1; i < POST_NUMBER_COLUMN; i++)
+		{
+			cell = sumRow.createCell(i);
+			cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
+		}
 
 		cell = sumRow.createCell(POST_NUMBER_COLUMN);
 		colRef = columnNumberToCoordinate(POST_NUMBER_COLUMN);
@@ -194,6 +206,11 @@ public class SiteUserStats
 				{
 					row.getCell(j).setCellValue((Integer) DATA[i][j]);
 				}
+				else if (DATA[i][j] instanceof Float)
+				{
+					row.getCell(j).setCellValue((Float) DATA[i][j]);
+					row.getCell(j).setCellStyle(styles.get(PERCENTAGE_FORMULA_STYLE_NAME));
+				}
 				else if (DATA[i][j] instanceof Date)
 				{
 					row.getCell(j).setCellValue((Date) DATA[i][j]);
@@ -201,7 +218,7 @@ public class SiteUserStats
 				}
 				else
 				{
-					row.getCell(j).setCellErrorValue((byte) 1);
+					row.getCell(j).setCellErrorValue((byte) 42);
 				}
 			}
 		}
@@ -223,6 +240,8 @@ public class SiteUserStats
 		FileOutputStream out = new FileOutputStream(file);
 		wb.write(out);
 		out.close();
+
+		System.out.println("Done.");
 	}
 
 	/**
@@ -280,6 +299,12 @@ public class SiteUserStats
 		floatFormulaStyle.cloneStyleFrom(integerFormulaStyle);
 		floatFormulaStyle.setDataFormat(df.getFormat("0.00"));
 		styles.put(FLOAT_FORMULA_STYLE_NAME, floatFormulaStyle);
+
+		CellStyle percentageFormulaStyle = wb.createCellStyle();
+		percentageFormulaStyle.cloneStyleFrom(integerFormulaStyle);
+		percentageFormulaStyle.setDataFormat(df.getFormat("0.00 %")); // Doesn't work?
+//		percentageFormulaStyle.setDataFormat((short) 9); // See BuiltinFormats
+		styles.put(PERCENTAGE_FORMULA_STYLE_NAME, percentageFormulaStyle);
 
 		return styles;
 	}
