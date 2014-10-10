@@ -13,17 +13,27 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PatternFormatting;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
@@ -84,7 +94,8 @@ public class SiteUserStats
 	public static void main(String[] args) throws Exception
 	{
 		Locale.setDefault(Locale.US);
-		Workbook wb = new HSSFWorkbook();
+//		Workbook wb = new HSSFWorkbook();
+		Workbook wb = new XSSFWorkbook();
 
 		Map<String, CellStyle> styles = createStyles(wb);
 
@@ -106,7 +117,7 @@ public class SiteUserStats
 			Cell c = titleRow.getCell(i, Row.CREATE_NULL_AS_BLANK);
 			c.setCellStyle(styles.get(TITLE_STYLE_NAME));
 		}
-		CellRangeAddress titleRange = CellRangeAddress.valueOf("A1:" + columnNumberToCoordinate(HEADERS.length - 1) + "1");
+		CellRangeAddress titleRange = CellRangeAddress.valueOf("A1:" + CellReference.convertNumToColString(HEADERS.length - 1) + "1");
 		sheet.addMergedRegion(titleRange);
 
 		// Header row
@@ -129,20 +140,20 @@ public class SiteUserStats
 				if (j == AGE_COLUMN)
 				{
 					// Age of the user
-					cell.setCellFormula("(TODAY() - " + columnNumberToCoordinate(BIRTHDAY_DATE_COLUMN) + rowNum + ") / 365.2625");
+					cell.setCellFormula("(TODAY() - " + CellReference.convertNumToColString(BIRTHDAY_DATE_COLUMN) + rowNum + ") / 365.2625");
 					cell.setCellStyle(styles.get(FLOAT_FORMULA_STYLE_NAME));
 				}
 				else if (j == SENIORITY_COLUMN)
 				{
 					// Number of days of presence
-					cell.setCellFormula("TODAY() - " + columnNumberToCoordinate(ACCOUNT_CREATION_DATE_COLUMN) + rowNum);
+					cell.setCellFormula("TODAY() - " + CellReference.convertNumToColString(ACCOUNT_CREATION_DATE_COLUMN) + rowNum);
 					cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
 				}
 				else if (j == POST_NUMBER_COLUMN)
 				{
 					// Number of posts / messages
-					String ref = columnNumberToCoordinate(TOPIC_NUMBER_COLUMN) + rowNum + ":" +
-							columnNumberToCoordinate(ANSWER_NUMBER_COLUMN) + rowNum;
+					String ref = CellReference.convertNumToColString(TOPIC_NUMBER_COLUMN) + rowNum + ":" +
+							CellReference.convertNumToColString(ANSWER_NUMBER_COLUMN) + rowNum;
 					cell.setCellFormula("SUM(" + ref + ")");
 					cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
 				}
@@ -166,13 +177,13 @@ public class SiteUserStats
 		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
 
 		cell = sumRow.createCell(TOPIC_NUMBER_COLUMN);
-		String colRef = columnNumberToCoordinate(TOPIC_NUMBER_COLUMN);
+		String colRef = CellReference.convertNumToColString(TOPIC_NUMBER_COLUMN);
 		String ref = colRef + "2:" + colRef + (2 + DATA.length);
 		cell.setCellFormula("SUM(" + ref + ")");
 		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
 
 		cell = sumRow.createCell(ANSWER_NUMBER_COLUMN);
-		colRef = columnNumberToCoordinate(ANSWER_NUMBER_COLUMN);
+		colRef = CellReference.convertNumToColString(ANSWER_NUMBER_COLUMN);
 		ref = colRef + "2:" + colRef + (2 + DATA.length);
 		cell.setCellFormula("SUM(" + ref + ")");
 		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
@@ -185,7 +196,7 @@ public class SiteUserStats
 		}
 
 		cell = sumRow.createCell(POST_NUMBER_COLUMN);
-		colRef = columnNumberToCoordinate(POST_NUMBER_COLUMN);
+		colRef = CellReference.convertNumToColString(POST_NUMBER_COLUMN);
 		ref = colRef + "2:" + colRef + (2 + DATA.length);
 		cell.setCellFormula("SUM(" + ref + ")");
 		cell.setCellStyle(styles.get(INTEGER_FORMULA_STYLE_NAME));
@@ -235,8 +246,11 @@ public class SiteUserStats
 			sheet.setColumnWidth(i, 11 * 256);
 		}
 
+		CellRangeAddress range = new CellRangeAddress(2, 2 + DATA.length - 1, ANSWER_NUMBER_COLUMN, ANSWER_NUMBER_COLUMN);
+		applyConditionalFormatting(sheet, range);
+
 		// Write the output to a file
-		File file = new File(System.getProperty("user.home"), "Example.com's users.xls");
+		File file = new File(System.getProperty("user.home"), "Example.com's users.xls" + (wb instanceof XSSFWorkbook ? "x" : ""));
 		FileOutputStream out = new FileOutputStream(file);
 		wb.write(out);
 		out.close();
@@ -302,8 +316,18 @@ public class SiteUserStats
 
 		CellStyle percentageFormulaStyle = wb.createCellStyle();
 		percentageFormulaStyle.cloneStyleFrom(integerFormulaStyle);
-		percentageFormulaStyle.setDataFormat(df.getFormat("0.00 %")); // Doesn't work?
+		percentageFormulaStyle.setDataFormat(df.getFormat("0.00 %"));
 //		percentageFormulaStyle.setDataFormat((short) 9); // See BuiltinFormats
+		short colorIndex = IndexedColors.INDIGO.getIndex();
+		Color customColor = defineColor(wb, colorIndex, 0x88, 0xFF, 0x55);
+		if (percentageFormulaStyle instanceof XSSFCellStyle)
+		{
+			((XSSFCellStyle) percentageFormulaStyle).setFillForegroundColor((XSSFColor) customColor);
+		}
+		else
+		{
+			percentageFormulaStyle.setFillForegroundColor(colorIndex);
+		}
 		styles.put(PERCENTAGE_FORMULA_STYLE_NAME, percentageFormulaStyle);
 
 		return styles;
@@ -322,24 +346,55 @@ public class SiteUserStats
 
 		return style;
 	}
-	private static char numberToLetter(int nb)
+
+	private static Color defineColor(Workbook workbook, short index, int r, int g, int b)
 	{
-		return (char)('A' + nb);
-	}
-	private static String columnNumberToCoordinate(int nb)
-	{
-		char[] letters;
-		if (nb < 26)
+		Color color;
+		if (workbook instanceof HSSFWorkbook)
 		{
-			letters = new char[1];
-			letters[0] = numberToLetter(nb);
+			HSSFPalette palette = ((HSSFWorkbook) workbook).getCustomPalette();
+			color = palette.findColor((byte) r, (byte) g, (byte) b);
+			if (color == null)
+			{
+				palette.setColorAtIndex(index, (byte) r, (byte) g, (byte) b);
+				color = palette.getColor(index);
+			}
 		}
 		else
 		{
-			letters = new char[2];
-			letters[0] = numberToLetter(nb % 26);
-			letters[1] = numberToLetter(nb / 26);
+			color = new XSSFColor(new java.awt.Color(r, g, b));
 		}
-		return new String(letters);
+
+		return color;
+	}
+
+	// http://poi.apache.org/spreadsheet/quick-guide.html#ConditionalFormatting
+	private static void applyConditionalFormatting(Sheet sheet, CellRangeAddress range)
+	{
+		SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+
+		// Maximum 3 rules...
+	    ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(ComparisonOperator.LT, "20");
+	    ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "20", "1000");
+	    ConditionalFormattingRule rule3 = sheetCF.createConditionalFormattingRule(ComparisonOperator.GT, "1000");
+
+	    PatternFormatting patternFmt1 = rule1.createPatternFormatting();
+	    PatternFormatting patternFmt2 = rule2.createPatternFormatting();
+	    PatternFormatting patternFmt3 = rule3.createPatternFormatting();
+	    patternFmt1.setFillBackgroundColor(IndexedColors.YELLOW.index);
+	    patternFmt2.setFillBackgroundColor(IndexedColors.LIGHT_GREEN.index);
+	    patternFmt3.setFillBackgroundColor(IndexedColors.LIGHT_ORANGE.index);
+
+	    ConditionalFormattingRule [] cfRules =
+	    {
+	        rule1, rule2, rule3
+	    };
+
+	    CellRangeAddress[] regions =
+    	{
+	        range
+	    };
+
+	    sheetCF.addConditionalFormatting(regions, cfRules);
 	}
 }
