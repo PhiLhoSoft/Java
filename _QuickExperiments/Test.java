@@ -35,6 +35,9 @@ public class Test
     {
       System.out.println(e);
     }
+
+    Planet p = Planet.EARTH;
+    System.out.println(p);
   }
 
   static void printDate(long ts)
