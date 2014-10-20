@@ -36,8 +36,21 @@ public class Test
       System.out.println(e);
     }
 
-    Planet p = Planet.EARTH;
-    System.out.println(p);
+    System.out.println("Compare strings");
+    final String F = "Foo";
+    String a = F;
+    String b = F;
+    assert a == b; // Works!
+    String c = "F" + F.substring(1); // Still "Foo"
+    System.out.println(c);
+    assert c.equals(a); // Works
+    assert c == a; // Fails
+
+    System.out.println("Reverse strings");
+    System.out.println(reverseString("Reverse strings"));
+    System.out.println(reverseString("x"));
+    System.out.println(reverseString("xy"));
+    System.out.println(reverseString("xyz"));
   }
 
   static void printDate(long ts)
@@ -45,5 +58,17 @@ public class Test
     Date d = new Date(ts);
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     System.out.println(sdf.format(d));
+  }
+
+  static String reverseString(String str)
+  {
+    char[] ca = str.toCharArray();
+    for (int i = 0, cal = ca.length; i < cal / 2; i++)
+    {
+      char c = ca[i];
+      ca[i] = ca[cal - 1 - i];
+      ca[cal - 1 - i] = c;
+    }
+    return new String(ca);
   }
 }

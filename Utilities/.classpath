@@ -6,5 +6,7 @@
 	<classpathentry kind="lib" path="C:/Java/libraries/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/testng-6.7.jar"/>
 	<classpathentry kind="lib" path="C:/Java/junit-4.8.2/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Java/libraries/assertj-core-1.6.1.jar" sourcepath="C:/Java/libraries/assertj-core-1.6.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Java/libraries/assertj-guava-1.2.0.jar" sourcepath="C:/Java/libraries/assertj-guava-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
