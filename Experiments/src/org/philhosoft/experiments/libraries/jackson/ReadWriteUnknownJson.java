@@ -38,7 +38,7 @@ public class ReadWriteUnknownJson
 		JsonNode id = object.get("id");
 		System.out.println(id);
 
-		object.put("newField", id);
+		object.set("newField", id);
 
 		mapper.writeValue(fileOut, object);
 
@@ -49,7 +49,7 @@ public class ReadWriteUnknownJson
 		ArrayNode emails = mapper.createArrayNode();
 		emails.add("plhoste@somewhere.com").add("philho@somewhereelse.org");
 		email.set("refs", emails);
-		object.put("email", email);
+		object.set("email", email);
 
 		object.remove("@class");
 		System.out.println(object);

@@ -38,7 +38,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		Injector injector = Guice.createInjector(new Module());
-		Main main = injector.getInstance(Main.class);
+		injector.getInstance(Main.class);
 
 //	    Library library = injector.getInstance(Library.class);
 //	    library.addBook();

@@ -292,7 +292,7 @@ public class Book implements Comparable<Book>
 	 */
 	public static void main(String[] args)
 	{
-		Stopwatch watch = new Stopwatch().start();
+		Stopwatch watch = Stopwatch.createStarted();
 		Book goodBook = new Book.Builder("The Hitchhicker's Guide to the Galaxy")
 				.authors("Douglas Adams")
 				.isbn("9780345391803")

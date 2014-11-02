@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+
+
 // For Tiff images which need to jump around the whole file:
 // "header" information can be at the end of the file, and information it references can be before it.
 import javax.imageio.stream.FileImageInputStream;
+
 import java.nio.ByteOrder;
 import java.io.File;
 
@@ -783,7 +786,8 @@ public class ImageInfo {
    }
 
    // See TIFF 6.0 Specification <http://partners.adobe.com/public/developer/tiff/index.html#spec>
-   private boolean checkTiff(boolean bUseLittleEndian) throws IOException {
+   @SuppressWarnings("unused")
+private boolean checkTiff(boolean bUseLittleEndian) throws IOException {
       byte[] a = new byte[2];
       if (read(a) != a.length) {
          return false;
@@ -934,7 +938,8 @@ public class ImageInfo {
    // In case we only have a simple InputStream, not seekable, we can only get information
    // from the data contained in the header, not elsewhere in the file,
    // because the header is often at the end of the file and we cannot go back.
-   private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
+   @SuppressWarnings("unused")
+private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
       EndianReader er = new EndianReader(bUseLittleEndian);
 
       // Read the IFD (image file directory) offset
