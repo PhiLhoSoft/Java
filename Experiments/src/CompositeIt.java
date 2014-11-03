@@ -15,7 +15,7 @@ public class CompositeIt extends JFrame
 {
 	private JSlider sourcePercentage = new JSlider();
 	private JSlider destinationPercentage = new JSlider();
-	private JComboBox alphaComposites = new JComboBox();
+	private JComboBox<String> alphaComposites = new JComboBox<>();
 	private DrawingPanel drawingPanel = new DrawingPanel();
 
 	private static final String rules[] =
@@ -78,7 +78,7 @@ public class CompositeIt extends JFrame
 			}
 		});
 
-		ComboBoxModel model = new DefaultComboBoxModel(rules);
+		ComboBoxModel<String> model = new DefaultComboBoxModel<>(rules);
 		alphaComposites.setModel(model);
 		alphaComposites.setSelectedItem("XOR");
 		alphaComposites.addActionListener(new ActionListener()

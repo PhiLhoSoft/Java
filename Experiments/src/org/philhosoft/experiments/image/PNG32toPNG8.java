@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Random;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -297,7 +296,7 @@ public class PNG32toPNG8
 
 	public static void main(String[] args) throws IOException
 	{
-//		test1();
+		test1();
 		test2();
 
 		System.out.println("Done");

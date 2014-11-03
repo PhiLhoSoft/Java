@@ -16,6 +16,7 @@ package org.philhosoft.ui;
 
 
 import java.awt.*;
+
 import javax.swing.*;
 
 
@@ -25,7 +26,7 @@ import javax.swing.*;
  * Written to answer a question on <a href="http://stackoverflow.com/questions/138793/how-do-i-add-a-separator-to-a-jcombobox-in-java">StackOverflow</a>.
  */
 @SuppressWarnings("serial")
-public class TwoPartsComboBox extends JComboBox
+public class TwoPartsComboBox extends JComboBox<String>
 {
 	private int m_lastFirstPartIndex;
 
@@ -41,7 +42,7 @@ public class TwoPartsComboBox extends JComboBox
 		setRenderer(new JLRenderer());
 	}
 
-	protected class JLRenderer extends JLabel implements ListCellRenderer
+	protected class JLRenderer extends JLabel implements ListCellRenderer<String>
 	{
 		private JLabel m_lastFirstPart;
 
@@ -54,8 +55,8 @@ public class TwoPartsComboBox extends JComboBox
 
 		@Override
 		public Component getListCellRendererComponent(
-				JList list,
-				Object value,
+				JList<? extends String> list,
+				String value,
 				int index,
 				boolean isSelected,
 				boolean cellHasFocus)

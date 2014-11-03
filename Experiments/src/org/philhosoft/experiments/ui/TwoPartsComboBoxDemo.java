@@ -52,7 +52,7 @@ public class TwoPartsComboBoxDemo extends JFrame
 		});
 
 		// Reference, to check we have similar behavior to standard combo
-		JComboBox combo = new JComboBox(itemsRecent);
+		JComboBox<String> combo = new JComboBox<>(itemsRecent);
 		cont.add(combo);
 	}
 
