@@ -17,9 +17,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.Statement;
 
 //import org.philhosoft.string.Plural;
 
@@ -246,9 +246,6 @@ public class DatabaseAccess
 			} while (w.getNextException() != null);
 			return warnMsg.toString();
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 }

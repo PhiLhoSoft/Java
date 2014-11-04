@@ -146,10 +146,7 @@ public class Plural
 		{
 			return name + m_pluralMark;
 		}
-		else
-		{
-			return name;
-		}
+		return name;
 	}
 
 	/**
@@ -164,10 +161,7 @@ public class Plural
 		{
 			return nameSingular;
 		}
-		else
-		{
-			return namePlural;
-		}
+		return namePlural;
 	}
 
 	/**
@@ -182,10 +176,7 @@ public class Plural
 		{
 			return nb + " " + name + m_pluralMark;
 		}
-		else
-		{
-			return nb + " " + name;
-		}
+		return nb + " " + name;
 	}
 
 	/**
@@ -200,10 +191,7 @@ public class Plural
 		{
 			return nb + " " + nameSingular;
 		}
-		else
-		{
-			return nb + " " + namePlural;
-		}
+		return nb + " " + namePlural;
 	}
 
 	/*----- Getters and setters (got to have them, doesn't I?) -----*/

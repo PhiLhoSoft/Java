@@ -1,11 +1,13 @@
 package org.philhosoft.util;
 
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 
 public class NaturalOrderComparatorTest
@@ -83,11 +85,8 @@ public class NaturalOrderComparatorTest
 			show(" !!! Bad test" + info);
 			return false;
 		}
-		else
-		{
-			show(" -- Test" + info);
-			return true;
-		}
+		show(" -- Test" + info);
+		return true;
 	}
 
 	private static final String EQU = "=";

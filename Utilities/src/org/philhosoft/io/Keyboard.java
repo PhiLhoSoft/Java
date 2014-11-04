@@ -13,7 +13,9 @@ Copyright (c) 2005-2006 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.io;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Keyboard handling class.
@@ -62,10 +64,7 @@ public class Keyboard
 			// Successive delimiters are collapsed into one
 			return line.split("[" + delimiters + "]+");
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 	/**
 	 * Read a line on stdin and convert it to integer, if possible.
@@ -80,11 +79,8 @@ public class Keyboard
 		{
 			return Integer.parseInt(line);
 		}
-		else
-		{
-			// Transform readFullLine exception
-			throw new NumberFormatException();
-		}
+		// Transform readFullLine exception
+		throw new NumberFormatException();
 	}
 	public static boolean readBoolean()
 			throws NumberFormatException
@@ -98,10 +94,7 @@ public class Keyboard
 			// Actually, should accept localized strings too...
 			return Boolean.getBoolean(line);
 		}
-		else
-		{
-			// Transform readFullLine exception
-			throw new NumberFormatException();
-		}
+		// Transform readFullLine exception
+		throw new NumberFormatException();
 	}
 }

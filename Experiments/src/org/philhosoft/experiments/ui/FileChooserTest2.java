@@ -13,28 +13,28 @@
  */
 package org.philhosoft.experiments.ui;
 
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-
-import java.io.File;
-
-import javax.swing.*;
-import javax.swing.filechooser.*;
-import javax.swing.plaf.*;
-import javax.swing.plaf.basic.*;
-import javax.swing.event.*;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Window;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.plaf.FileChooserUI;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 
 //import org.philhosoft.ui.ImagePreview;
 import org.philhosoft.ui.SimpleFileFilter;
@@ -393,11 +393,8 @@ class WindowsAltFileSystemView extends FileSystemView
 		{
 			return true;
 		}
-		else
-		{
-			File parent = new File(parentPath);
-			return parent.equals(f);
-		}
+		File parent = new File(parentPath);
+		return parent.equals(f);
 	}
 
 	/**
@@ -425,10 +422,7 @@ class WindowsAltFileSystemView extends FileSystemView
 		{
 			throw new IOException("Directory already exists:" + newFolder.getAbsolutePath());
 		}
-		else
-		{
-			newFolder.mkdirs();
-		}
+		newFolder.mkdirs();
 		return newFolder;
 	}
 

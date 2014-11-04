@@ -2,6 +2,7 @@
  * Tests: A collection of little test programs to explore Java language.
  */
 /* File history:
+ *  1.02.000 -- 2014/11/04 (PL) -- Using UTF-8 resources
  *  1.01.000 -- 2012/10/22 (PL) -- A little update, moving the resources to a specific folder, with a package
  *  1.00.000 -- 2005/12/21 (PL) -- Creation
  */
@@ -10,20 +11,23 @@ Author: Philippe Lhoste <PhiLho(a)GMX.net> http://Phi.Lho.free.fr
 Copyright notice: For details, see the following file:
 http://Phi.Lho.free.fr/softwares/PhiLhoSoft/PhiLhoSoftLicense.txt
 This program is distributed under the zlib/libpng license.
-Copyright (c) 2005-2012 Philippe Lhoste / PhiLhoSoft
+Copyright (c) 2005-2014 Philippe Lhoste / PhiLhoSoft
 */
 package org.philhosoft.experiments.i18n;
 
 //import java.io.File;
-import java.util.*;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.philhosoft.util.ResourceUtil;
+import org.philhosoft.util.UTF8ResourceBundle;
 
 /**
  * Test of internationalization (i18n: 18 chars between i and n...).
  *
  * @author Philippe Lhoste
- * @version 1.01.000
+ * @version 1.02.000
  * @date 2012/10/22
  */
 public class I18nTest
@@ -72,7 +76,7 @@ public class I18nTest
 		}
 		String baseName = ResourceUtil.getPackage(this) + "MessagesBundle";
 		m_locale = new Locale(m_language, m_country);
-		m_messages = ResourceBundle.getBundle(baseName, m_locale);
+		m_messages = UTF8ResourceBundle.getBundle(baseName, m_locale);
 	}
 
 	void showMessages()
@@ -86,7 +90,7 @@ public class I18nTest
 		}
 		catch (MissingResourceException e)
 		{
-			System.out.println("Missing a translation: " + e.getMessage());
+			System.out.println("Missing a translation for: \"" + e.getKey() + "\" (" + e.getMessage() + ")");
 		}
 	}
 }
