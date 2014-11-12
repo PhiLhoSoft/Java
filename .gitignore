@@ -6,14 +6,17 @@
 
 *.lnk
 
+*.class
+
 *.java-
 *.jad
 
 bin/
+output/
 test-bin/
 test-output/
 
-.metadata/
+OLD/
 ProfileProject/
 traer.physics/
 RemoteSystemsTempFiles/
