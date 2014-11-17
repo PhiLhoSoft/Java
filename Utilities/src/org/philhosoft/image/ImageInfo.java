@@ -14,20 +14,17 @@
 package org.philhosoft.image;
 
 import java.io.DataInput;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
-
-
 
 // For Tiff images which need to jump around the whole file:
 // "header" information can be at the end of the file, and information it references can be before it.
 import javax.imageio.stream.FileImageInputStream;
-
-import java.nio.ByteOrder;
-import java.io.File;
 
 
 /**
@@ -531,9 +528,8 @@ public class ImageInfo {
             height = getShortBigEndian(a, 2);
             bitsPerPixel = a[8] & 0xff;
             return (width > 0 && height > 0 && bitsPerPixel > 0 && bitsPerPixel < 33);
-         } else {
-            skip(size);
          }
+         skip(size);
       } while (true);
    }
 
@@ -1032,12 +1028,14 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
          bUseLittleEndian = bIsLittleEndian;
       }
       public long getInt(byte[] a, int offs) {
-         if (bUseLittleEndian) return getIntLittleEndian(a, offs);
-         else return getIntBigEndian(a, offs);
+         if (bUseLittleEndian)
+        	 return getIntLittleEndian(a, offs);
+         return getIntBigEndian(a, offs);
       }
       public int getShort(byte[] a, int offs) {
-         if (bUseLittleEndian) return getShortLittleEndian(a, offs);
-         else return getShortBigEndian(a, offs);
+         if (bUseLittleEndian)
+        	 return getShortLittleEndian(a, offs);
+         return getShortBigEndian(a, offs);
       }
    }
 
@@ -1145,11 +1143,9 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
     * @return color type name
     */
    public String getColorTypeName() {
-      if (colorType >= 0 && colorType < COLOR_TYPES.length) {
+      if (colorType >= 0 && colorType < COLOR_TYPES.length)
          return COLOR_TYPES[colorType];
-      } else {
-         return "Unknown";
-      }
+      return "Unknown";
    }
 
    /**
@@ -1158,11 +1154,9 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
     * @return file format name
     */
    public String getFormatName() {
-      if (format >= 0 && format < FORMAT_NAMES.length) {
+      if (format >= 0 && format < FORMAT_NAMES.length)
          return FORMAT_NAMES[format];
-      } else {
-         return "?";
-      }
+      return "?";
    }
 
    /**
@@ -1202,9 +1196,8 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
             return "image/pjpeg";
          }
          return MIME_TYPE_STRINGS[format];
-      } else {
-         return null;
       }
+      return null;
    }
 
    /**
@@ -1217,11 +1210,9 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
     */
    public int getNumberOfComments()
    {
-      if (comments == null) {
+      if (comments == null)
          return 0;
-      } else {
-         return comments.size();
-      }
+      return comments.size();
    }
 
    /**
@@ -1259,11 +1250,9 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
    public float getPhysicalHeightInch() {
       int h = getHeight();
       int ph = getPhysicalHeightDpi();
-      if (h > 0 && ph > 0) {
+      if (h > 0 && ph > 0)
          return ((float)h) / ((float)ph);
-      } else {
-         return -1.0f;
-      }
+      return -1.0f;
    }
 
    /**
@@ -1289,11 +1278,9 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
    public float getPhysicalWidthInch() {
       int w = getWidth();
       int pw = getPhysicalWidthDpi();
-      if (w > 0 && pw > 0) {
+      if (w > 0 && pw > 0)
          return ((float)w) / ((float)pw);
-      } else {
-         return -1.0f;
-      }
+      return -1.0f;
    }
 
    private static int getShortBigEndian(byte[] a, int offs) {
@@ -1470,29 +1457,26 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
    }
 
    private int read() throws IOException {
-      if (in != null) {
+      if (in != null)
          return in.read();
-      } else {
-         return din.readByte();
-      }
+
+      return din.readByte();
    }
 
    private int read(byte[] a) throws IOException {
-      if (in != null) {
+      if (in != null)
          return in.read(a);
-      } else {
-         din.readFully(a);
-         return a.length;
-      }
+
+      din.readFully(a);
+      return a.length;
    }
 
    private int read(byte[] a, int offset, int num) throws IOException {
-      if (in != null) {
+      if (in != null)
          return in.read(a, offset, num);
-      } else {
-         din.readFully(a, offset, num);
-         return num;
-      }
+
+      din.readFully(a, offset, num);
+      return num;
    }
 
    private String readLine() throws IOException {
@@ -1605,11 +1589,10 @@ private boolean checkTiffHeader(boolean bUseLittleEndian) throws IOException {
             } else {
                result = din.readByte();
             }
-            if (result == -1) {
+            if (result == -1)
                throw new IOException("Premature end of input.");
-            } else {
-               num--;
-            }
+
+            num--;
          }
       }
    }

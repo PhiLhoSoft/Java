@@ -9,7 +9,7 @@ import org.philhosoft.collection.IdCreator;
  * A graph object, made of {@link GraphNode}s (or vertices) and {@link GraphEdge}s (or arcs or links).
  * <p>
  * Closely follow cpettitt's graphlib (JS graph library) API https://github.com/cpettitt/graphlib/wiki/API-Reference
- * Firstly because it is well done. Secondly because it is intended to be used as a GWT wrapper for this library.
+ * Firstly because it is well done. Secondly because it is intended to be used in a GWT wrapper for this library.
  * This first version doesn't support compound graphs.
  *
  * @author Philippe Lhoste
