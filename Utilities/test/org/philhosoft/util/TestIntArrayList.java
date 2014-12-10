@@ -1,23 +1,33 @@
 package org.philhosoft.util;
 
 
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Random;
 
-import org.testng.annotations.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 
-// http://www.mkyong.com/unittest/testng-tutorial-6-parameterized-test/
-public class IntArrayListTest
+@RunWith(Parameterized.class)
+public class TestIntArrayList
 {
 	private Random rnd = new Random();
+	private int size;
 
-	@DataProvider(name="Data-Generator")
-	public static Object[][] generateData()
+	public TestIntArrayList(int size)
 	{
-		return new Object[][]
+		this.size = size;
+	}
+
+	@Parameters
+    public static Collection<Object[]> generateData()
+	{
+		return Arrays.asList(new Object[][]
 		{
 			{ 0 },
 			{ 1 },
@@ -36,11 +46,11 @@ public class IntArrayListTest
 			// Long tests, can be used to see performance
 			{ 500000 },
 //			{ 6000000 }, // Need a big chunk of memory to run testSort2 with that
-		};
+		});
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testSort(int size)
+	@Test
+	public void testSort()
 	{
 		int[] testArray = makeIntArray(size, false);
 		int[] reverseArray = makeIntArray(size, true);
@@ -48,13 +58,13 @@ public class IntArrayListTest
 
 		IntArrayList ial = new IntArrayList(Arrays.copyOf(randomizedArray, size));
 		ial.sort(true);
-		assertTrue(Arrays.equals(ial.getArray(), testArray));
+		assertThat(ial.getArray()).isEqualTo(testArray);
 
 		ial.sort(false);
-		assertTrue(Arrays.equals(ial.getArray(), reverseArray));
+		assertThat(ial.getArray()).isEqualTo(reverseArray);
 
 		ial.reverse();
-		assertTrue(Arrays.equals(ial.getArray(), testArray));
+		assertThat(ial.getArray()).isEqualTo(testArray);
 
 		ial.clear();
 		ial.addAll(Arrays.copyOf(randomizedArray, size));
@@ -69,11 +79,11 @@ public class IntArrayListTest
 			}
 		};
 		ial.sort(icComparator);
-		assertTrue(Arrays.equals(ial.getArray(), testArray));
+		assertThat(ial.getArray()).isEqualTo(testArray);
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testSort2(int size)
+	@Test
+	public void testSort2()
 	{
 		final String[] stringArray = new String[size];
 		for (int i = 0; i < size; i++)
@@ -107,37 +117,37 @@ public class IntArrayListTest
 		{
 			String prev = stringArray[ial.get(i - 1)];
 			String curr = stringArray[ial.get(i)];
-			assertTrue(prev.compareTo(curr) <= 0, prev + " > " + curr);
+			assertThat(prev.compareTo(curr) <= 0).isTrue();
 		}
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testAddRemove(int size)
+	@Test
+	public void testAddRemove()
 	{
 		IntArrayList ial = new IntArrayList();
 		for (int i = 0; i < size; i++)
 		{
 			ial.add(i);
 		}
-		assertEquals(ial.getSize(), size);
+		assertThat(ial.getSize()).isEqualTo(size);
 		if (size < 4) return;
 
 		int sample = size / 2;
-		assertEquals(ial.get(sample), sample);
+		assertThat(ial.get(sample)).isEqualTo(sample);
 		ial.insertAt(0, 42);
 		ial.insertAt(sample, 4242);
 		ial.add(424242);
 		ial.removeAt(sample - 1);
 		ial.removeAt(ial.getSize() - 2);
-		assertEquals(ial.get(0), 42);
-		assertEquals(ial.get(sample - 1), 4242);
+		assertThat(ial.get(0)).isEqualTo(42);
+		assertThat(ial.get(sample - 1)).isEqualTo(4242);
 		ial.removeAt(0);
-		assertEquals(ial.get(sample - 2), 4242);
-		assertEquals(ial.get(ial.getSize() - 1), 424242);
+		assertThat(ial.get(sample - 2)).isEqualTo(4242);
+		assertThat(ial.get(ial.getSize() - 1)).isEqualTo(424242);
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testAddAt(int size)
+	@Test
+	public void testAddAt()
 	{
 		if (size > 100000) return;
 
@@ -146,18 +156,18 @@ public class IntArrayListTest
 		{
 			ia11.addAt(0, i);
 		}
-		assertEquals(ia11.getSize(), size);
+		assertThat(ia11.getSize()).isEqualTo(size);
 
 		IntArrayList ia2 = new IntArrayList(0);
 		for (int i = 0; i < size; i++)
 		{
 			ia2.addAt(0, i);
 		}
-		assertEquals(ia2.getSize(), size);
+		assertThat(ia2.getSize()).isEqualTo(size);
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testAdd(int size)
+	@Test
+	public void testAdd()
 	{
 		if (size > 100000) return;
 
@@ -167,9 +177,9 @@ public class IntArrayListTest
 			ial.add(i);
 			ial.addAt(0, i);
 			int s = ial.getSize();
-			assertEquals(s, 2 * (i + 1));
-			assertEquals(ial.get(0), i);
-			assertEquals(ial.get(s - 1), i);
+			assertThat(s).isEqualTo(2 * (i + 1));
+			assertThat(ial.get(0)).isEqualTo(i);
+			assertThat(ial.get(s - 1)).isEqualTo(i);
 		}
 		while (ial.getSize() >= 3)
 		{
@@ -179,12 +189,12 @@ public class IntArrayListTest
 			ial.removeAt(m);
 			ial.removeAt(0);
 			int ns = ial.getSize();
-			assertEquals(s, ns + 3);
+			assertThat(s).isEqualTo(ns + 3);
 		}
 	}
 
-	@Test(dataProvider="Data-Generator")
-	public void testIterator(int size)
+	@Test
+	public void testIterator()
 	{
 		if (size > 20) return; // No need to test all the values
 
@@ -241,13 +251,8 @@ public class IntArrayListTest
 		}
 		if (expected != null)
 		{
-			assertTrue(Arrays.equals(expected, results), showArgs(size, expected, results));
+			assertThat(results).isEqualTo(expected);
 		}
-	}
-
-	private String showArgs(int s, int[] a1, int[] a2)
-	{
-		return "For " + s + ", " + Arrays.toString(a1) + " vs. " + Arrays.toString(a2);
 	}
 
 	private int[] makeIntArray(int nSize, boolean bReverse)

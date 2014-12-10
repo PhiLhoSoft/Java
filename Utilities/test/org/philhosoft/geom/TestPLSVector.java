@@ -1,15 +1,14 @@
 package org.philhosoft.geom;
 
 
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 
-import org.testng.annotations.*;
+import org.junit.Test;
 
 
-
-public class PLSVectorTest
+public class TestPLSVector
 {
 	static final float EPSILON = 1e-6f; // We need a higher tolerance than FEPSILON
 
@@ -18,20 +17,20 @@ public class PLSVectorTest
 	{
 		PLSVector v = new PLSVector();
 		checkResult(v, 0, 0, 0);
-		assertTrue(v.isNull());
-		assertEquals(v.length(), 0.0f);
+		assertThat(v.isNull()).isTrue();
+		assertThat(v.length()).isEqualTo(0.0f);
 
 		v = new PLSVector(1, 2);
 		checkResult(v, 1, 2, 0);
-		assertTrue(GeomUtil.areAlmostEqual(v.length(), 2.236068f));
+		assertThat(GeomUtil.areAlmostEqual(v.length(), 2.236068f)).isTrue();
 
 		v = new PLSVector(3, 4, 5);
 		checkResult(v, 3, 4, 5);
 		float len = v.length();
-		assertTrue(GeomUtil.areAlmostEqual(len, 7.071068f));
+		assertThat(GeomUtil.areAlmostEqual(len, 7.071068f)).isTrue();
 		v.invert();
 		checkResult(v, -3, -4, -5);
-		assertEquals(v.length(), len);
+		assertThat(v.length()).isEqualTo(len);
 
 		float[][] vectors =
 		{
@@ -73,40 +72,40 @@ public class PLSVectorTest
 	{
 		PLSVector v = PLSVector.create();
 		checkResult(v, 1, 1, 1);
-		assertEquals(v.length(), (float) Math.sqrt(3));
+		assertThat(v.length()).isEqualTo((float) Math.sqrt(3));
 
 		v = PLSVector.create((float) Math.PI / 2);
 		checkResult(v, 0, 1, 0);
-		assertTrue(v.almostEquals(PLSVector.Y_AXIS));
-		assertEquals(v.length(), 1.0f);
+		assertThat(v.almostEquals(PLSVector.Y_AXIS)).isTrue();
+		assertThat(v.length()).isEqualTo(1.0f);
 
 		v = PLSVector.create().set(0, 0, 1);
 		checkResult(v, 0, 0, 1);
-		assertTrue(v.almostEquals(PLSVector.Z_AXIS));
-		assertEquals(v.length(), 1.0f);
+		assertThat(v.almostEquals(PLSVector.Z_AXIS)).isTrue();
+		assertThat(v.length()).isEqualTo(1.0f);
 
 		PLSVector rv = PLSVector.createRandom();
-		assertNotEquals(v, rv);
-		assertEquals(v.length(), 1.0f);
+		assertThat(v).isNotEqualTo(rv);
+		assertThat(v.length()).isEqualTo(1.0f);
 	}
 
 	@Test
 	public void testAngles()
 	{
 		PLSVector vPX = PLSVector.create(0);
-		assertEquals(Math.abs(vPX.heading()), 0f);
-		assertEquals(Math.abs(vPX.heading()), vPX.angleWith(PLSVector.X_AXIS));
+		assertThat(Math.abs(vPX.heading())).isEqualTo(0f);
+		assertThat(Math.abs(vPX.heading())).isEqualTo(vPX.angleWith(PLSVector.X_AXIS));
 
 		PLSVector vPY = PLSVector.create((float) Math.PI / 2);
-		assertEquals(vPY.heading(), (float) Math.PI / 2);
-		assertEquals(vPY.heading(), vPY.angleWith(PLSVector.X_AXIS));
+		assertThat(vPY.heading()).isEqualTo((float) Math.PI / 2);
+		assertThat(vPY.heading()).isEqualTo(vPY.angleWith(PLSVector.X_AXIS));
 
 		PLSVector vNX = PLSVector.create((float) Math.PI);
-		assertEquals(vNX.heading(), (float) Math.PI);
+		assertThat(vNX.heading()).isEqualTo((float) Math.PI);
 		checkAlmostEqualFloats(vNX.heading(), vNX.angleWith(PLSVector.X_AXIS), "NX");
 
 		PLSVector vNY = PLSVector.create((float) Math.PI * 3 / 2);
-		assertEquals(vNY.heading(), (float) Math.PI * 3 / 2);
+		assertThat(vNY.heading()).isEqualTo((float) Math.PI * 3 / 2);
 		checkAlmostEqualFloats(vNY.heading(), (float) Math.PI + vNY.angleWith(PLSVector.X_AXIS), "NY");
 	}
 
@@ -123,6 +122,6 @@ public class PLSVectorTest
 
 	void checkAlmostEqualFloats(float f1, float f2, String m)
 	{
-		assertTrue(Math.abs(f1 - f2) < EPSILON, "Diff on " + m + ": " + Math.abs(f1 - f2));
+		assertThat(Math.abs(f1 - f2) < EPSILON).isTrue();
 	}
 }

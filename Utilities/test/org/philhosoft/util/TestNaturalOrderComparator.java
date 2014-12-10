@@ -1,16 +1,15 @@
 package org.philhosoft.util;
 
 
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
-
-public class NaturalOrderComparatorTest
+public class TestNaturalOrderComparator
 {
 	private static final boolean bShowOutput = false;
 	private NaturalOrderComparator noc = new NaturalOrderComparator();
@@ -23,7 +22,7 @@ public class NaturalOrderComparatorTest
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, s1, s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
+			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, s1, s2));
 		}
 
 		// Same test, starting with number(s)
@@ -32,14 +31,14 @@ public class NaturalOrderComparatorTest
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, "5:" + s1, "5:" + s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
+			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, "5:" + s1, "5:" + s2));
 		}
 		show("\n\n## Shifted pair test 2\n");
 		for (int i = 0; i < TEST_DATA.length; i++)
 		{
 			String s1 = TEST_DATA[i][0];
 			String s2 = TEST_DATA[i][1];
-			assertTrue(testPair(i, "75:" + s1, "75:" + s2), "Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1]);
+			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, "75:" + s1, "75:" + s2));
 		}
 
 		show("\n\n## Global sort test\n");
