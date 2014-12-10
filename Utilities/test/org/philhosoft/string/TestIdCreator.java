@@ -1,9 +1,11 @@
-package org.philhosoft.collection;
+package org.philhosoft.string;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+
+import org.philhosoft.string.IdCreator;
 
 
 public class TestIdCreator

@@ -1,4 +1,4 @@
-package org.philhosoft.collection;
+package org.philhosoft.string;
 
 /**
  * Allows to create ids with some control on their length and characters they use.
@@ -28,16 +28,15 @@ public class IdCreator
 		this(DEFAULT_ID_LENGTH, DEFAULT_ZERO_CHAR, DEFAULT_MAX_CHAR);
 	}
 	/**
-	 * Creates an id creator with given parameters.<br>
+	 * Creates an id creator with given parameters.
 	 *
-	 *
-	 * @param idLength  length of the generated ids. Should be 3 or more, up to 12.
+	 * @param idLength  length of the generated ids. Must be 3 or more, up to 12.
 	 * @param char1  first supplementary character
 	 * @param char2  second supplementary character
 	 */
 	public IdCreator(int idLength, char char1, char char2)
 	{
-		if (idLength <3 || idLength > 12)
+		if (idLength < 3 || idLength > 12)
 			throw new IllegalArgumentException("idLength is below 3 or above 12.");
 		// Long.MAX_VALUE is 9_223_372_036_854_775_807, 19 digits, so at most 12 characters
 

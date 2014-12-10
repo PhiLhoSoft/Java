@@ -3,7 +3,7 @@ package org.philhosoft.collection.graph;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.philhosoft.collection.IdCreator;
+import org.philhosoft.string.IdCreator;
 
 /**
  * A graph object, made of {@link GraphNode}s (or vertices) and {@link GraphEdge}s (or arcs or links).
