@@ -11,6 +11,7 @@
 package org.philhosoft.string;
 
 
+
 /**
  * Static methods to parse a string to its numerical value without raising exception. If the string isn't well formed,
  * return a default value instead. This is used, for example, to convert values read in a file (properties, etc.).
@@ -132,7 +133,9 @@ public class ParseString
 		return c >= '0' && c <= '9';
 	}
 
-	private enum NumberParsingState { INITIAL, SIGN, PREFIXING_DOT, INITIAL_DIGIT, MIDDLE_DOT, EXPONENT, EXPONENT_SIGN, EXPONENT_DIGIT, END };
+	private enum NumberParsingState
+	{ INITIAL, SIGN, PREFIXING_DOT, INITIAL_DIGIT, MIDDLE_DOT, EXPONENT, EXPONENT_SIGN, EXPONENT_DIGIT, END };
+
 	public static boolean isNumber(String candidate)
 	{
 		if (candidate == null) return false;
