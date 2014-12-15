@@ -3,29 +3,32 @@ package org.philhosoft.fsa;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FiniteStateAutomaton
+public abstract class FiniteStateAutomaton<T>
 {
-	private Map<State, Action> automaton = new HashMap<>();
+	private Map<State, Transition<T>> automaton = new HashMap<>();
 	private State currentState;
 
-	public void addState(State state, Action action)
+	protected void addState(State state, Transition<T> transition)
 	{
-		automaton.put(state, action);
+		automaton.put(state, transition);
 	}
 
-	public void start(State state)
+	protected void start(State state)
 	{
 		currentState = state;
-		next();
 	}
 
-	public void next()
+	protected abstract T provide();
+
+	protected State next()
 	{
-		Action action = automaton.get(currentState);
-		currentState = action.execute();
+		Transition<T> transition = automaton.get(currentState);
+		T value = provide();
+		currentState = transition.evaluate(value);
+		return currentState;
 	}
 
-	public State getState()
+	protected State getState()
 	{
 		return currentState;
 	}

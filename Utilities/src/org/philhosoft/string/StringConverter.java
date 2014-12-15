@@ -20,9 +20,9 @@ package org.philhosoft.string;
  *
  * @author Philippe Lhoste
  */
-public class ParseString
+public class StringConverter
 {
-	private ParseString()
+	private StringConverter()
 	{
 	}
 
@@ -127,9 +127,14 @@ public class ParseString
 		return val;
 	}
 
-	private static boolean isDigit(char c)
+	/**
+	 * Tells if given char is an Ascii digit.
+	 * <p>
+	 * More restrictive, faster than Character.isDigit(c) which should be used if Unicode awareness is required.
+	 */
+	public static boolean isAsciiDigit(char c)
 	{
-		// ~ return Character.isDigit(c); // If Unicode awareness is required
+		// ~ return
 		return c >= '0' && c <= '9';
 	}
 
@@ -141,7 +146,7 @@ public class ParseString
 		if (candidate == null) return false;
 		int length = candidate.length();
 		if (length == 0) return false;
-		if (length == 1) return isDigit(candidate.charAt(0));
+		if (length == 1) return isAsciiDigit(candidate.charAt(0));
 
 		NumberParsingState state = NumberParsingState.INITIAL;
 		int cursor = 0;
@@ -160,7 +165,7 @@ public class ParseString
 				{
 					state = NumberParsingState.PREFIXING_DOT;
 				}
-				else if (isDigit(c))
+				else if (isAsciiDigit(c))
 				{
 					state = NumberParsingState.INITIAL_DIGIT;
 				}
@@ -174,7 +179,7 @@ public class ParseString
 				{
 					state = NumberParsingState.PREFIXING_DOT;
 				}
-				else if (isDigit(c))
+				else if (isAsciiDigit(c))
 				{
 					state = NumberParsingState.INITIAL_DIGIT;
 				}
@@ -184,7 +189,7 @@ public class ParseString
 				}
 				break;
 			case PREFIXING_DOT: // After prefixing dot, want digits
-				if (isDigit(c))
+				if (isAsciiDigit(c))
 				{
 					state = NumberParsingState.MIDDLE_DOT;
 				}
@@ -206,7 +211,7 @@ public class ParseString
 				{
 					state = NumberParsingState.END;
 				}
-				else if (isDigit(c))
+				else if (isAsciiDigit(c))
 				{
 					break; // Continue on this state
 				}
@@ -224,7 +229,7 @@ public class ParseString
 				{
 					state = NumberParsingState.END;
 				}
-				else if (isDigit(c))
+				else if (isAsciiDigit(c))
 				{
 					break; // Continue on this state
 				}
@@ -238,7 +243,7 @@ public class ParseString
 				{
 					state = NumberParsingState.EXPONENT_SIGN;
 				}
-				else if (isDigit(c))
+				else if (isAsciiDigit(c))
 				{
 					state = NumberParsingState.EXPONENT_DIGIT;
 				}
@@ -248,7 +253,7 @@ public class ParseString
 				}
 				break;
 			case EXPONENT_SIGN: // After exponent's sign
-				if (isDigit(c))
+				if (isAsciiDigit(c))
 				{
 					state = NumberParsingState.EXPONENT_DIGIT;
 				}
@@ -258,7 +263,7 @@ public class ParseString
 				}
 				break;
 			case EXPONENT_DIGIT: // Exponent's digits
-				if (isDigit(c))
+				if (isAsciiDigit(c))
 				{
 					break; // Stay here
 				}

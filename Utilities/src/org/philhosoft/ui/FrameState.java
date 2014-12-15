@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.awt.*;
 //import java.awt.event.*;
 
-import org.philhosoft.string.ParseString;
+import org.philhosoft.string.StringConverter;
 
 
 /**
@@ -158,15 +158,15 @@ public class FrameState
 		{
 			properties.load(new FileInputStream(s_propertiesPath));
 			String prop = properties.getProperty(m_frameName + PROP_WIDTH);
-			w = ParseString.toInt(prop, w);
+			w = StringConverter.toInt(prop, w);
 			prop = properties.getProperty(m_frameName + PROP_HEIGHT);
-			h = ParseString.toInt(prop, h);
+			h = StringConverter.toInt(prop, h);
 			prop = properties.getProperty(m_frameName + PROP_XPOS);
-			x = ParseString.toInt(prop, x);
+			x = StringConverter.toInt(prop, x);
 			prop = properties.getProperty(m_frameName + PROP_YPOS);
-			y = ParseString.toInt(prop, y);
+			y = StringConverter.toInt(prop, y);
 			prop = properties.getProperty(m_frameName + PROP_MAX);
-			bMax = ParseString.toBoolean(prop, bMax);
+			bMax = StringConverter.toBoolean(prop, bMax);
 			bOK = true;
 		}
 		catch (IOException e)

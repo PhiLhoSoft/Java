@@ -17,7 +17,7 @@ public class TestStringWalker
 		assertThat(walker.atLineEnd()).isFalse();
 		assertThat(walker.atLineStart()).isTrue();
 
-		assertThat(walker.previous()).isEqualTo(' ');
+		assertThat(walker.previous()).isEqualTo('\0');
 		assertThat(walker.current()).isEqualTo('S');
 		assertThat(walker.next()).isEqualTo('i');
 
@@ -30,6 +30,7 @@ public class TestStringWalker
 
 		walker.forward();
 
+		assertThat(walker.hasMore()).isTrue();
 		assertThat(walker.atLineEnd()).isFalse();
 		assertThat(walker.atLineStart()).isFalse();
 
@@ -58,7 +59,7 @@ public class TestStringWalker
 		assertThat(walker.match('x')).isFalse();
 		assertThat(walker.match('l', 'e')).isTrue();
 		assertThat(walker.match('x', 'x')).isFalse();
-		assertThat(walker.match("le  ")).isTrue(); // Mmm...
+		assertThat(walker.match("le  ")).isFalse();
 		assertThat(walker.match("leet")).isFalse();
 
 		walker.forward(3);
@@ -67,9 +68,9 @@ public class TestStringWalker
 		assertThat(walker.atLineEnd()).isTrue();
 		assertThat(walker.atLineStart()).isFalse();
 
-		assertThat(walker.previous()).isEqualTo(' ');
-		assertThat(walker.current()).isEqualTo(' ');
-		assertThat(walker.next()).isEqualTo(' ');
+		assertThat(walker.previous()).isEqualTo('\0');
+		assertThat(walker.current()).isEqualTo('\0');
+		assertThat(walker.next()).isEqualTo('\0');
 
 		assertThat(walker.match('x')).isFalse();
 		assertThat(walker.match('x', 'x')).isFalse();
@@ -77,40 +78,63 @@ public class TestStringWalker
 	}
 
 	@Test
+	public void testSimpleAll()
+	{
+		String s = "Simple";
+		StringWalker walker = new StringWalker(s);
+
+		int c = 0;
+		while (walker.hasMore())
+		{
+//			System.out.println(c);
+			assertThat(walker.atLineEnd()).isEqualTo(c == s.length());
+			assertThat(walker.atLineStart()).isEqualTo(c == 0);
+
+			assertThat(walker.previous()).isEqualTo(c == 0 ? '\0' : s.charAt(c - 1));
+			assertThat(walker.current()).isEqualTo(s.charAt(c));
+			assertThat(walker.next()).isEqualTo(c == s.length() - 1 ? '\0' : s.charAt(c + 1));
+
+			walker.forward();
+			c++;
+		}
+		assertThat(c).isEqualTo(s.length());
+	}
+
+	@Test
 	public void testUnixNewline()
 	{
 		String s = "Line\nBreak";
 		StringWalker walker = new StringWalker(s);
-	
+
 		walker.forward(3);
-	
+
 		assertThat(walker.hasMore()).isTrue();
 		assertThat(walker.atLineEnd()).isFalse();
 		assertThat(walker.atLineStart()).isFalse();
-	
+
 		assertThat(walker.previous()).isEqualTo('n');
 		assertThat(walker.current()).isEqualTo('e');
 		assertThat(walker.next()).isEqualTo('\n');
-	
+
 		assertThat(walker.match('e', 'e')).isFalse();
 		assertThat(walker.match("en")).isFalse();
-	
+
 		walker.forward();
-	
+
 		assertThat(walker.hasMore()).isTrue();
 		assertThat(walker.atLineEnd()).isTrue();
 		assertThat(walker.atLineStart()).isFalse();
-	
+
 		assertThat(walker.previous()).isEqualTo('e');
 		assertThat(walker.current()).isEqualTo('\n');
 		assertThat(walker.next()).isEqualTo('B');
-	
+
 		walker.forward();
-	
+
 		assertThat(walker.hasMore()).isTrue();
 		assertThat(walker.atLineEnd()).isFalse();
 		assertThat(walker.atLineStart()).isTrue();
-	
+
 		assertThat(walker.previous()).isEqualTo('\n');
 		assertThat(walker.current()).isEqualTo('B');
 		assertThat(walker.next()).isEqualTo('r');

@@ -10,8 +10,7 @@ package org.philhosoft.string.parser;
  */
 public class StringWalker
 {
-	// Maybe allow to choose the placeholder char, eg. to '\0' or some Unicode char.
-	private static final char PLACEHOLDER_CHAR = ' ';
+	private static final char PLACEHOLDER_CHAR = '\0';
 
 	private String walked;
 	private int cursor;
@@ -37,7 +36,7 @@ public class StringWalker
 	 */
 	public boolean hasMore()
 	{
-		return cursor < walked.length() - 1;
+		return cursor < walked.length();
 	}
 	/**
 	 * Advance by one character (two if these are a Windows line-ending CR+LF pair).
@@ -141,6 +140,18 @@ public class StringWalker
 				return false;
 		}
 		return true;
+	}
+	/**
+	 * True if the current character is in the given list of chars.
+	 */
+	public boolean matchOneOf(char... characters)
+	{
+		for (char c : characters)
+		{
+			if (current == c)
+				return true;
+		}
+		return false;
 	}
 
 	private void fetchNextCharacter()
