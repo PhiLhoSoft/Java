@@ -79,7 +79,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '.')
 				return NumberParsingState.PREFIXING_DOT;
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.INITIAL_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -93,7 +93,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '.')
 				return NumberParsingState.PREFIXING_DOT;
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.INITIAL_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -106,7 +106,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After prefixing dot, want digits.
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.MIDDLE_DOT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -128,7 +128,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (walker.matchOneOf('f', 'F', 'd', 'D', 'l', 'L'))
 				return NumberParsingState.END;
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.INITIAL_DIGIT; // Check for more
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -141,7 +141,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After dot, want more digits or exponent or type
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.MIDDLE_DOT; // Check for more
 
 			if (walker.matchOneOf('f', 'F', 'd', 'D'))
@@ -163,7 +163,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '+' || c == '-')
 				return NumberParsingState.EXPONENT_SIGN;
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -176,7 +176,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After exponent' sign, want digit
 
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -187,7 +187,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		@Override
 		public State evaluate(Character c)
 		{
-			if (StringConverter.isAsciiDigit(c))
+			if (isAsciiDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT; // Want more
 
 			if (walker.matchOneOf('f', 'F', 'd', 'D'))
@@ -203,5 +203,16 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			return NumberParsingState.ERROR; // Should not have a character beyond the end
 		}
+	}
+
+	/**
+	 * Tells if given char is an Ascii digit.
+	 * <p>
+	 * More restrictive, faster than Character.isDigit(c) which should be used if Unicode awareness is required.
+	 */
+	public static boolean isAsciiDigit(char c)
+	{
+		// ~ return
+		return c >= '0' && c <= '9';
 	}
 }
