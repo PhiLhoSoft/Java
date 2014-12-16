@@ -3,7 +3,7 @@ package org.philhosoft.string;
 import org.philhosoft.fsa.FiniteStateAutomaton;
 import org.philhosoft.fsa.State;
 import org.philhosoft.fsa.Transition;
-import org.philhosoft.string.parser.StringWalker;
+import org.philhosoft.parser.StringWalker;
 
 public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 {

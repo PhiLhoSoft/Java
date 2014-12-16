@@ -1,8 +1,10 @@
-package org.philhosoft.string.parser;
+package org.philhosoft.parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+
+import org.philhosoft.parser.StringWalker;
 
 
 public class TestStringWalker

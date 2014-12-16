@@ -1,4 +1,4 @@
-package org.philhosoft.string.parser;
+package org.philhosoft.parser;
 
 // Inspired by Scintilla's StyleContext class.
 // Usually, I start my method names with verbs or do real getters, but here I took at more concise approach, for readability.
