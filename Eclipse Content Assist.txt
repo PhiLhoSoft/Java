@@ -1,0 +1,25 @@
+Eclipse > Window > Preferences
+Java > Editor > Content Assist
+Has links to static imports settings, and type filters.
+The former allows to do static imports on selected methods, like mock() or assertThat().
+The latter allows to  exclude some packages we are sure not to use in our project. This allows to have auto import of classes (eg. with the Organize imports feature, Ctrl+Shift+O) without needing to choose between two packages (eg. java.util.List vs. java.awt.List). The excluded classes are often classes for internal use.
+
+My current settings are:
+
+Java > Editor > Content Assist > Favorites (static imports)
+
+org.mockito.Matchers.*
+org.mockito.Mockito.*
+
+Java > Appearance > Type Filters
+
+antlr.collections.*
+com.google.gwt.dev.*
+com.google.gwt.thirdparty.*
+edu.umd.cs.findbugs.annotations.CheckForNull
+edu.umd.cs.findbugs.annotations.Nullable
+groovyjarjarantlr.collections.*
+java.awt.*
+jersey.repackaged.*
+
+Obviously, these lists depend on the project and the libraries used.
