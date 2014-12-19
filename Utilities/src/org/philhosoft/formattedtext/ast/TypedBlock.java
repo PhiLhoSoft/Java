@@ -1,4 +1,4 @@
-package org.philhosoft.ast.formattedtext;
+package org.philhosoft.formattedtext.ast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,12 @@ public class TypedBlock implements Block
 	public List<Block> getBlocks()
 	{
 		return blocks;
+	}
+
+	@Override
+	public <T> void accept(MarkupVisitor<T> visitor, T output)
+	{
+		visitor.visit(this, output);
 	}
 
 	@Override

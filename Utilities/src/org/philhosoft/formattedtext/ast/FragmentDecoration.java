@@ -1,4 +1,4 @@
-package org.philhosoft.ast.formattedtext;
+package org.philhosoft.formattedtext.ast;
 
 public enum FragmentDecoration
 {

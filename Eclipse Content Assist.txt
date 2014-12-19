@@ -16,10 +16,12 @@ Java > Appearance > Type Filters
 antlr.collections.*
 com.google.gwt.dev.*
 com.google.gwt.thirdparty.*
+com.sun.*
 edu.umd.cs.findbugs.annotations.CheckForNull
 edu.umd.cs.findbugs.annotations.Nullable
 groovyjarjarantlr.collections.*
 java.awt.*
 jersey.repackaged.*
+sun.tools.*
 
 Obviously, these lists depend on the project and the libraries used.

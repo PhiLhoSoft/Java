@@ -1,10 +1,14 @@
-package org.philhosoft.ast.formattedtext;
+package org.philhosoft.formattedtext.ast;
 
 public class LinkFragment implements Fragment
 {
 	private Fragment textFragment; // source anchor
 	private String url; // destination anchor
 
+	public LinkFragment(String text, String url)
+	{
+		this(new PlainTextFragment(text), url);
+	}
 	public LinkFragment(Fragment textFragment, String url)
 	{
 		this.textFragment = textFragment;
@@ -18,6 +22,12 @@ public class LinkFragment implements Fragment
 	public String getUrl()
 	{
 		return url;
+	}
+
+	@Override
+	public <T> void accept(MarkupVisitor<T> visitor, T output)
+	{
+		visitor.visit(this, output);
 	}
 
 	@Override

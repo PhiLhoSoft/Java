@@ -1,10 +1,10 @@
-package org.philhosoft.ast.formattedtext;
+package org.philhosoft.formattedtext.ast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class DecoratedFragment
+public class DecoratedFragment implements Fragment
 {
 	private FragmentDecoration decoration;
 	private List<Fragment> fragments = new ArrayList<Fragment>();
@@ -21,6 +21,12 @@ public class DecoratedFragment
 	public List<Fragment> getFragments()
 	{
 		return fragments;
+	}
+
+	@Override
+	public <T> void accept(MarkupVisitor<T> visitor, T output)
+	{
+		visitor.visit(this, output);
 	}
 
 	@Override

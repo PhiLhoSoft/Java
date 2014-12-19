@@ -1,4 +1,4 @@
-package org.philhosoft.ast.formattedtext;
+package org.philhosoft.formattedtext.ast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,12 @@ public class Line implements Block
 	public List<Fragment> getFragments()
 	{
 		return fragments;
+	}
+
+	@Override
+	public <T> void accept(MarkupVisitor<T> visitor, T output)
+	{
+		visitor.visit(this, output);
 	}
 
 	@Override
