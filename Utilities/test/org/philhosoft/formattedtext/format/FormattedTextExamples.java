@@ -33,8 +33,8 @@ public class FormattedTextExamples
 		// Second line, starting bold
 		Line secondLine = new Line();
 		document.add(secondLine);
-		secondLine.add(new DecoratedFragment(FragmentDecoration.STRONG, "Strong init, followed by "));
-		secondLine.add(new TextFragment("plain text and "));
+		secondLine.add(new DecoratedFragment(FragmentDecoration.STRONG, "Strong init, followed by"));
+		secondLine.add(new TextFragment(" plain text and "));
 
 		LinkFragment link = new LinkFragment("a nice ", "http://www.example.com");
 		DecoratedFragment linkE = new DecoratedFragment(FragmentDecoration.EMPHASIS, "link");
@@ -66,7 +66,7 @@ public class FormattedTextExamples
 
 		// Meet new start of line
 		TypedBlock document = new TypedBlock(BlockType.DOCUMENT);
-		document.add(title);
+		document.add(firstBlock);
 
 		// Second line, plain text
 		Line secondLine = new Line();
