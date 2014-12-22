@@ -1,45 +1,47 @@
 package org.philhosoft.formattedtext.format;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
 import org.philhosoft.formattedtext.ast.Block;
-import org.philhosoft.formattedtext.ast.BlockType;
-import org.philhosoft.formattedtext.ast.DecoratedFragment;
-import org.philhosoft.formattedtext.ast.Fragment;
-import org.philhosoft.formattedtext.ast.FragmentDecoration;
-import org.philhosoft.formattedtext.ast.LinkFragment;
-import org.philhosoft.formattedtext.ast.PlainTextFragment;
-import org.philhosoft.formattedtext.ast.TypedBlock;
 
 
 public class TestPlainTextVisitor
 {
 	@Test
-	public void test() throws Exception
+	public void testFragments() throws Exception
 	{
-		// First line
-		DecoratedFragment sdf = new DecoratedFragment(FragmentDecoration.STRONG);
-		List<Fragment> fl = sdf.getFragments();
-		fl.add(new PlainTextFragment("Plain text "));
-		DecoratedFragment idf = new DecoratedFragment(FragmentDecoration.EMPHASIS);
-		idf.getFragments().add(new PlainTextFragment("Text with emphasis."));
-		fl.add(idf);
-		fl.add(new PlainTextFragment(" Really plain text "));
+		Block document = FormattedTextExamples.buildFragments();
 
-		PlainTextFragment ptf = new PlainTextFragment("Text of ");
-		DecoratedFragment linkE = new DecoratedFragment(FragmentDecoration.EMPHASIS);
-		linkE.getFragments().add(new PlainTextFragment("Link"));
-		LinkFragment lf = new LinkFragment(ptf, "http://www.example.com");
-		fl.add(ptf);
+		PlainTextVisitor visitor = new PlainTextVisitor();
+		StringBuilder sb = new StringBuilder();
+		document.accept(visitor, sb);
 
-//		Line l1 = new Line(text);
+//		System.out.println(sb.toString());
+		assertThat(sb.toString()).isEqualTo("Start of text with emphasis inside.\n" +
+				"Strong init, followed by plain text and a nice link - http://www.example.com\n" +
+				"Boring plain text and emphased text and even deleted text fixed width text.\n");
+	}
 
-		PlainTextFragment plain = new PlainTextFragment("Boring plain text");
+	@Test
+	public void testBlocks() throws Exception
+	{
+		Block document = FormattedTextExamples.buildTypedBlocks();
 
-		TypedBlock tb = new TypedBlock(BlockType.DOCUMENT);
-		List<Block> blocks = tb.getBlocks();
+		PlainTextVisitor visitor = new PlainTextVisitor();
+		StringBuilder sb = new StringBuilder();
+		document.accept(visitor, sb);
 
+//		System.out.println(sb.toString());
+		assertThat(sb.toString()).isEqualTo("This is a title\n" +
+				"Line Two\n" +
+				"Item 0\n" +
+				"Item 1\n" +
+				"Item 2\n" +
+				"\n" +
+				"Block of code\n" +
+				"on several lines\n" +
+				"Last line\n");
 	}
 }
