@@ -15,11 +15,11 @@ public class TestHTMLVisitor
 		Block document = FormattedTextExamples.buildFragments();
 
 		HTMLVisitor visitor = new HTMLVisitor();
-		ContextWithStringBuilder sb = new ContextWithStringBuilder();
-		document.accept(visitor, sb);
+		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
+		document.accept(visitor, ctx);
 
-//		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo(
+//		System.out.println(ctx.toString());
+		assertThat(ctx.asString()).isEqualTo(
 				"<div>Start of text with <em>emphasis inside</em>.<br>\n" +
 				"<strong>Strong init, followed by</strong> plain text and <a href='http://www.example.com'>a nice <em>link</em></a><br>\n" +
 				"Boring plain text and <em>emphased text <strong>and even </strong><del>deleted text</del><code> fixed width text</code>.</em>\n" +
@@ -32,23 +32,24 @@ public class TestHTMLVisitor
 		Block document = FormattedTextExamples.buildTypedBlocks();
 
 		HTMLVisitor visitor = new HTMLVisitor();
-		ContextWithStringBuilder sb = new ContextWithStringBuilder();
-		document.accept(visitor, sb);
+		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
+		document.accept(visitor, ctx);
 
-//		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo(
+//		System.out.println(ctx.toString());
+		assertThat(ctx.asString()).isEqualTo(
 				"<div>\n" +
 				"<h3>This is a title</h3>\n" +
-				"<p>Line Two</p>\n" +
+				"Line Two<br>\n" +
 				"<ul>\n" +
 				"<li>Item 0</li>\n" +
 				"<li>Item 1</li>\n" +
 				"<li>Item 2</li>\n" +
 				"</ul>\n" +
-				"<pre><code>Block of code\n" +
+				"<pre><code>\n" +
+				"Block of code\n" +
 				"on several lines\n" +
 				"</code></pre>\n" +
-				"<p>Last line</p>\n" +
-				"</div>");
+				"Last line<br>\n" +
+				"</div>\n");
 	}
 }

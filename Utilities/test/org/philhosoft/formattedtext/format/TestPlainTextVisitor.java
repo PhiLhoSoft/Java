@@ -15,11 +15,11 @@ public class TestPlainTextVisitor
 		Block document = FormattedTextExamples.buildFragments();
 
 		PlainTextVisitor visitor = new PlainTextVisitor();
-		ContextWithStringBuilder sb = new ContextWithStringBuilder();
-		document.accept(visitor, sb);
+		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
+		document.accept(visitor, ctx);
 
-//		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo("Start of text with emphasis inside.\n" +
+//		System.out.println(ctx.toString());
+		assertThat(ctx.asString()).isEqualTo("Start of text with emphasis inside.\n" +
 				"Strong init, followed by plain text and a nice link - http://www.example.com\n" +
 				"Boring plain text and emphased text and even deleted text fixed width text.\n");
 	}
@@ -30,11 +30,11 @@ public class TestPlainTextVisitor
 		Block document = FormattedTextExamples.buildTypedBlocks();
 
 		PlainTextVisitor visitor = new PlainTextVisitor();
-		ContextWithStringBuilder sb = new ContextWithStringBuilder();
-		document.accept(visitor, sb);
+		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
+		document.accept(visitor, ctx);
 
-//		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo("This is a title\n" +
+//		System.out.println(ctx.toString());
+		assertThat(ctx.asString()).isEqualTo("This is a title\n" +
 				"Line Two\n" +
 				"Item 0\n" +
 				"Item 1\n" +
