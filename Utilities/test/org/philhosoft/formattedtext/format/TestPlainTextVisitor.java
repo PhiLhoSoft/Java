@@ -15,7 +15,7 @@ public class TestPlainTextVisitor
 		Block document = FormattedTextExamples.buildFragments();
 
 		PlainTextVisitor visitor = new PlainTextVisitor();
-		StringBuilder sb = new StringBuilder();
+		ContextWithStringBuilder sb = new ContextWithStringBuilder();
 		document.accept(visitor, sb);
 
 //		System.out.println(sb.toString());
@@ -30,7 +30,7 @@ public class TestPlainTextVisitor
 		Block document = FormattedTextExamples.buildTypedBlocks();
 
 		PlainTextVisitor visitor = new PlainTextVisitor();
-		StringBuilder sb = new StringBuilder();
+		ContextWithStringBuilder sb = new ContextWithStringBuilder();
 		document.accept(visitor, sb);
 
 //		System.out.println(sb.toString());

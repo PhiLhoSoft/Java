@@ -3,6 +3,7 @@ package org.philhosoft.formattedtext.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+
 import org.philhosoft.formattedtext.ast.Block;
 
 
@@ -14,14 +15,15 @@ public class TestHTMLVisitor
 		Block document = FormattedTextExamples.buildFragments();
 
 		HTMLVisitor visitor = new HTMLVisitor();
-		StringBuilder sb = new StringBuilder();
+		ContextWithStringBuilder sb = new ContextWithStringBuilder();
 		document.accept(visitor, sb);
 
 //		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo("<div>Start of text with <em>emphasis inside</em>.\n" +
-				"<strong>Strong init, followed by</strong> plain text and <a href='http://www.example.com'>a nice <em>link</em></a>\n" +
+		assertThat(sb.toString()).isEqualTo(
+				"<div>Start of text with <em>emphasis inside</em>.<br>\n" +
+				"<strong>Strong init, followed by</strong> plain text and <a href='http://www.example.com'>a nice <em>link</em></a><br>\n" +
 				"Boring plain text and <em>emphased text <strong>and even </strong><del>deleted text</del><code> fixed width text</code>.</em>\n" +
-				"</div>");
+				"</div>\n");
 	}
 
 	@Test
@@ -30,13 +32,14 @@ public class TestHTMLVisitor
 		Block document = FormattedTextExamples.buildTypedBlocks();
 
 		HTMLVisitor visitor = new HTMLVisitor();
-		StringBuilder sb = new StringBuilder();
+		ContextWithStringBuilder sb = new ContextWithStringBuilder();
 		document.accept(visitor, sb);
 
 //		System.out.println(sb.toString());
-		assertThat(sb.toString()).isEqualTo("\n<div>\n" +
+		assertThat(sb.toString()).isEqualTo(
+				"<div>\n" +
 				"<h3>This is a title</h3>\n" +
-				"Line Two\n" +
+				"<p>Line Two</p>\n" +
 				"<ul>\n" +
 				"<li>Item 0</li>\n" +
 				"<li>Item 1</li>\n" +
@@ -45,7 +48,7 @@ public class TestHTMLVisitor
 				"<pre><code>Block of code\n" +
 				"on several lines\n" +
 				"</code></pre>\n" +
-				"Last line\n" +
+				"<p>Last line</p>\n" +
 				"</div>");
 	}
 }
