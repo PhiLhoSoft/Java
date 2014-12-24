@@ -56,7 +56,7 @@ public class FormattedTextExamples
 		return document;
 	}
 
-	public static Block buildTypedBlocks()
+	public static Block buildTypedBlocks(boolean withSimpleLines)
 	{
 		// First line, title
 		TypedBlock firstBlock = new TypedBlock(BlockType.TITLE1);
@@ -69,9 +69,12 @@ public class FormattedTextExamples
 		document.add(firstBlock);
 
 		// Second line, plain text
-		Line secondLine = new Line();
-		document.add(secondLine);
-		secondLine.add(new TextFragment("Line Two"));
+		if (withSimpleLines)
+		{
+			Line secondLine = new Line();
+			document.add(secondLine);
+			secondLine.add(new TextFragment("Line Two"));
+		}
 
 		// List
 		TypedBlock list = new TypedBlock(BlockType.UNORDERED_LIST);
@@ -84,9 +87,12 @@ public class FormattedTextExamples
 		}
 
 		// Empty line
-		Line emptyLine = new Line();
-		document.add(emptyLine);
-//		emptyLine.add(new TextFragment(""));
+		if (withSimpleLines)
+		{
+			Line emptyLine = new Line();
+			document.add(emptyLine);
+//			emptyLine.add(new TextFragment(""));
+		}
 
 		// Code block
 		TypedBlock code = new TypedBlock(BlockType.CODE);
@@ -95,9 +101,12 @@ public class FormattedTextExamples
 		code.add(new Line(new TextFragment("on several lines")));
 
 		// Last line, plain text
-		Line lastLine = new Line();
-		document.add(lastLine);
-		lastLine.add(new TextFragment("Last line"));
+		if (withSimpleLines)
+		{
+			Line lastLine = new Line();
+			document.add(lastLine);
+			lastLine.add(new TextFragment("Last line"));
+		}
 
 		return document;
 	}

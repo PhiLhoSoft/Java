@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
+import org.philhosoft.formattedtext.ast.Block;
+import org.philhosoft.formattedtext.ast.Line;
+
 
 public class TestContextWithStringBuilder
 {
@@ -12,10 +15,11 @@ public class TestContextWithStringBuilder
 	{
 		ContextWithStringBuilder context = new ContextWithStringBuilder();
 
-		context.push("", true, true);
-		context.push("", false, true);
-		context.push("", true, false);
-		context.push("", false, false);
+		Block b = new Line();
+		context.push(b, true, true);
+		context.push(b, false, true);
+		context.push(b, true, false);
+		context.push(b, false, false);
 
 		assertThat(context.isFirst()).isFalse();
 		assertThat(context.isLast()).isFalse();
@@ -46,13 +50,14 @@ public class TestContextWithStringBuilder
 	{
 		ContextWithStringBuilder context = new ContextWithStringBuilder();
 
-		context.push("", true, true);
-		context.push("", false, false);
+		Block b = new Line();
+		context.push(b, true, true);
+		context.push(b, false, false);
 
 		assertThat(context.isFirst()).isFalse();
 		assertThat(context.isLast()).isFalse();
 
-		context.setFirstLast("", true, false);
+		context.setFirstLast(true, false);
 
 		assertThat(context.isFirst()).isTrue();
 		assertThat(context.isLast()).isFalse();

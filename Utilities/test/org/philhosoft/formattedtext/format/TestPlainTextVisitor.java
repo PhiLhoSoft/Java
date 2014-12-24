@@ -27,7 +27,7 @@ public class TestPlainTextVisitor
 	@Test
 	public void testBlocks() throws Exception
 	{
-		Block document = FormattedTextExamples.buildTypedBlocks();
+		Block document = FormattedTextExamples.buildTypedBlocks(true);
 
 		PlainTextVisitor visitor = new PlainTextVisitor();
 		ContextWithStringBuilder ctx = new ContextWithStringBuilder();

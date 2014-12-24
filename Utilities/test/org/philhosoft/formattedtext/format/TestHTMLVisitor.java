@@ -18,7 +18,7 @@ public class TestHTMLVisitor
 		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
 		document.accept(visitor, ctx);
 
-//		System.out.println(ctx.toString());
+//		System.out.println(ctx.asString());
 		assertThat(ctx.asString()).isEqualTo(
 				"<div>\n" +
 				"Start of text with <em>emphasis inside</em>.<br>\n" +
@@ -28,17 +28,42 @@ public class TestHTMLVisitor
 	}
 
 	@Test
-	public void testBlocks() throws Exception
+	public void testBlocks_noLines() throws Exception
 	{
-		Block document = FormattedTextExamples.buildTypedBlocks();
+		Block document = FormattedTextExamples.buildTypedBlocks(false);
 
 		HTMLVisitor visitor = new HTMLVisitor();
 		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
 		document.accept(visitor, ctx);
 
-//		System.out.println(ctx.toString());
+//		System.out.println(ctx.asString());
 		assertThat(ctx.asString()).isEqualTo(
-				"<div>" +
+				"<div>\n" +
+				"<h3>This is a title</h3>\n" +
+				"<ul>\n" +
+				"<li>Item 0</li>\n" +
+				"<li>Item 1</li>\n" +
+				"<li>Item 2</li>\n" +
+				"</ul>\n" +
+				"<pre><code>\n" +
+				"Block of code\n" +
+				"on several lines" +
+				"\n</code></pre>\n" +
+				"\n</div>\n");
+	}
+
+	@Test
+	public void testBlocks_withLines() throws Exception
+	{
+		Block document = FormattedTextExamples.buildTypedBlocks(true);
+
+		HTMLVisitor visitor = new HTMLVisitor();
+		ContextWithStringBuilder ctx = new ContextWithStringBuilder();
+		document.accept(visitor, ctx);
+
+//		System.out.println(ctx.asString());
+		assertThat(ctx.asString()).isEqualTo(
+				"<div>\n" +
 				"<h3>This is a title</h3>\n" +
 				"Line Two<br>\n" +
 				"\n<ul>\n" +
@@ -49,9 +74,9 @@ public class TestHTMLVisitor
 				"<br>\n" +
 				"\n<pre><code>\n" +
 				"Block of code\n" +
-				"on several lines\n" +
-				"</code></pre>\n" +
-				"\nLast line\n" +
-				"</div>\n");
+				"on several lines" +
+				"\n</code></pre>\n" +
+				"\nLast line" +
+				"\n</div>\n");
 	}
 }
