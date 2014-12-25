@@ -1,6 +1,6 @@
 package org.philhosoft.fsa;
 
-public interface Transition<T>
+public interface TransitionEvaluation<T>
 {
 	State evaluate(T toEvaluate);
 }

@@ -2,7 +2,7 @@ package org.philhosoft.string;
 
 import org.philhosoft.fsa.FiniteStateAutomaton;
 import org.philhosoft.fsa.State;
-import org.philhosoft.fsa.Transition;
+import org.philhosoft.fsa.TransitionEvaluation;
 import org.philhosoft.parser.StringWalker;
 
 public class NumberAsStringParser extends FiniteStateAutomaton<Character>
@@ -68,7 +68,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		addState(NumberParsingState.END, new EndAction());
 	}
 
-	private class InitialAction implements Transition<Character>
+	private class InitialAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -85,7 +85,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class SignAction implements Transition<Character>
+	private class SignAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -99,7 +99,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class PrefixingDotAction implements Transition<Character>
+	private class PrefixingDotAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -112,7 +112,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class InitialDigitAction implements Transition<Character>
+	private class InitialDigitAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -134,7 +134,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class MiddleDotAction implements Transition<Character>
+	private class MiddleDotAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -153,7 +153,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class ExponentAction implements Transition<Character>
+	private class ExponentAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -169,7 +169,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class ExponentSignAction implements Transition<Character>
+	private class ExponentSignAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -182,7 +182,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class ExponentDigitAction implements Transition<Character>
+	private class ExponentDigitAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)
@@ -196,7 +196,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			return NumberParsingState.ERROR; // Unexpected char
 		}
 	}
-	private class EndAction implements Transition<Character>
+	private class EndAction implements TransitionEvaluation<Character>
 	{
 		@Override
 		public State evaluate(Character c)

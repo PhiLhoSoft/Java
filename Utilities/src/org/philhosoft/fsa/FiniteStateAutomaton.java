@@ -5,12 +5,12 @@ import java.util.Map;
 
 public abstract class FiniteStateAutomaton<T>
 {
-	private Map<State, Transition<T>> automaton = new HashMap<>();
+	private Map<State, TransitionEvaluation<T>> automaton = new HashMap<>();
 	private State currentState;
 
-	protected void addState(State state, Transition<T> transition)
+	protected void addState(State state, TransitionEvaluation<T> transitionEvaluation)
 	{
-		automaton.put(state, transition);
+		automaton.put(state, transitionEvaluation);
 	}
 
 	protected void start(State state)
@@ -22,9 +22,9 @@ public abstract class FiniteStateAutomaton<T>
 
 	protected State next()
 	{
-		Transition<T> transition = automaton.get(currentState);
+		TransitionEvaluation<T> transitionEvaluation = automaton.get(currentState);
 		T value = provide();
-		currentState = transition.evaluate(value);
+		currentState = transitionEvaluation.evaluate(value);
 		return currentState;
 	}
 
