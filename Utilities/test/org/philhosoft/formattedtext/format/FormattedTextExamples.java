@@ -46,7 +46,7 @@ public class FormattedTextExamples
 		document.add(lastLine);
 		lastLine.add(new TextFragment("Boring plain text and "));
 
-		DecoratedFragment df = new DecoratedFragment(FragmentDecoration.EMPHASIS, "emphased text ");
+		DecoratedFragment df = new DecoratedFragment(FragmentDecoration.EMPHASIS, "emphasized text ");
 		df.add(new DecoratedFragment(FragmentDecoration.STRONG, "and even "));
 		df.add(new DecoratedFragment(FragmentDecoration.DELETE, "deleted text"));
 		df.add(new DecoratedFragment(FragmentDecoration.CODE, " fixed width text"));
@@ -158,7 +158,7 @@ public class FormattedTextExamples
 		Line lastLine = new Line();
 		lastLine.add(new TextFragment("Boring plain text and "));
 
-		DecoratedFragment df = new DecoratedFragment(FragmentDecoration.EMPHASIS, "emphased text ");
+		DecoratedFragment df = new DecoratedFragment(FragmentDecoration.EMPHASIS, "emphasized text ");
 		df.add(new DecoratedFragment(FragmentDecoration.STRONG, "and even "));
 		df.add(new DecoratedFragment(FragmentDecoration.DELETE, "deleted text"));
 		df.add(new DecoratedFragment(FragmentDecoration.CODE, " fixed width text"));

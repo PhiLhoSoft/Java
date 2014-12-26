@@ -21,7 +21,7 @@ public class TestPlainTextVisitor
 //		System.out.println(ctx.toString());
 		assertThat(ctx.asString()).isEqualTo("Start of text with emphasis inside.\n" +
 				"Strong init, followed by plain text and a nice link - http://www.example.com\n" +
-				"Boring plain text and emphased text and even deleted text fixed width text.\n");
+				"Boring plain text and emphasized text and even deleted text fixed width text.\n");
 	}
 
 	@Test
