@@ -37,6 +37,6 @@
 	<classpathentry kind="lib" path="C:/Java/libraries/poi-3.11-beta2/ooxml-lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/poi-3.11-beta2/poi-ooxml-schemas-3.11-beta2-20140822.jar"/>
 	<classpathentry kind="lib" path="C:/Java/libraries/jsoup-1.8.1.jar" sourcepath="C:/Java/libraries/jsoup-1.8.1-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Java/jdk1.6.0_30/jre/lib/plugin.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jdk1.7.0_55_w64/jre/lib/plugin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
