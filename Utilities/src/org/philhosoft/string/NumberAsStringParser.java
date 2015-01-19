@@ -3,6 +3,7 @@ package org.philhosoft.string;
 import org.philhosoft.fsa.FiniteStateAutomaton;
 import org.philhosoft.fsa.State;
 import org.philhosoft.fsa.TransitionEvaluation;
+import org.philhosoft.parser.CharacterCheck;
 import org.philhosoft.parser.StringWalker;
 
 public class NumberAsStringParser extends FiniteStateAutomaton<Character>
@@ -79,7 +80,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '.')
 				return NumberParsingState.PREFIXING_DOT;
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.INITIAL_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -93,7 +94,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '.')
 				return NumberParsingState.PREFIXING_DOT;
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.INITIAL_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -106,7 +107,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After prefixing dot, want digits.
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.MIDDLE_DOT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -125,10 +126,10 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == 'e' || c == 'E')
 				return NumberParsingState.EXPONENT;
 
-			if (walker.matchOneOf('f', 'F', 'd', 'D', 'l', 'L'))
+			if (CharacterCheck.isOneOf(c, "fFdDlL"))
 				return NumberParsingState.END;
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.INITIAL_DIGIT; // Check for more
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -141,10 +142,10 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After dot, want more digits or exponent or type
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.MIDDLE_DOT; // Check for more
 
-			if (walker.matchOneOf('f', 'F', 'd', 'D'))
+			if (CharacterCheck.isOneOf(c, "fFdD"))
 				return NumberParsingState.END;
 
 			if (c == 'e' || c == 'E')
@@ -163,7 +164,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 			if (c == '+' || c == '-')
 				return NumberParsingState.EXPONENT_SIGN;
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -176,7 +177,7 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			// After exponent' sign, want digit
 
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -187,10 +188,10 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		@Override
 		public State evaluate(Character c)
 		{
-			if (isAsciiDigit(c))
+			if (CharacterCheck.isDigit(c))
 				return NumberParsingState.EXPONENT_DIGIT; // Want more
 
-			if (walker.matchOneOf('f', 'F', 'd', 'D'))
+			if (CharacterCheck.isOneOf(c, "fFdD"))
 				return NumberParsingState.END;
 
 			return NumberParsingState.ERROR; // Unexpected char
@@ -203,16 +204,5 @@ public class NumberAsStringParser extends FiniteStateAutomaton<Character>
 		{
 			return NumberParsingState.ERROR; // Should not have a character beyond the end
 		}
-	}
-
-	/**
-	 * Tells if given char is an Ascii digit.
-	 * <p>
-	 * More restrictive, faster than Character.isDigit(c) which should be used if Unicode awareness is required.
-	 */
-	public static boolean isAsciiDigit(char c)
-	{
-		// ~ return
-		return c >= '0' && c <= '9';
 	}
 }
