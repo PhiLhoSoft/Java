@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="java" deleted="false" description="Surround the selected line(s) with braces" enabled="true" name="Bracify lines">{&#13;
+	${line_selection}${cursor}&#13;
+}</template><template autoinsert="false" context="java" deleted="false" description="Surround the selected line(s) with braces" enabled="true" name="Bracify single line">{&#13;
+	${word_selection}${cursor}&#13;
+}</template><template autoinsert="false" context="java" deleted="false" description="Logger declaration for standard Java logging" enabled="true" name="logger">${i:import(java.util.logging.Logger)}private static final Logger logger = Logger.getLogger(${enclosing_type}.class.getName());</template><template autoinsert="false" context="java" deleted="false" description="Logger declaration for SLF4J" enabled="true" name="loggerSLF4J">${i:import(org.slf4j.Logger, org.slf4j.LoggerFactory)}private static Logger logger = LoggerFactory.getLogger(${enclosing_type}.class);</template></templates>

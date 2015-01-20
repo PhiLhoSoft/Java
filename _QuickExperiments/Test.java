@@ -11,6 +11,7 @@ public class Test
 
   public static void main(String args[])
   {
+    System.out.println(Arrays.toString(args));
     Test t1 = new Test();
     System.out.println(t1.hashCode());
     Test t2 = new Test();

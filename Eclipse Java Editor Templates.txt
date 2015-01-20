@@ -1,0 +1,42 @@
+Eclipse Java Editor Templates
+
+Window > Preferences > Java > Editor > Templates
+
+http://books.google.fr/books?id=rgZ1gymy2ycC&pg=PA132&lpg=PA132&dq=eclipse+template+new+Name+refer+to+variable&source=bl&ots=ebMwL981Lu&sig=hVEakTdAvq2YWGLNeB1SeTKpd2w&hl=en&sa=X&ei=9xZvVI7LIsrfPfKdgNgD&ved=0CFkQ6AEwCA#v=onepage&q=eclipse%20template%20new%20Name%20refer%20to%20variable&f=false
+
+
+# Selection in editor with at least a newline in it: hit Ctrl+Space, Eclipse will show the templates with ${line_selection} in it
+
+{
+	${line_selection}${cursor}
+}
+
+
+# Selection in editor inside a line: hit Ctrl+Space, Eclipse will show the templates with ${word_selection} in it
+
+{
+	${word_selection}${cursor}
+}
+
+
+# Simple import: don't put newline after the import declaration, it will mess up formatting!
+
+${i:import(java.util.logging.Logger)}private static final Logger logger = Logger.getLogger(${enclosing_type}.class.getName());
+
+
+# Multiple imports:
+
+${i:import(org.slf4j.Logger, org.slf4j.LoggerFactory)}private static Logger logger = LoggerFactory.getLogger(${enclosing_type}.class);
+
+
+# Static import
+
+## Simple mock declaration
+
+${is:importStatic(org.mockito.Mockito.mock)}${T} ${m:newName(T)} = mock(${T}.class);
+
+## Simple mock declaration using the selected type
+
+${is:importStatic(org.mockito.Mockito.mock)}${word_selection} ${m:newName(word_selection)} = mock(${word_selection}.class);
+
+
