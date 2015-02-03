@@ -15,7 +15,7 @@ public class TestNaturalOrderComparator
 	private NaturalOrderComparator noc = new NaturalOrderComparator();
 
 	@Test
-	public void testCompareNaturalNumericalOrder()
+	public void testCompareNaturalNumericalOrder_pair()
 	{
 		show("\n\n## Pair test\n");
 		for (int i = 0; i < TEST_DATA.length; i++)
@@ -24,7 +24,11 @@ public class TestNaturalOrderComparator
 			String s2 = TEST_DATA[i][1];
 			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, s1, s2));
 		}
+	}
 
+	@Test
+	public void testCompareNaturalNumericalOrder_shiftedPair1()
+	{
 		// Same test, starting with number(s)
 		show("\n\n## Shifted pair test 1\n");
 		for (int i = 0; i < TEST_DATA.length; i++)
@@ -33,6 +37,10 @@ public class TestNaturalOrderComparator
 			String s2 = TEST_DATA[i][1];
 			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, "5:" + s1, "5:" + s2));
 		}
+	}
+	@Test
+	public void testCompareNaturalNumericalOrder_shiftedPair2()
+	{
 		show("\n\n## Shifted pair test 2\n");
 		for (int i = 0; i < TEST_DATA.length; i++)
 		{
@@ -40,7 +48,11 @@ public class TestNaturalOrderComparator
 			String s2 = TEST_DATA[i][1];
 			assertTrue("Failed on " + i + " = " + TEST_DATA[i][0] + " vs. " + TEST_DATA[i][1], testPair(i, "75:" + s1, "75:" + s2));
 		}
+	}
 
+	@Test
+	public void testCompareNaturalNumericalOrder_globalSort()
+	{
 		show("\n\n## Global sort test\n");
 		ArrayList<String> data = new ArrayList<String>();
 		for (int i = 11; i < TEST_DATA.length; i++)
@@ -65,10 +77,13 @@ public class TestNaturalOrderComparator
 	}
 
 	@Test
-	public void testInIsolation()
+	public void testBug1()
 	{
 		// Got array index out of bounds or infinite loop for non-significant zeroes
-		System.out.println(noc.compare("a01b", "a1bc"));
+		if (bShowOutput)
+		{
+			System.out.println(noc.compare("a01b", "a1bc"));
+		}
 	}
 
 
